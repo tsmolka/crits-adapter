@@ -1,51 +1,48 @@
 crits:
-  datagen:
-    indicator_count: 100
-    source: barfoo
   sites:
     demo_central:
       api:
         allow_self_signed: true
-        key: c5e7ae42ba55d52fc9b062f86336d7b1ae9a22a8
+        key: 0055eaeb01c0f9f38cd65b190daf8f6d8e88c8fc
         max_results: 1000
         path: /api/v1/
         poll_interval: 300
         port: 444
+        source: dsie
         ssl: true
-        user: toor
+        user: api
       host: 54.154.52.195
     demo_site_a:
       api:
         allow_self_signed: true
-        key: c5e7ae42ba55d52fc9b062f86336d7b1ae9a22a8
+        key: 0055eaeb01c0f9f38cd65b190daf8f6d8e88c8fc
         max_results: 1000
         path: /api/v1/
         poll_interval: 300
         port: 444
+        source: dsie
         ssl: true
-        user: toor
+        user: api
       host: 54.154.28.239
     demo_site_b:
       api:
         allow_self_signed: true
-        key: c5e7ae42ba55d52fc9b062f86336d7b1ae9a22a8
+        key: 0055eaeb01c0f9f38cd65b190daf8f6d8e88c8fc
         max_results: 1000
         path: /api/v1/
         poll_interval: 300
         port: 444
+        source: dsie
         ssl: true
-        user: toor
+        user: api
       host: 54.154.64.114
-datagen:
-  canonical_tlds: datagen/tlds-alpha-by-domain.txt
 edge:
-  datagen:
-    indicator_count: 100
-    xmlns_name: barfoo
-    xmlns_url: http://barfoo.com
   sites:
     demo_central:
       host: 54.154.52.195
+      stix:
+        xmlns_name: dsie
+        xmlns_url: http://www.dsie.net/
       taxii:
         allow_self_signed: true
         collection: Default
@@ -54,10 +51,13 @@ edge:
         poll_interval: 300
         port: 443
         ssl: true
-        user: admin
+        user: api
         version: 1.1
     demo_site_a:
       host: 54.154.28.239
+      stix:
+        xmlns_name: dsie
+        xmlns_url: http://www.dsie.net/
       taxii:
         allow_self_signed: true
         collection: Default
@@ -66,10 +66,13 @@ edge:
         poll_interval: 300
         port: 443
         ssl: true
-        user: admin
+        user: api
         version: 1.1
     demo_site_b:
       host: 54.154.64.114
+      stix:
+        xmlns_name: dsie
+        xmlns_url: http://www.dsie.net/
       taxii:
         allow_self_signed: true
         collection: Default
@@ -78,11 +81,11 @@ edge:
         poll_interval: 300
         port: 443
         ssl: true
-        user: admin
+        user: api
         version: 1.1
 state:
   demo_central_to_demo_central:
     crits_to_edge:
-      timestamp: 2014-12-19 17:10:00
+      timestamp: 2014-12-26 16:22:00+00:00
     edge_to_crits:
-      timestamp: 2014-12-19 17:13:00+00:00
+      timestamp: 2014-12-19 17:13:00
