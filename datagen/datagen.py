@@ -133,11 +133,11 @@ def get_crits_api_base_url(config, target):
     return(url)
 
 
-def gen_stix_sample(config, datatype=None, title='random test data', description='random test data', package_intents='Indicators - Watchlist', tlp_color='WHITE'):
+def gen_stix_sample(config, target=None, datatype=None, title='random test data', description='random test data', package_intents='Indicators - Watchlist', tlp_color='WHITE'):
     '''generate sample stix data comprised of indicator_count indicators of type datatype'''
     # setup the xmlns...
-    set_stix_id_namespace({config['edge']['datagen']['xmlns_url']: config['edge']['datagen']['xmlns_name']})
-    set_cybox_id_namespace(Namespace(config['edge']['datagen']['xmlns_url'], config['edge']['datagen']['xmlns_name']))
+    set_stix_id_namespace({config['edge']['sites'][target]['stix']['xmlns_url']: config['edge']['sites'][target]['stix']['xmlns_name']})
+    set_cybox_id_namespace(Namespace(config['edge']['sites'][target]['stix']['xmlns_url'], config['edge']['sites'][target]['stix']['xmlns_name']))
     # construct a stix package...
     stix_package = STIXPackage()
     stix_header = STIXHeader()
@@ -198,7 +198,7 @@ def upload_json_via_crits_api(config, target, endpoint, json):
     # import pudb; pu.db
     data = {'api_key'  : config['crits']['sites'][target]['api']['key'],
             'username' : config['crits']['sites'][target]['api']['user'],
-            'source'   : config['crits']['datagen']['source']}
+            'source'   : config['crits']['sites'][target]['api']['source']}
     data.update(json)
     if config['crits']['sites'][target]['api']['ssl']:
         r = requests.post(url + endpoint + '/' , data=data, verify=not config['crits']['sites'][target]['api']['allow_self_signed'])
@@ -251,7 +251,7 @@ def inject_edge_sample_data(config, target=None, datatype=None):
     if datatype != 'mixed':
         i = 0
         while i < config['edge']['datagen']['indicator_count']:
-            stix_package = gen_stix_sample(config, datatype=datatype)
+            stix_package = gen_stix_sample(config, target=target, datatype=datatype)
             upload_stix_via_taxii(config, target, stix_package)
             i += 1
     elif datatype == 'mixed':
@@ -262,7 +262,7 @@ def inject_edge_sample_data(config, target=None, datatype=None):
         i = 0
         while i < config['edge']['datagen']['indicator_count']:
             type_ = types_[random.randint(0, len(types_) - 1)]
-            stix_package = gen_stix_sample(config, datatype=type_)
+            stix_package = gen_stix_sample(config, target=target, datatype=type_)
             upload_stix_via_taxii(config, target, stix_package)
             i += 1
             print(i)
