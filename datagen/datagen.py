@@ -47,7 +47,7 @@ datagen_targets = ['edge', 'crits']
 __doc__ = '''datagen.py: inject randomly generated sample data in Soltra Edge and MITRE CRITs
 
 Usage:
-    datagen.py --inject --type=TYPE --datatype=DATATYPE --target=TARGET [--config=CONFIG]
+    datagen.py --inject --type=TYPE --datatype=DATATYPE --target=TARGET [--config=CONFIG] [--count=COUNT]
     datagen.py --list-targets [--config=CONFIG]
     datagen.py --list-types [--config=CONFIG]
     datagen.py --list-datatypes [--config=CONFIG]
@@ -57,7 +57,8 @@ Usage:
 
 
 Options:
-    -c CONFIG --config=CONFIG         Specify config file to use [default: %s].
+    -C CONFIG --config=CONFIG         Specify config file to use [default: %s].
+    -c count --count=COUNT            Specify how many indicators to push (overrides whatever's in config.yaml)
     -d DATATYPE --datatype=DATATYPE   Specify datatype to inject - must be one of %s [default: mixed].
     -t TYPE --type=TYPE               Specify target type - must be one of %s [default: edge].
     -h --help                         Show this screen.
@@ -172,7 +173,7 @@ def gen_stix_sample(config, datatype=None, title='random test data', description
         indicator = Indicator(title='A Very Bad [tm] Filehash')
         indicator.add_indicator_type('File Hash Watchlist')
         file_object = File()
-        file_.file_name = str(uuid.uuid4()) + '.exe'
+        file_object.file_name = str(uuid.uuid4()) + '.exe'
         (sha256_, md5_) = generate_random_hash()
         file_object.add_hash(Hash(sha256_))
         file_object.hashes[0].simple_hash_value.condition = "Equals"
@@ -327,8 +328,14 @@ def main():
     elif args['--inject']:
         if not args['--datatype']:
             args['--datatype'] = 'mixed'
+        if args['--count']:
+            config['crits']['datagen']['indicator_count'] = args['--count']
         if args['--type'] in datagen_targets:
             if args['--type'] == 'crits' and args['--target'] in config['crits']['sites'].keys():
+                # override indicator_count from config file if it's
+                # passed via cli
+                if args['--count']:
+                    config['crits']['datagen']['indicator_count'] = int(args['--count'])
                 # read in icann tlds list for datagen use
                 config['datagen']['tlds'] = load_tlds(config)
                 # TODO modify the inject_*_sample_data functions to
@@ -336,6 +343,10 @@ def main():
                 #      and domain names
                 inject_crits_sample_data(config, target=args['--target'], datatype=args['--datatype'])
             elif args['--type'] == 'edge' and args['--target'] in config['edge']['sites'].keys():
+                # override indicator_count from config file if it's
+                # passed via cli
+                if args['--count']:
+                    config['edge']['datagen']['indicator_count'] = int(args['--count'])
                 # read in icann tlds list for datagen use
                 config['datagen']['tlds'] = load_tlds(config)
                 inject_edge_sample_data(config, target=args['--target'], datatype=args['--datatype'])
