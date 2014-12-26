@@ -1,7 +1,6 @@
 crits:
   datagen:
     indicator_count: 100
-    source: dsie
   sites:
     demo_central:
       api:
@@ -13,6 +12,7 @@ crits:
         port: 444
         ssl: true
         user: api
+        source: dsie
       host: 54.154.52.195
     demo_site_a:
       api:
@@ -24,6 +24,7 @@ crits:
         port: 444
         ssl: true
         user: api
+        source: dsie
       host: 54.154.28.239
     demo_site_b:
       api:
@@ -35,17 +36,19 @@ crits:
         port: 444
         ssl: true
         user: api
+        source: dsie
       host: 54.154.64.114
 datagen:
   canonical_tlds: data/tlds-alpha-by-domain.txt
 edge:
   datagen:
     indicator_count: 100
-    xmlns_name: barfoo
-    xmlns_url: http://barfoo.com
   sites:
     demo_central:
       host: 54.154.52.195
+      stix:
+        xmlns_name: dsie
+        xmlns_url: http://www.dsie.net/
       taxii:
         allow_self_signed: true
         collection: Default
@@ -54,10 +57,13 @@ edge:
         poll_interval: 300
         port: 443
         ssl: true
-        user: admin
+        user: api
         version: 1.1
     demo_site_a:
       host: 54.154.28.239
+      stix:
+        xmlns_name: dsie
+        xmlns_url: http://www.dsie.net/
       taxii:
         allow_self_signed: true
         collection: Default
@@ -66,10 +72,13 @@ edge:
         poll_interval: 300
         port: 443
         ssl: true
-        user: admin
+        user: api
         version: 1.1
     demo_site_b:
       host: 54.154.64.114
+      stix:
+        xmlns_name: dsie
+        xmlns_url: http://www.dsie.net/
       taxii:
         allow_self_signed: true
         collection: Default
@@ -78,5 +87,5 @@ edge:
         poll_interval: 300
         port: 443
         ssl: true
-        user: admin
+        user: api
         version: 1.1
