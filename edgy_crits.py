@@ -40,8 +40,6 @@ default_config = os.path.join(app_path, 'config.yaml')
 __doc__ = '''edgy_crits.py: bidirectional synchronization between Soltra Edge and MITRE CRITs
 
 Usage:
-    edgy_crits.py [--config=CONFIG] --inject-edge-sample-data --target=TARGET
-    edgy_crits.py [--config=CONFIG] --inject-crits-sample-data --target=TARGET
     edgy_crits.py [--config=CONFIG] --sync-crits-to-edge --source=SOURCE --destination=DESTINATION
     edgy_crits.py [--config=CONFIG] --sync-edge-to-crits --source=SOURCE --destination=DESTINATION
 
@@ -53,7 +51,6 @@ Options:
     -c CONFIG --config=CONFIG         Specify config file to use [default: %s].
     -h --help                         Show this screen.
     -V --version                      Show version.
-    TARGET...                         Specify host defined in config.yaml
     SOURCE...                         Specify host defined in config.yaml
     DESTINATION...                    Specify host defined in config.yaml
 
@@ -64,6 +61,7 @@ Please report bugs to support@soltra.com
 def nowutcmin():
     """time now, but only minute-precision"""
     return datetime.datetime.utcnow().replace(second=0,microsecond=0).replace(tzinfo=pytz.utc)
+
 
 def epoch_start():
     '''it was the best of times, it was the worst of times...'''
@@ -79,33 +77,6 @@ def parse_config(file_):
         exit()
 
         
-def load_tlds(config):
-    '''read in icaan tlds file and return a list'''
-    file_ = config['datagen']['canonical_tlds']
-    tlds_file = open(file_)
-    tlds = list()
-    for line in tlds_file:
-        if not line.startswith('#'):
-            tlds.append(line.strip().lower())
-    tlds_file.close()
-    return(tlds)
-
-
-def generate_random_domain(tlds):
-    '''generate a random domain name by pairing a random uuid with a random tld'''
-    domain = str(uuid.uuid4())
-    tld = tlds[random.randint(0, len(tlds) - 1)]
-    domain += '.%s' % tld
-    return(domain)
-
-
-def generate_random_ip_address():
-    '''generate a random ip address
-    (this will sometimes naively return things like 255.255.255.255)'''
-    random_ip = inet_ntoa(pack('>I', randint(1, 0xffffffff)))
-    return(random_ip)
-
-
 def get_crits_api_base_url(config, target):
     '''assemble base url for crits api'''
     url=str()
@@ -117,40 +88,6 @@ def get_crits_api_base_url(config, target):
     url += ':' + str(config['crits']['sites'][target]['api']['port'])
     url += config['crits']['sites'][target]['api']['path']
     return(url)
-
-
-def gen_stix_sample(config, title='random test data', description='random test data', package_intents='Indicators - Watchlist', tlp_color='WHITE'):
-    '''generate sample stix data comprised of indicator_count random IP Watchlist indicators'''
-    # setup the xmlns...
-    set_stix_id_namespace({config['edge']['datagen']['xmlns_url']: config['edge']['datagen']['xmlns_name']})
-    set_cybox_id_namespace(Namespace(config['edge']['datagen']['xmlns_url'], config['edge']['datagen']['xmlns_name']))
-    # construct a stix package...
-    stix_package = STIXPackage()
-    stix_header = STIXHeader()
-    stix_header.title = title
-    stix_header.description = description
-    stix_header.package_intents = package_intents
-    marking = MarkingSpecification()
-    marking.controlled_structure = '../../../../descendant-or-self::node()'
-    tlp_marking = TLPMarkingStructure()
-    tlp_marking.color = tlp_color
-    marking.marking_structures.append(tlp_marking)
-    stix_package.stix_header = stix_header
-    stix_package.stix_header.handling = Marking()
-    stix_package.stix_header.handling.add_marking(marking)
-    #...and stuff it full of random sample data :-)
-    i = 0
-    while i <= config['edge']['datagen']['indicator_count']:
-        indicator = Indicator(title='IP Address for known C2 Channel')
-        indicator.add_indicator_type('IP Watchlist')
-        addr = Address(address_value=generate_random_ip_address(), category=Address.CAT_IPV4)
-        addr.condition = 'Equals'
-        indicator.add_observable(addr)
-        stix_package.add_indicator(indicator)
-        i += 1
-    return(stix_package)
-
-
 
 
 def pull_json_via_crits_api(config, target, endpoint, object_ids=None):
@@ -185,7 +122,7 @@ def upload_json_via_crits_api(config, target, endpoint, json):
     # import pudb; pu.db
     data = {'api_key'  : config['crits']['sites'][target]['api']['key'],
             'username' : config['crits']['sites'][target]['api']['user'],
-            'source'   : config['crits']['datagen']['source']}
+            'source'   : config['crits']['sites'][target]['api']['source']}
     data.update(json)
     if config['crits']['sites'][target]['api']['ssl']:
         r = requests.post(url + endpoint + '/' , data=data, verify=not config['crits']['sites'][target]['api']['allow_self_signed'])
@@ -297,30 +234,11 @@ def upload_stix_via_taxii(config, target, stix_package=None):
         return(success)
 
 
-def inject_edge_sample_data(config, target):
-    '''inject randomly generated sample data into edge target'''
-    stix_package = gen_stix_sample(config)
-    upload_stix_via_taxii(config, target, stix_package)
-
-
-def inject_crits_sample_data(config, target):
-    '''inject randomly generated sample data into crits target'''
-    i = 0
-    while i < config['crits']['datagen']['indicator_count']:
-        ip = generate_random_ip_address()
-        # json = {'ip': ip}
-        json = {'ip': ip, 'ip_type': 'Address - ipv4-addr'}
-        (id_, success) = upload_json_via_crits_api(config, target, 'ips', json)
-        # domain = generate_random_domain(config['datagen']['tlds'])
-        # (id_, success) = upload_json_via_crits_api(config, target, 'domains', {'domain': domain})
-        i += 1
-
-
 def crits_to_stix(config, source, type_, json, title='random test data', description='random test data', package_intents='Indicators - Watchlist', tlp_color='WHITE'):
     '''generate stix data from crits json'''
     # setup the xmlns...
-    set_stix_id_namespace({config['edge']['datagen']['xmlns_url']: config['edge']['datagen']['xmlns_name']})
-    set_cybox_id_namespace(Namespace(config['edge']['datagen']['xmlns_url'], config['edge']['datagen']['xmlns_name']))
+    set_stix_id_namespace({config['edge']['sites'][source]['stix']['xmlns_url']: config['edge']['sites'][source]['stix']['xmlns_name']})
+    set_cybox_id_namespace(Namespace(config['edge']['sites'][source]['stix']['xmlns_url'], config['edge']['sites'][source]['stix']['xmlns_name']))
     # construct a stix package...
     stix_package = STIXPackage()
     stix_header = STIXHeader()
@@ -506,43 +424,12 @@ def fetch_crits_object_ids(config, target, endpoint, timestamp=None):
     return(object_ids)
 
 
-def push_random_domains_into_crits(count):
-    domains_tracker = dict()
-    i = 0
-    while i < count:
-        domain = generate_random_domain()
-        (id_, success) = crits_import_domain(domain.strip().encode('utf-8', 'ignore'))
-        if success:
-            id_ = id_.encode('ascii', 'ignore')
-            domains_tracker[id_] = dict()
-            domains_tracker[id_]['domain'] = domain
-            domains_tracker[id_]['successful_import'] = True
-            domains_tracker[id_]['successful_export'] = False
-            i += 1
-    return(domains_tracker)
-
-
-
-
 def main():
     args = docopt(__doc__, version=__version__)
     global config_file
     config_file = args['--config']
     config = parse_config(config_file)
-    if args['--inject-crits-sample-data']:
-        if args['--target'] in config['crits']['sites'].keys():
-            # read in icann tlds list for datagen use
-            config['datagen']['tlds'] = load_tlds(config)
-            # TODO modify the inject_*_sample_data functions to
-            #      generate a mix of ip addresses, file hashes, urls,
-            #      and domain names
-            inject_crits_sample_data(config, args['--target'])
-    elif args['--inject-edge-sample-data']:
-        if args['--target'] in config['edge']['sites'].keys():
-            # read in icann tlds list for datagen use
-            tlds = load_tlds(config)
-            inject_edge_sample_data(config, args['--target'])
-    elif args['--sync-crits-to-edge']:
+    if args['--sync-crits-to-edge']:
         if args['--source'] in config['crits']['sites'].keys() and args['--destination'] in config['edge']['sites'].keys():
             sync_crits_to_edge(config, args['--source'], args['--destination'])
     elif args['--sync-edge-to-crits']:
