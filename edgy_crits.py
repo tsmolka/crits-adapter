@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # TODO make imports modular based on cli args
+# TODO add logging!!!
 from stix.core import STIXPackage, STIXHeader
 from stix.indicator import Indicator
 from stix.data_marking import Marking, MarkingSpecification
@@ -9,6 +10,8 @@ from stix.utils import set_id_namespace as set_stix_id_namespace
 from cybox.utils import Namespace
 from cybox.utils import set_id_namespace as set_cybox_id_namespace
 from cybox.objects.address_object import Address
+from cybox.objects.file_object import File
+from cybox.objects.domain_name_object import DomainName
 import libtaxii as t
 import libtaxii.clients as tc
 import libtaxii.messages_11 as tm11
@@ -58,6 +61,25 @@ Please report bugs to support@soltra.com
 ''' % (default_config)
 
 
+# shamelessly plundered from repository.edge.tools :-P
+#
+# recursive getattr()
+# syntax is the same as getattr, but the requested
+# attribute is a list instead of a string.
+#
+# e.g. confidence = rgetattr(apiobject,['confidence','value','value'])
+#                 = apiobject.confidence.value.value
+#
+def rgetattr(object_ ,list_ ,default_=None):
+    """recursive getattr using a list"""
+    if object_ is None:
+        return default_
+    if len(list_) == 1:
+        return getattr(object_, list_[0], default_)
+    else:
+        return rgetattr(getattr(object_, list_[0], None), list_[1:], default_)
+
+    
 def nowutcmin():
     """time now, but only minute-precision"""
     return datetime.datetime.utcnow().replace(second=0,microsecond=0).replace(tzinfo=pytz.utc)
@@ -136,11 +158,45 @@ def upload_json_via_crits_api(config, target, endpoint, json):
 
 
 def cybox_to_crits_json(observable):
-    # import pudb; pu.db
-    if isinstance(observable.object_.properties, Address) and observable.object_.properties.category == 'ipv4-addr' and observable.object_.properties.condition == 'Equals':
-        ip = observable.object_.properties.address_value.value
-        json = {'ip': ip, 'ip_type': 'Address - ipv4-addr'}
-        return(json)
+    if isinstance(observable.object_.properties, Address):
+        crits_types = {'cidr': 'Address - cidr', \
+                       'ipv4-addr': 'Address - ipv4-net', \
+                       'ipv4-netmask': 'Address - ipv4-net-mask', \
+                       'ipv6-addr': 'Address - ipv6-addr', \
+                       'ipv6-net': 'Address - ipv6-net', \
+                       'ipv6-netmask': 'Address - ipv6-net-mask'}
+        endpoint = 'ips'
+        condition = rgetattr(observable.object_.properties, ['condition'])
+        if condition == 'Equals':
+            # currently not handling other observable conditions as
+            # it's not clear that crits even supports these...
+            ip_category = rgetattr(observable.object_.properties, ['category'])
+            ip_value = rgetattr(observable.object_.properties, ['address_value', 'value'])
+            if ip_value and ip_category:
+                json = {'ip': ip_value, 'ip_type': crits_types[ip_category]}
+                return(json, endpoint)
+    elif isinstance(observable.object_.properties, DomainName):
+        crits_types = {'FQDN': 'A'}
+        # crits doesn't appear to support tlds...
+        endpoint = 'domains'
+        domain_category = rgetattr(observable.object_.properties, ['type_'])
+        domain_value = rgetattr(observable.object_.properties, ['value', 'value'])
+        if domain_category and domain_value:
+            json = {'domain': domain_value, 'type': crits_types[domain_category]}
+            return(json, endpoint)
+    elif isinstance(observable.object_.properties, File):
+        import pudb; pu.db
+        json = {'upload_type': 'metadata'}
+        # if observable.object_.properties.file_name
+        # {'filename': str(uuid.uuid4()) + '.exe', 'md5': md5_, 'sha256': sha256_, 'upload_type': 'metadata'}
+            # currently not handling other observable conditions as
+            # it's not clear that crits even supports these...
+        #     if observable.object_.properties.category == 'cidr':
+        # import pudb; pu.db
+        pass
+    else:
+        import pudb; pu.db
+    # return(json, endpoint)
 
         
 def pull_stix_via_taxii(config, target, timestamp=None):
@@ -178,8 +234,9 @@ def pull_stix_via_taxii(config, target, timestamp=None):
         print(taxii_message.message)
         exit()
     elif isinstance(taxii_message, tm10.PollResponse):
-        json_list = list()
+        json_ = {'ips': [], 'samples': [], 'emails': [], 'domains': []}
         # print("Got response. There are %s packages" % len(taxii_message.content_blocks))
+        # import pudb; pu.db
         for content_block in taxii_message.content_blocks:
             xml = StringIO.StringIO(content_block.content)
             stix_package = STIXPackage.from_xml(xml)
@@ -189,9 +246,15 @@ def pull_stix_via_taxii(config, target, timestamp=None):
             #     print 'indicators: ' + str(len(stix_package.indicators))
             if stix_package.observables:
                 for observable in stix_package.observables.observables:
-                    json = cybox_to_crits_json(observable)
-                    json_list.append(json)
-    return(json_list, latest)
+                    (json, endpoint) = cybox_to_crits_json(observable)
+                    if json:
+                        # mark crits releasability...
+                        json['releasability'] = config['crits']['sites'][target]['api']['source']
+                        # TODO batch this up similarly to how
+                        #      crits-to-stix works (a la, 100x observables
+                        #      at a time or similar)
+                        json_[endpoint].append(json)
+    return(json_, latest)
     # if http_response.code != 200 or http_response.msg != 'OK':
     #     success = False
     # else:
@@ -344,9 +407,11 @@ def sync_edge_to_crits(config, source, destination):
         # looks like first sync...
         # ...so we'll want to poll all records...
         timestamp = epoch_start()
-    (json_list, latest) = pull_stix_via_taxii(config, source, timestamp)
-    for json in json_list:
-        (id_, success) = upload_json_via_crits_api(config, destination, 'ips', json)
+    (json_, latest) = pull_stix_via_taxii(config, source, timestamp)
+    # import pudb; pu.db
+    for endpoint in json_.keys():
+        for blob in json_[endpoint]:
+            (id_, success) = upload_json_via_crits_api(config, destination, endpoint, blob)
     # ids = fetch_crits_object_ids(config, source, 'domains', timestamp)
     # TODO this will be a taxii operation of some kind...
     # pseudocode...
