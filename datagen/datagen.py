@@ -34,7 +34,8 @@ import random
 import time
 import os.path
 import pytz
-from hashlib import sha256, md5
+from hashlib import md5, sha1, sha224, sha256, sha384, sha512
+import ssdeep
 
 __version__ = '0.1'
 app_path = os.path.split(os.path.abspath(__file__))[0]
@@ -99,10 +100,18 @@ def load_tlds(config):
     return(tlds)
 
 
-def generate_random_hash():
-    '''generate a random sha256 hash'''
+def generate_random_hashes():
+    '''generate random hashes to simulate a cybox file object'''
     val = str(uuid.uuid4())
-    return(sha256(val).hexdigest(), md5(val).hexdigest())
+    hashes = dict()
+    hashes['md5'] = md5(val).hexdigest()
+    hashes['sha1'] = sha1(val).hexdigest()
+    hashes['sha224'] = sha224(val).hexdigest()
+    hashes['sha256'] = sha256(val).hexdigest()
+    hashes['sha384'] = sha384(val).hexdigest()
+    hashes['sha512'] = sha512(val).hexdigest()
+    hashes['ssdeep'] = ssdeep.hash(val)
+    return(hashes)
     
 
 def generate_random_domain(config):
@@ -174,9 +183,11 @@ def gen_stix_sample(config, target=None, datatype=None, title='random test data'
         indicator.add_indicator_type('File Hash Watchlist')
         file_object = File()
         file_object.file_name = str(uuid.uuid4()) + '.exe'
-        (sha256_, md5_) = generate_random_hash()
-        file_object.add_hash(Hash(sha256_))
-        file_object.hashes[0].simple_hash_value.condition = "Equals"
+        hashes = generate_random_hashes()
+        for hash in hashes.keys():
+            file_object.add_hash(Hash(hashes[hash], type_=hash.upper()))
+            for i in file_object.hashes:
+                i.simple_hash_value.condition = "Equals"
         indicator.add_observable(file_object)
         stix_package.add_indicator(indicator)
     elif datatype == 'email':
