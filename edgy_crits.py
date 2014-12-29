@@ -159,12 +159,12 @@ def upload_json_via_crits_api(config, target, endpoint, json):
 
 def cybox_to_crits_json(observable):
     if isinstance(observable.object_.properties, Address):
-        crits_types = {'cidr': 'Address - cidr', \
-                       'ipv4-addr': 'Address - ipv4-net', \
-                       'ipv4-netmask': 'Address - ipv4-net-mask', \
-                       'ipv6-addr': 'Address - ipv6-addr', \
-                       'ipv6-net': 'Address - ipv6-net', \
-                       'ipv6-netmask': 'Address - ipv6-net-mask'}
+        crits_types = {'cidr'         : 'Address - cidr', \
+                       'ipv4-addr'    : 'Address - ipv4-net', \
+                       'ipv4-netmask' : 'Address - ipv4-net-mask', \
+                       'ipv6-addr'    : 'Address - ipv6-addr', \
+                       'ipv6-net'     : 'Address - ipv6-net', \
+                       'ipv6-netmask' : 'Address - ipv6-net-mask'}
         endpoint = 'ips'
         condition = rgetattr(observable.object_.properties, ['condition'])
         if condition == 'Equals':
@@ -185,15 +185,34 @@ def cybox_to_crits_json(observable):
             json = {'domain': domain_value, 'type': crits_types[domain_category]}
             return(json, endpoint)
     elif isinstance(observable.object_.properties, File):
-        import pudb; pu.db
+        crits_types = {'MD5'    : 'md5', \
+                       'SHA1'   : 'sha1', \
+                       'SHA224' : 'sha224', \
+                       'SHA256' : 'sha256', \
+                       'SHA384' : 'sha384', \
+                       'SHA512' : 'sha512', \
+                       'SSDEEP' : 'ssdeep'}
+        endpoint = 'samples'
         json = {'upload_type': 'metadata'}
-        # if observable.object_.properties.file_name
-        # {'filename': str(uuid.uuid4()) + '.exe', 'md5': md5_, 'sha256': sha256_, 'upload_type': 'metadata'}
-            # currently not handling other observable conditions as
-            # it's not clear that crits even supports these...
-        #     if observable.object_.properties.category == 'cidr':
-        # import pudb; pu.db
-        pass
+        hashes = rgetattr(observable.object_.properties, ['hashes'])
+        if hashes:
+            for hash in hashes:
+                hash_type = rgetattr(hash, ['type_', 'value'])
+                hash_value = rgetattr(hash, ['simple_hash_value', 'value'])
+                # TODO for some reason crits isn't accepting anything
+                #      but md5 via the api o_O
+                if hash_type and hash_value:
+                    json[crits_types[hash_type]] = hash_value
+        file_name = rgetattr(observable.object_.properties, ['file_name', 'value'])
+        if file_name:
+            json['filename'] = file_name
+        file_format = rgetattr(observable.object_.properties, ['file_format', 'value'])
+        if file_format:
+            json['filetype'] = file_format
+        file_size = rgetattr(observable.object_.properties, ['size_in_bytes', 'value'])
+        if file_size:
+            json['size'] = file_size
+        return(json, endpoint)
     else:
         import pudb; pu.db
     # return(json, endpoint)
