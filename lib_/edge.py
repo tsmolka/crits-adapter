@@ -24,6 +24,22 @@ import pytz
 import yaml
 
 
+# TODO support proxies
+# TODO support certificate auth
+# TODO add more granular error checks
+# TODO take taxii version from config and use the corresponding api
+# TODO for some reason crits isn't accepting anything but md5 via the
+#      api o_O
+# TODO batch this up similarly to how crits-to-stix works (a la, 100x
+#      observables at a time or similar)
+# TODO need to avoid syncing when new data on one side is new
+#      precisely because it was just injected from the other side
+# TODO need to fix timestamps so they match the original data
+# TODO need to set the xmlns to show the origin (aka,
+#      demo_site_a_crits: https://54.154.28.239)
+# TODO how to handle updates???
+
+
 def stix2json(observable):
     if isinstance(observable.object_.properties, Address):
         crits_types = {'cidr'         : 'Address - cidr', \
@@ -66,8 +82,6 @@ def stix2json(observable):
             for hash in hashes:
                 hash_type = rgetattr(hash, ['type_', 'value'])
                 hash_value = rgetattr(hash, ['simple_hash_value', 'value'])
-                # TODO for some reason crits isn't accepting anything
-                #      but md5 via the api o_O
                 if hash_type and hash_value:
                     json[crits_types[hash_type]] = hash_value
         file_name = rgetattr(observable.object_.properties, ['file_name', 'value'])
@@ -82,7 +96,6 @@ def stix2json(observable):
         return(json, endpoint)
     else:
         import pudb; pu.db
-    # return(json, endpoint)
 
         
 def taxii_poll(config, target, timestamp=None):
@@ -92,15 +105,6 @@ def taxii_poll(config, target, timestamp=None):
     client.setAuthType(client.AUTH_BASIC)
     client.setAuthCredentials({'username': config['edge']['sites'][target]['taxii']['user'], \
                                'password': config['edge']['sites'][target]['taxii']['pass']})
-    # discovery_request = tm11.DiscoveryRequest(tm11.generate_message_id())
-    # discovery_xml = discovery_request.to_xml(pretty_print=True)
-
-    # http_resp = client.call_taxii_service2(config['edge']['sites'][target]['host'], config['edge']['sites'][target]['taxii']['path'], VID_TAXII_XML_11, discovery_xml)
-    # taxii_message = t.get_message_from_http_response(http_resp, discovery_request.message_id)
-    # print taxii_message.to_xml(pretty_print=True)
-    # print type(epoch_start())
-    # print type(nowutcmin())
-    # exit()
     if not timestamp:
         earliest = epoch_start()
     else:
@@ -108,8 +112,7 @@ def taxii_poll(config, target, timestamp=None):
     latest = nowutcmin()
     poll_request = tm10.PollRequest(
                 message_id=tm10.generate_message_id(),
-                # feed_name=config['edge']['sites'][target]['taxii']['collection'],
-                feed_name='system.Default',
+                feed_name=config['edge']['sites'][target]['taxii']['collection'],
                 exclusive_begin_timestamp_label=earliest,
                 inclusive_end_timestamp_label=latest,
                 content_bindings=[t.CB_STIX_XML_11])
@@ -121,41 +124,21 @@ def taxii_poll(config, target, timestamp=None):
         exit()
     elif isinstance(taxii_message, tm10.PollResponse):
         json_ = {'ips': [], 'samples': [], 'emails': [], 'domains': []}
-        # print("Got response. There are %s packages" % len(taxii_message.content_blocks))
-        # import pudb; pu.db
         for content_block in taxii_message.content_blocks:
             xml = StringIO.StringIO(content_block.content)
             stix_package = STIXPackage.from_xml(xml)
             xml.close()
-            # print stix_package._id
-            # if stix_package.indicators:
-            #     print 'indicators: ' + str(len(stix_package.indicators))
             if stix_package.observables:
                 for observable in stix_package.observables.observables:
                     (json, endpoint) = stix2json(observable)
                     if json:
                         # mark crits releasability...
                         json['releasability'] = [{'name': config['crits']['sites'][target]['api']['source']},]
-                        # TODO batch this up similarly to how
-                        #      crits-to-stix works (a la, 100x observables
-                        #      at a time or similar)
                         json_[endpoint].append(json)
     return(json_, latest)
-    # if http_response.code != 200 or http_response.msg != 'OK':
-    #     success = False
-    # else:
-    #     success = True
-    # return(success)
-
 
 
 def taxii_inbox(config, target, stix_package=None):
-    # TODO support proxies
-    # TODO support certificate auth
-    # TODO add more granular error checks
-    # TODO take taxii version from config and use the corresponding 
-   #      api
-    # import pudb; pu.db
     if stix_package:
         stixroot = lxml.etree.fromstring(stix_package.to_xml())
         client = tc.HttpClient()
@@ -168,12 +151,6 @@ def taxii_inbox(config, target, stix_package=None):
             content         = stixroot,
         )
         message.destination_collection_names = [config['edge']['sites'][target]['taxii']['collection'],]
-        # TODO need to avoid syncing when new data on one side is new
-        #      precisely because it was just injected from the other
-        #      side
-        # TODO need to fix timestamps so they match the original data
-        # TODO need to set the xmlns to show the origin (aka,
-        #      demo_site_a_crits: https://54.154.28.239)
         message.content_blocks.append(content_block)
         taxii_response = client.callTaxiiService2(config['edge']['sites'][target]['host'], config['edge']['sites'][target]['taxii']['path'], t.VID_TAXII_XML_11, message.to_xml(), port=config['edge']['sites'][target]['taxii']['port'])
         if taxii_response.code != 200 or taxii_response.msg != 'OK':
@@ -184,16 +161,9 @@ def taxii_inbox(config, target, stix_package=None):
 
 
 def edge2crits(config, source, destination):
-    # TODO ensure that both source and destination are actually defined!
-
-    # 1. poll edge for objects created or modified since $timestamp
-    # 2. check whether the stix _id is present in crits
-    # 3. transform each stix object into crits json
-    # 4. upload object via crits api
-
     # check if (and when) we synced source and destination...
     state_key = source + '_to_' + destination
-    now = nowutcmin() # datetime.datetime.now()
+    now = nowutcmin()
     # make yaml play nice...
     if not isinstance(config['state'], dict):
         config['state'] = dict()
@@ -208,18 +178,9 @@ def edge2crits(config, source, destination):
         # ...so we'll want to poll all records...
         timestamp = epoch_start()
     (json_, latest) = taxii_poll(config, source, timestamp)
-    # import pudb; pu.db
     for endpoint in json_.keys():
         for blob in json_[endpoint]:
             (id_, success) = crits.crits_inbox(config, destination, endpoint, blob)
-    # ids = fetch_crits_object_ids(config, source, 'domains', timestamp)
-    # TODO this will be a taxii operation of some kind...
-    # pseudocode...
-    # upload_tracker = list(ids)
-    # for range of ids in ids:
-    #     transform crits[id range] into stix package and inbox it...
-    #     if upload is succesful, delete id range from upload_tracker
-    #     TODO how to handle updates???
     # save state to disk for next run...
     yaml_ = deepcopy(config)
     yaml_['state'][state_key]['edge_to_crits']['timestamp'] = latest

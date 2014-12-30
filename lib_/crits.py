@@ -16,6 +16,14 @@ import requests
 import yaml
 
 
+# TODO how to deal with deleted crits objects?
+# TODO ensure that both source and destination are actually defined!
+# TODO if we fail midway through an operation, what should we do with
+#      the timestamp?
+# TODO ensure that all timestamps are utc!
+# TODO how to handle updates???
+
+
 def crits_url(config, target):
     '''assemble base url for crits api'''
     url=str()
@@ -35,10 +43,8 @@ def crits_poll(config, target, endpoint, object_ids=None):
     results = dict()
     if config['crits']['sites'][target]['api']['allow_self_signed']:
         requests.packages.urllib3.disable_warnings()
-    # import pudb; pu.db
     data = {'api_key'  : config['crits']['sites'][target]['api']['key'],
             'username' : config['crits']['sites'][target]['api']['user']}
-    # import pudb; pu.db
     for id_ in object_ids:
         if config['crits']['sites'][target]['api']['ssl']:
             r = requests.get(url + endpoint + '/' + id_ + '/', params=data, verify=not config['crits']['sites'][target]['api']['allow_self_signed'])
@@ -58,7 +64,6 @@ def crits_inbox(config, target, endpoint, json):
     url = crits_url(config, target)
     if config['crits']['sites'][target]['api']['allow_self_signed']:
         requests.packages.urllib3.disable_warnings()
-    # import pudb; pu.db
     data = {'api_key'  : config['crits']['sites'][target]['api']['key'],
             'username' : config['crits']['sites'][target]['api']['user'],
             'source'   : config['crits']['sites'][target]['api']['source']}
@@ -104,17 +109,9 @@ def json2stix(config, source, type_, json, title='random test data', description
         
 
 def crits2edge(config, source, destination):
-    global config_file
-    # TODO how to deal with deleted crits objects?
-    # TODO ensure that both source and destination are actually defined!
-    # 1. poll crits for objects created or modified since $timestamp
-    # 2. check whether the crits object _id is present in edge
-    # 3. transform each crits object into stix
-    # 4. taxii inbox the stix into edge
-
     # check if (and when) we synced source and destination...
     state_key = source + '_to_' + destination
-    now = nowutcmin() #datetime.datetime.now()
+    now = nowutcmin()
     # make yaml play nice...
     if not isinstance(config['state'], dict):
         config['state'] = dict()
@@ -144,14 +141,10 @@ def crits2edge(config, source, destination):
     else:
         outgoing_json = crits_poll(config, source, 'ips', upload_tracker)
         outgoing_stix = json2stix(config, source, 'ips', outgoing_json)
-        # TODO if we fail midway through an operation, what should we
-        #      do with the timestamp?
-        # TODO ensure that all timestamps are utc!
         success = edge.taxii_inbox(config, destination, outgoing_stix)
         if not success:
             print 'fail!!!'
             exit()
-    # TODO how to handle updates???
     # save state to disk for next run...
     yaml_ = deepcopy(config)
     yaml_['state'][state_key]['crits_to_edge']['timestamp'] = now
