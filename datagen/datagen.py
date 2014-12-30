@@ -207,9 +207,10 @@ def upload_json_via_crits_api(config, target, endpoint, json):
     if config['crits']['sites'][target]['api']['allow_self_signed']:
         requests.packages.urllib3.disable_warnings()
     # import pudb; pu.db
-    data = {'api_key'  : config['crits']['sites'][target]['api']['key'],
-            'username' : config['crits']['sites'][target]['api']['user'],
-            'source'   : config['crits']['sites'][target]['api']['source']}
+    data = {'api_key'       : config['crits']['sites'][target]['api']['key'],
+            'username'      : config['crits']['sites'][target]['api']['user'],
+            'source'        : config['crits']['sites'][target]['api']['source'],
+            'releasability' : [{'name': config['crits']['sites'][target]['api']['source']},]}
     data.update(json)
     if config['crits']['sites'][target]['api']['ssl']:
         r = requests.post(url + endpoint + '/' , data=data, verify=not config['crits']['sites'][target]['api']['allow_self_signed'])
@@ -286,8 +287,11 @@ def generate_crits_json(config, datatype=None):
     elif datatype == 'domain':
         return({'domain': generate_random_domain(config)})
     elif datatype == 'filehash':
-        (sha256_, md5_) = generate_random_hash()
-        return({'filename': str(uuid.uuid4()) + '.exe', 'md5': md5_, 'sha256': sha256_, 'upload_type': 'metadata'})
+        hashes = generate_random_hashes()
+        json = {'filename': str(uuid.uuid4()) + '.exe', 'upload_type': 'metadata'}
+        for hash in hashes.keys():
+            json[hash] = hashes[hash]
+        return(json)
     elif datatype == 'email':
         return(None)
 
