@@ -3,6 +3,10 @@
 from copy import deepcopy
 from cybox.utils import Namespace
 from cybox.utils import set_id_namespace as set_cybox_id_namespace
+from cybox.objects.address_object import Address
+from cybox.objects.domain_name_object import DomainName
+from cybox.objects.file_object import File
+from cybox.common import Hash
 from stix.core import STIXPackage, STIXHeader
 from stix.data_marking import Marking, MarkingSpecification
 from stix.extensions.marking.tlp import TLPMarkingStructure
@@ -43,8 +47,9 @@ def crits_poll(config, target, endpoint, object_ids=None):
     results = dict()
     if config['crits']['sites'][target]['api']['allow_self_signed']:
         requests.packages.urllib3.disable_warnings()
-    data = {'api_key'  : config['crits']['sites'][target]['api']['key'],
-            'username' : config['crits']['sites'][target]['api']['user']}
+    data = {'api_key'              : config['crits']['sites'][target]['api']['key'],
+            'username'             : config['crits']['sites'][target]['api']['user'],}
+            # 'c-releasability.name' : config['crits']['sites'][target]['api']['source']}
     for id_ in object_ids:
         if config['crits']['sites'][target]['api']['ssl']:
             r = requests.get(url + endpoint + '/' + id_ + '/', params=data, verify=not config['crits']['sites'][target]['api']['allow_self_signed'])
@@ -79,7 +84,7 @@ def crits_inbox(config, target, endpoint, json):
     return(id_, success)
 
 
-def json2stix(config, source, type_, json, title='random test data', description='random test data', package_intents='Indicators - Watchlist', tlp_color='WHITE'):
+def json2stix(config, source, endpoint, json_, title='random test data', description='random test data', package_intents='Indicators - Watchlist', tlp_color='WHITE'):
     '''generate stix data from crits json'''
     # setup the xmlns...
     set_stix_id_namespace({config['edge']['sites'][source]['stix']['xmlns_url']: config['edge']['sites'][source]['stix']['xmlns_name']})
@@ -98,15 +103,107 @@ def json2stix(config, source, type_, json, title='random test data', description
     stix_package.stix_header = stix_header
     stix_package.stix_header.handling = Marking()
     stix_package.stix_header.handling.add_marking(marking)
-    for i in json.keys():
-        indicator = Indicator(title='IP Address for known C2 Channel')
-        indicator.add_indicator_type('IP Watchlist')
-        addr = Address(address_value=json[i]['ip'], category=Address.CAT_IPV4)
-        addr.condition = 'Equals'
-        indicator.add_observable(addr)
-        stix_package.add_indicator(indicator)
+    if endpoint == 'ips':
+        crits_types = {'Address - cidr': 'cidr', \
+                       'Address - ipv4-addr': 'ipv4-addr', \
+                       'Address - ipv4-net': 'ipv4-net', \
+                       'Address - ipv4-net-mask': 'ipv4-netmask', \
+                       'Address - ipv6-addr': 'ipv6-addr', \
+                       'Address - ipv6-net': 'ipv6-net', \
+                       'Address - ipv6-net-mask': 'ipv6-netmask'}
+        for i in json_.keys():
+            indicator = Indicator(title='IP Address for known C2 Channel')
+            indicator.add_indicator_type('IP Watchlist')
+            # import pudb; pu.db
+            addr = Address(address_value=json_[i]['ip'], category=crits_types[json_[i]['type']])
+            addr.condition = 'Equals'
+            indicator.add_observable(addr)
+            stix_package.add_indicator(indicator)
+    elif endpoint == 'domains':
+        for i in json_.keys():
+            indicator = Indicator(title='A Very Bad [tm] Domain')
+            indicator.add_indicator_type('Domain Watchlist')
+            domain = DomainName()
+            domain.type_ = 'FQDN'
+            domain.value = json_[i]['domain']
+            domain.condition = 'Equals'
+            indicator.add_observable(domain)
+            stix_package.add_indicator(indicator)
+    elif endpoint == 'samples':
+        crits_types = {'md5'    : 'MD5', \
+                       'sha1'   : 'SHA1', \
+                       'sha224' : 'SHA224', \
+                       'sha256' : 'SHA256', \
+                       'sha384' : 'SHA384', \
+                       'sha512' : 'SHA512', \
+                       'ssdeep' : 'SSDEEP'}
+        for i in json_.keys():
+            indicator = Indicator(title='A Very Bad [tm] Filehash')
+            indicator.add_indicator_type('File Hash Watchlist')
+            file_object = File()
+            file_object.file_name = json_[i]['filename']
+            # import pudb; pu.db
+            for hash in crits_types.keys():
+                if hash in json_[i]:
+                    file_object.add_hash(Hash(json_[i][hash], type_=crits_types[hash]))
+            for i in file_object.hashes:
+                i.simple_hash_value.condition = "Equals"
+            indicator.add_observable(file_object)
+            stix_package.add_indicator(indicator)
+    elif datatype == 'email':
+        exit()
     return(stix_package)
-        
+
+
+    #     endpoint = 'ips'
+    #     condition = rgetattr(observable.object_.properties, ['condition'])
+    #     if condition == 'Equals':
+    #         # currently not handling other observable conditions as
+    #         # it's not clear that crits even supports these...
+    #         ip_category = rgetattr(observable.object_.properties, ['category'])
+    #         ip_value = rgetattr(observable.object_.properties, ['address_value', 'value'])
+    #         if ip_value and ip_category:
+    #             json = {'ip': ip_value, 'ip_type': crits_types[ip_category]}
+    #             return(json, endpoint)
+    # elif isinstance(observable.object_.properties, DomainName):
+    #     crits_types = {'FQDN': 'A'}
+    #     # crits doesn't appear to support tlds...
+    #     endpoint = 'domains'
+    #     domain_category = rgetattr(observable.object_.properties, ['type_'])
+    #     domain_value = rgetattr(observable.object_.properties, ['value', 'value'])
+    #     if domain_category and domain_value:
+    #         json = {'domain': domain_value, 'type': crits_types[domain_category]}
+    #         return(json, endpoint)
+    # elif isinstance(observable.object_.properties, File):
+    #     crits_types = {'MD5'    : 'md5', \
+    #                    'SHA1'   : 'sha1', \
+    #                    'SHA224' : 'sha224', \
+    #                    'SHA256' : 'sha256', \
+    #                    'SHA384' : 'sha384', \
+    #                    'SHA512' : 'sha512', \
+    #                    'SSDEEP' : 'ssdeep'}
+    #     endpoint = 'samples'
+    #     json = {'upload_type': 'metadata'}
+    #     hashes = rgetattr(observable.object_.properties, ['hashes'])
+    #     if hashes:
+    #         for hash in hashes:
+    #             hash_type = rgetattr(hash, ['type_', 'value'])
+    #             hash_value = rgetattr(hash, ['simple_hash_value', 'value'])
+    #             if hash_type and hash_value:
+    #                 json[crits_types[hash_type]] = hash_value
+    #     file_name = rgetattr(observable.object_.properties, ['file_name', 'value'])
+    #     if file_name:
+    #         json['filename'] = file_name
+    #     file_format = rgetattr(observable.object_.properties, ['file_format', 'value'])
+    #     if file_format:
+    #         json['filetype'] = file_format
+    #     file_size = rgetattr(observable.object_.properties, ['size_in_bytes', 'value'])
+    #     if file_size:
+    #         json['size'] = file_size
+    #     return(json, endpoint)
+    # else:
+    #     import pudb; pu.db
+
 
 def crits2edge(config, source, destination):
     # check if (and when) we synced source and destination...
@@ -125,26 +222,30 @@ def crits2edge(config, source, destination):
         # looks like first sync...
         # ...so we'll want to poll all records...
         timestamp = None
-    ids = fetch_crits_object_ids(config, source, 'ips', timestamp)
-    upload_tracker = list(ids)
-    if len(upload_tracker) > 100:
-        while len(upload_tracker) > 100:
-            outgoing_ids = upload_tracker[0:99]
-            outgoing_json = crits_poll(config, source, 'ips', outgoing_ids)
-            outgoing_stix = json2stix(config, source, 'ips', outgoing_json)
-            success = taxii_inbox(config, destination, outgoing_stix)
-            if not success:
-                print 'fail!!!'
-                exit()
-            else:
-                upload_tracker = upload_tracker[100:]
-    else:
-        outgoing_json = crits_poll(config, source, 'ips', upload_tracker)
-        outgoing_stix = json2stix(config, source, 'ips', outgoing_json)
-        success = edge.taxii_inbox(config, destination, outgoing_stix)
-        if not success:
-            print 'fail!!!'
-            exit()
+    endpoints = ['ips', 'domains', 'samples', 'emails']
+    ids = dict()
+    # import pudb; pu.db
+    for endpoint in endpoints:
+        ids[endpoint] = fetch_crits_object_ids(config, source, endpoint, timestamp)
+        if not len(ids[endpoint]): continue
+        else:
+            while len(ids[endpoint]) > 0:
+                if len(ids[endpoint]) <= 100:
+                    json_ = crits_poll(config, source, endpoint, ids[endpoint])
+                    stix_ = json2stix(config, source, endpoint, json_)
+                    success = edge.taxii_inbox(config, destination, stix_)
+                    if not success:
+                        print 'fail!!!'
+                        exit()
+                    ids[endpoint] = list()
+                else:
+                    json_ = crits_poll(config, source, endpoint, ids[endpoint][0:99])
+                    stix_ = json2stix(config, source, endpoint, json_)
+                    success = edge.taxii_inbox(config, destination, stix_)
+                    if not success:
+                        print 'fail!!!'
+                        exit()
+                    ids[endpoint] = ids[endpoint][100:]
     # save state to disk for next run...
     yaml_ = deepcopy(config)
     yaml_['state'][state_key]['crits_to_edge']['timestamp'] = now
@@ -171,7 +272,7 @@ def __fetch_crits_object_ids(config, target, endpoint, params):
             page_count += 1
     else:
         page_count = 0
-    object_ids = set()
+    object_ids = list()
     params['limit'] = config['crits']['sites'][target]['api']['max_results']
     i = 0
     while i <= page_count:
@@ -182,14 +283,14 @@ def __fetch_crits_object_ids(config, target, endpoint, params):
             r = requests.get(url + endpoint + '/' , params=params)
         json_output = r.json()
         for object_ in json_output[u'objects']:
-            object_ids.add(object_[u'_id'].encode('ascii', 'ignore'))
+            object_ids.append(object_[u'_id'].encode('ascii', 'ignore'))
         i += 1
     return(object_ids)
 
 
 def fetch_crits_object_ids(config, target, endpoint, timestamp=None):
     '''fetch all crits object ids from endpoint and return a list'''
-    object_ids = set()
+    object_ids = list()
     if timestamp:
         crits_timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S.%f')
         # first, check for newly created records...
@@ -197,24 +298,25 @@ def fetch_crits_object_ids(config, target, endpoint, timestamp=None):
                   'username'             : config['crits']['sites'][target]['api']['user'],
                   'limit'                : 1, # just grabbing meta for total object count...
                   'c-created__gt'        : crits_timestamp,
-                  'c-releasability.name' : config['crits']['sites'][target]['api']['source'],
+                  # 'c-releasability.name' : config['crits']['sites'][target]['api']['source'],
                   'offset'               : 0}
-        object_ids.update(__fetch_crits_object_ids(config, target, endpoint, params))
-        # next, check for recently updated records...
-        params = {'api_key'              : config['crits']['sites'][target]['api']['key'],
-                  'username'             : config['crits']['sites'][target]['api']['user'],
-                  'limit'                : 1, # just grabbing meta for total object count...
-                  'c-modified__gt'       : crits_timestamp,
-                  'c-releasability.name' : config['crits']['sites'][target]['api']['source'],
-                  'offset'               : 0}
-        object_ids.update(__fetch_crits_object_ids(config, target, endpoint, params))
+        object_ids.extend(__fetch_crits_object_ids(config, target, endpoint, params))
+        # TODO object updates have to be treated differently than creates...
+        # # next, check for recently updated records...
+        # params = {'api_key'              : config['crits']['sites'][target]['api']['key'],
+        #           'username'             : config['crits']['sites'][target]['api']['user'],
+        #           'limit'                : 1, # just grabbing meta for total object count...
+        #           'c-modified__gt'       : crits_timestamp,
+        #           'c-releasability.name' : config['crits']['sites'][target]['api']['source'],
+        #           'offset'               : 0}
+        # object_ids.update(__fetch_crits_object_ids(config, target, endpoint, params))
     else:
         params = {'api_key'              : config['crits']['sites'][target]['api']['key'],
                   'username'             : config['crits']['sites'][target]['api']['user'],
-                  'c-releasability.name' : config['crits']['sites'][target]['api']['source'],
+                  # 'c-releasability.name' : config['crits']['sites'][target]['api']['source'],
                   'limit'                : 1, # just grabbing meta for total object count...
                   'offset'               : 0}
-        object_ids.update(__fetch_crits_object_ids(config, target, endpoint, params))
+        object_ids.extend(__fetch_crits_object_ids(config, target, endpoint, params))
     return(object_ids)
 
 
