@@ -14,8 +14,10 @@ import log
 # DONE break edgy_crits into some libs so it's a more manageable size
 # DONE bring crits-to-edge up to the level of functionality present
 #      with edge-to-crits
-# TODO add logging!!!
-# TODO add datagen for emails
+# IN PROGRESS add logging!!!
+#     TODO: add logging to lib_/crits.py
+#     TODO: review other stuff in lib_/
+# DONE add datagen for emails
 # TODO implement crits-to-stix for emails
 # TODO implement stix-to-crits for emails
 # TODO daemonize edgy_crits
