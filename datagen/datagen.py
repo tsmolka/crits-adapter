@@ -10,6 +10,7 @@ from cybox.utils import Namespace
 from cybox.utils import set_id_namespace as set_cybox_id_namespace
 from cybox.objects.address_object import Address
 from cybox.objects.domain_name_object import DomainName
+from cybox.objects.email_message_object import EmailMessage, EmailHeader
 from cybox.objects.file_object import File
 from cybox.common import Hash
 import libtaxii as t
@@ -22,7 +23,7 @@ from dateutil.tz import tzutc
 import StringIO
 import sys
 import lxml.etree
-from random import randint
+from random import randint, choice
 from struct import pack
 from socket import inet_ntoa
 from docopt import docopt
@@ -32,10 +33,11 @@ import json
 import uuid
 import random
 import time
-import os.path
+import os
 import pytz
 from hashlib import md5, sha1, sha224, sha256, sha384, sha512
 import ssdeep
+from email.parser import Parser as email_parser
 
 __version__ = '0.1'
 app_path = os.path.split(os.path.abspath(__file__))[0]
@@ -98,6 +100,32 @@ def load_tlds(config):
             tlds.append(line.strip().lower())
     tlds_file.close()
     return(tlds)
+
+
+def get_random_spam_msg():
+    parser = email_parser()
+    spam_dir = 'data/spam'
+    random_spam_file = open(os.path.join(spam_dir, random.choice(os.listdir(spam_dir))))
+    random_spam_msg = parser.parse(random_spam_file)
+    random_spam_file.close()
+    return(random_spam_msg)
+
+def get_email_payload(msg):
+    val = None
+    # msg has no body
+    if not hasattr(msg, 'get_content_maintype'): return(val)
+    type_ = msg.get_content_maintype()
+    if type_ == 'multipart':
+        # msg has no body
+        if not hasattr(msg, 'get_payload'): return(val)
+        for part in msg.get_payload():
+            # probably this is a malformed msg
+            if not hasattr(part, 'get_content_type_'): continue
+            if part.get_content_type_() == 'text':
+                val = part.get_payload()
+            elif type_ == 'text':
+                val = msg.get_payload()
+    return(val)
 
 
 def generate_random_hashes():
@@ -191,13 +219,37 @@ def gen_stix_sample(config, target=None, datatype=None, title='random test data'
         indicator.add_observable(file_object)
         stix_package.add_indicator(indicator)
     elif datatype == 'email':
-        pass
-        #     indicator = Indicator(title='IP Address for known C2 Channel')
-        #     indicator.add_indicator_type('IP Watchlist')
-        #     addr = Address(address_value=generate_random_ip_address(), category=Address.CAT_IPV4)
-        #     addr.condition = 'Equals'
-        #     indicator.add_observable(addr)
-        #     stix_package.add_indicator(indicator)
+        try:
+            random_spam_msg = get_random_spam_msg()
+            email = EmailMessage()
+            email.header = EmailHeader()
+            header_map = {'Subject': 'subject', 'To': 'to', 'Cc': 'cc',
+                          'Bcc': 'bcc', 'From': 'from_', 'Sender': 'sender', 'Date':
+                          'date', 'Message-ID': 'message_id', 'Reply-To': 'reply_to',
+                          'In-Reply-To': 'in_reply_to', 'Content-Type': 'content_type',
+                          'Errors-To': 'errors_to', 'Boundary': 'boundary',
+                          'Precedence': 'precedence', 'Boundary': 'boundary',
+                          'MIME-Version': 'mime_version', 'X-Mailer': 'x_mailer',
+                          'User-Agent': 'user_agent', 'X-Originating-IP':
+                          'x_originating_ip', 'X-Priority': 'x_priority'}
+            # TODO handle received_lines
+            for key in header_map.keys():
+                val = random_spam_msg.get(key, None)
+                if val:
+                    email.header.__setattr__(header_map[key], val)
+                    email.header.__getattribute__(header_map[key]).condition = 'Equals'
+            # TODO handle email bodies (it's mostly all there except for
+            #      handling weird text encoding problems that were making
+            #      libcybox stacktrace)
+            # body = get_email_payload(random_spam_msg)
+            # if body:
+            #     email.raw_body = body
+            indicator = Indicator(title='spam spam spam')
+            indicator.add_indicator_type('Malicious E-mail')
+            indicator.add_observable(email)
+            stix_package.add_indicator(indicator)
+        except:
+            return(None)
     return(stix_package)
 
 
@@ -231,30 +283,32 @@ def upload_stix_via_taxii(config, target, stix_package=None):
    #      api
     # import pudb; pu.db
     if stix_package:
-        stixroot = lxml.etree.fromstring(stix_package.to_xml())
-        client = tc.HttpClient()
-        client.setUseHttps(config['edge']['sites'][target]['taxii']['ssl'])
-        client.setAuthType(client.AUTH_BASIC)
-        client.setAuthCredentials({'username': config['edge']['sites'][target]['taxii']['user'], 'password': config['edge']['sites'][target]['taxii']['pass']})
-        message = tm11.InboxMessage(message_id=tm11.generate_message_id())
-        content_block = tm11.ContentBlock(
-            content_binding = t.CB_STIX_XML_11, # of _101, _11, _111
-            content         = stixroot,
-        )
-        message.destination_collection_names = [config['edge']['sites'][target]['taxii']['collection'],]
-        # TODO need to avoid syncing when new data on one side is new
-        #      precisely because it was just injected from the other
-        #      side
-        # TODO need to fix timestamps so they match the original data
-        # TODO need to set the xmlns to show the origin (aka,
-        #      demo_site_a_crits: https://54.154.28.239)
-        message.content_blocks.append(content_block)
-        taxii_response = client.callTaxiiService2(config['edge']['sites'][target]['host'], config['edge']['sites'][target]['taxii']['path'], t.VID_TAXII_XML_11, message.to_xml(), port=config['edge']['sites'][target]['taxii']['port'])
+        try:
+            stixroot = lxml.etree.fromstring(stix_package.to_xml())
+            client = tc.HttpClient()
+            client.setUseHttps(config['edge']['sites'][target]['taxii']['ssl'])
+            client.setAuthType(client.AUTH_BASIC)
+            client.setAuthCredentials({'username': config['edge']['sites'][target]['taxii']['user'], 'password': config['edge']['sites'][target]['taxii']['pass']})
+            message = tm11.InboxMessage(message_id=tm11.generate_message_id())
+            content_block = tm11.ContentBlock(
+                content_binding = t.CB_STIX_XML_11, # of _101, _11, _111
+                content         = stixroot,
+            )
+            message.destination_collection_names = [config['edge']['sites'][target]['taxii']['collection'],]
+            # TODO need to avoid syncing when new data on one side is new
+            #      precisely because it was just injected from the other
+            #      side
+            # TODO need to fix timestamps so they match the original data
+            # TODO need to set the xmlns to show the origin (aka,
+            #      demo_site_a_crits: https://54.154.28.239)
+            message.content_blocks.append(content_block)
+            taxii_response = client.callTaxiiService2(config['edge']['sites'][target]['host'], config['edge']['sites'][target]['taxii']['path'], t.VID_TAXII_XML_11, message.to_xml(), port=config['edge']['sites'][target]['taxii']['port'])
+        except:
+            return(False)
         if taxii_response.code != 200 or taxii_response.msg != 'OK':
-            success = False
+            return(False)
         else:
-            success = True
-        return(success)
+            return(True)
 
 
 def inject_edge_sample_data(config, target=None, datatype=None):
@@ -310,6 +364,7 @@ def inject_crits_sample_data(config, target=None, datatype=None):
             (id_, success) = upload_json_via_crits_api(config, target, endpoint, generate_crits_json(config, datatype))
             i += 1
     elif datatype == 'mixed':
+        # TODO implement mixed crits input...
         pass
         # types_ = list()
         # types_.extend(datatypes)
