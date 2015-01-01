@@ -8,10 +8,11 @@ python_path.append('./lib_')
 from crits import crits2edge
 from edge import edge2crits
 from util import parse_config
+import log
 
 
 # DONE break edgy_crits into some libs so it's a more manageable size
-# TODO bring crits-to-edge up to the level of functionality present
+# DONE bring crits-to-edge up to the level of functionality present
 #      with edge-to-crits
 # TODO add logging!!!
 # TODO add datagen for emails
@@ -58,11 +59,15 @@ def main():
     args = docopt(__doc__, version=__version__)
     config = parse_config(args['--config'])
     config['config_file'] = args['--config']
+    logger = log.setup_logging(config)
+    config['logger'] = logger
     if args['--sync-crits-to-edge']:
         if args['--source'] in config['crits']['sites'].keys() and args['--destination'] in config['edge']['sites'].keys():
+            logger.info('initiating crits=>edge sync between %s and %s' % (args['--source'], args['--destination']))
             crits2edge(config, args['--source'], args['--destination'])
     elif args['--sync-edge-to-crits']:
         if args['--source'] in config['edge']['sites'].keys() and args['--destination'] in config['crits']['sites'].keys():
+            logger.info('initiating edge=>crits sync between %s and %s' % (args['--source'], args['--destination']))
             edge2crits(config, args['--source'], args['--destination'])
 
 

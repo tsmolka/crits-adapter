@@ -13,6 +13,7 @@ from stix.extensions.marking.tlp import TLPMarkingStructure
 from stix.indicator import Indicator
 from stix.utils import set_id_namespace as set_stix_id_namespace
 from util import nowutcmin, epoch_start, rgetattr
+import log
 import StringIO
 import crits
 import libtaxii as t
@@ -40,7 +41,7 @@ import yaml
 # TODO how to handle updates???
 
 
-def stix2json(observable):
+def stix2json(config, observable):
     if isinstance(observable.object_.properties, Address):
         crits_types = {'cidr'         : 'Address - cidr', \
                        'ipv4-addr'    : 'Address - ipv4-addr', \
@@ -96,7 +97,8 @@ def stix2json(observable):
             json['size'] = file_size
         return(json, endpoint)
     else:
-        import pudb; pu.db
+        config['logger'].error('unsupported stix object type %s!' % type(observable.object_.properties))
+        return(None, endpoint)
 
         
 def taxii_poll(config, target, timestamp=None):
@@ -121,28 +123,32 @@ def taxii_poll(config, target, timestamp=None):
     taxii_message = t.get_message_from_http_response(http_response, poll_request.message_id)
     json_list = None
     if isinstance(taxii_message, tm10.StatusMessage):
-        print(taxii_message.message)
-        exit()
+        config['logger'].error('unhandled taxii polling error! (%s)' % taxii_message.message)
     elif isinstance(taxii_message, tm10.PollResponse):
-        json_ = {'ips': [], 'samples': [], 'emails': [], 'domains': []}
+        endpoints = ['ips', 'domains', 'samples', 'emails']
+        json_ = dict()
+        for endpoint in endpoints:
+            json_[endpoint] = list()
+        # TODO use a generator here...
         for content_block in taxii_message.content_blocks:
             xml = StringIO.StringIO(content_block.content)
             stix_package = STIXPackage.from_xml(xml)
             xml.close()
             if stix_package.observables:
                 for observable in stix_package.observables.observables:
-                    (json, endpoint) = stix2json(observable)
+                    (json, endpoint) = stix2json(config, observable)
                     if json:
                         # mark crits releasability...
                         # json['releasability'] = [{'name': config['crits']['sites'][target]['api']['source'], 'analyst': 'toor', 'instances': []},]
                         # json['c-releasability.name'] = config['crits']['sites'][target]['api']['source']
                         # json['releasability.name'] = config['crits']['sites'][target]['api']['source']
                         json_[endpoint].append(json)
-    return(json_, latest)
+                    else:
+                        config['logger'].error('observable %s stix could not be converted to crits json!' % str(observable.id_))
+        return(json_, latest)
 
 
 def taxii_inbox(config, target, stix_package=None):
-    # import pudb; pu.db
     if stix_package:
         stixroot = lxml.etree.fromstring(stix_package.to_xml())
         client = tc.HttpClient()
@@ -157,11 +163,16 @@ def taxii_inbox(config, target, stix_package=None):
         if config['edge']['sites'][target]['taxii']['collection'] != 'system.Default':
             message.destination_collection_names = [config['edge']['sites'][target]['taxii']['collection'],]
         message.content_blocks.append(content_block)
+        if config['daemon']['debug']:
+            config['logger'].debug('initiating taxii connection to %s' % target)
         taxii_response = client.callTaxiiService2(config['edge']['sites'][target]['host'], config['edge']['sites'][target]['taxii']['path'], t.VID_TAXII_XML_11, message.to_xml(), port=config['edge']['sites'][target]['taxii']['port'])
         if taxii_response.code != 200 or taxii_response.msg != 'OK':
             success = False
+            config['logger'].error('taxii inboxing to %s failed! [%s]' % (target, taxii_response.msg))
         else:
             success = True
+            if config['daemon']['debug']:
+                config['logger'].debug('taxii inboxing to %s was successful' % target)
         return(success)
 
 
@@ -178,18 +189,48 @@ def edge2crits(config, source, destination):
         config['state'][state_key]['edge_to_crits'] = dict()
     if 'timestamp' in config['state'][state_key]['edge_to_crits'].keys():
         timestamp = config['state'][state_key]['edge_to_crits']['timestamp'].replace(tzinfo=pytz.utc)
+        config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
     else:
+        config['logger'].info('initial sync between %s and %s' % (source, destination))
         # looks like first sync...
         # ...so we'll want to poll all records...
         timestamp = epoch_start()
     (json_, latest) = taxii_poll(config, source, timestamp)
+    total_input = 0
+    total_output = 0
+    subtotal_input = {}
+    subtotal_output = {}
     for endpoint in json_.keys():
+        subtotal_input[endpoint] = 0
+        subtotal_output[endpoint] = 0
+        for blob in json_[endpoint]:
+            total_input += 1
+            subtotal_input[endpoint] += 1
+    config['logger'].info('%i (total) objects to be synced between %s (edge) and %s (crits)' % (total_input, source, destination))
+    for endpoint in json_.keys():
+        config['logger'].info('%i %s objects to be synced between %s (edge) and %s (crits)' % (subtotal_input[endpoint], endpoint, source, destination))
         for blob in json_[endpoint]:
             (id_, success) = crits.crits_inbox(config, destination, endpoint, blob)
+            if not success:
+                config['logger'].error('%s object with id %s could not be synced from %s (edge) to %s (crits)!' % (endpoint, str(id_), source, destination))
+            else:
+                if config['daemon']['debug']:
+                    config['logger'].debug('%s object with id %s was synced from %s (edge) to %s (crits)' % (endpoint, str(id_), source, destination))
+                subtotal_output[endpoint] += 1
+                total_output += 1
+        config['logger'].info('%i %s objects successfully synced between %s (edge) and %s (crits)' % (subtotal_output[endpoint], endpoint, source, destination))
+        if subtotal_output[endpoint] < subtotal_input[endpoint]:
+            config['logger'].info('%i %s objects could not be synced between %s (edge) and %s (crits)' % (subtotal_input[endpoint] - subtotal_output[endpoint], endpoint, source, destination))
+    config['logger'].info('%i (total) objects successfully synced between %s (edge) and %s (crits)' % (total_output, source, destination))
+    if total_output < total_input:
+        config['logger'].info('%i (total) objects could not be synced between %s (edge) and %s (crits)' % (total_input - total_output, source, destination))
     # save state to disk for next run...
     yaml_ = deepcopy(config)
     yaml_['state'][state_key]['edge_to_crits']['timestamp'] = latest
     del yaml_['config_file']
+    del yaml_['logger']
     file_ = file(config['config_file'], 'w')
     yaml.dump(yaml_, file_, default_flow_style=False)
+    if config['daemon']['debug']:
+        config['logger'].debug('saving state until next run [%s]' % str(latest))
     file_.close()
