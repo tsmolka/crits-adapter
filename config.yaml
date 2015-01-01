@@ -36,6 +36,10 @@ crits:
         ssl: true
         user: api
       host: 54.154.64.114
+daemon:
+  debug: false
+  log: edgy_crits.log
+  pid: edgy_crits.pid
 edge:
   sites:
     demo_central:
@@ -45,7 +49,7 @@ edge:
         xmlns_url: http://www.dsie.net/
       taxii:
         allow_self_signed: true
-        collection: Default
+        collection: system.Default
         pass: Opiningbiddyproxywandzigzagsetchedeightjimmies_2347
         path: /taxii-data
         poll_interval: 300
@@ -60,7 +64,7 @@ edge:
         xmlns_url: http://www.dsie.net/
       taxii:
         allow_self_signed: true
-        collection: Default
+        collection: system.Default
         pass: Opiningbiddyproxywandzigzagsetchedeightjimmies_2347
         path: /taxii-data
         poll_interval: 300
@@ -75,7 +79,7 @@ edge:
         xmlns_url: http://www.dsie.net/
       taxii:
         allow_self_signed: true
-        collection: Default
+        collection: system.Default
         pass: Opiningbiddyproxywandzigzagsetchedeightjimmies_2347
         path: /taxii-data
         poll_interval: 300
@@ -84,8 +88,3 @@ edge:
         user: api
         version: 1.1
 state:
-  demo_central_to_demo_central:
-    crits_to_edge:
-      timestamp: 2014-12-26 16:22:00+00:00
-    edge_to_crits:
-      timestamp: 2014-12-19 17:13:00
