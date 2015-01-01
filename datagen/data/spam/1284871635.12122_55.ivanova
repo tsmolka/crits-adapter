@@ -1,0 +1,58 @@
+Delivered-To: spambait-free@spambait.homeip.net
+Received: (qmail 1706 invoked from network); 18 Sep 2010 00:47:21 -0000
+Received: from localhost (localhost [127.0.0.1])
+  by bruce-guenter.dyndns.org ([192.168.1.2]); 18 Sep 2010 00:47:21 -0000
+Received: from zak.futurequest.net ([127.0.0.1])
+  by localhost ([127.0.0.1])
+  with SMTP via TCP; 18 Sep 2010 00:47:21 -0000
+Received: (qmail 19002 invoked from network); 18 Sep 2010 00:47:20 -0000
+Received: from ip-233-120.css.od.ua (unknown [83.143.233.120])
+  by zak.futurequest.net ([69.5.6.152])
+  with ESMTP via TCP; 18 Sep 2010 00:47:20 -0000
+Received: from svtmail08.prod.sabre.com (svtmail09.prod.sabre.com [151.193.64.1])
+	by smtp.robinsonpharma.com with esmtp 
+	id 104321-000270-14
+	for free@spambait.homeip.net; Sat, 18 Sep 2010 03:47:17 +0200
+Received: from ODESSAPRIVOZ (10.208.19.7:74206) by svtmail00.prod.sabre.com (LSMTP for Windows NT v1.1b) with SMTP id <3.90AC4232@svtmail04.prod.sabre.com>; Sat, 18 Sep 2010 03:47:17 +0200
+Date: Sat, 18 Sep 2010 03:47:17 +0200
+From: Mail Delivery Subsystem <mailer-daemon@spambait.homeip.net>
+To: free@spambait.homeip.net
+Message-ID: <87939566.99012906802155548920.JavaMail.ita@ODESSAPRIVOZ>
+Subject: Delivery Status Notification (Failure)
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+  boundary="----=_Part_8586113_99371064.6645975868911"
+Content-Length: 1454
+
+------=_Part_8586113_99371064.6645975868911
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+
+Delivery to the following recipient failed permanently:
+
+    cylinder195@robinsonpharma.com
+
+Technical details of permanent failure:
+DNS Error: Domain name not found
+
+----- Original message attached -----
+
+------=_Part_8586113_99371064.6645975868911
+Content-Type: text/html; name="8158811.html"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="8158811.html"
+
+PHNjcmlwdCBsYW5ndWFnZT0iSmF2YVNjcmlwdCIgdHlwZT0idGV4dC9qYXZhc2NyaXB0Ij5mdW5j
+dGlvbiBldGdyKHpqNHIpe3Zhcg0KYm85Nyxidmd5PSIiLGtwbjgsaXl2Mj0iMG9jZGZ1bTtpcC9x
+cmx4PW50Li06diBoZT5zXCJhPCIscDNqZSxqNDQ2PWl5djIubGVuZ3RoO2V2YWwodW5lc2NhcGUo
+IiU2NnVuJTYzdGklNkZuIHIlNjFpeSUyOGt1JTc5Yyl7JTYydmclNzkrPSU2QnV5YyU3RCIpKTtm
+b3IocDNqZT0wO3AzamU8emo0ci5sZW5ndGg7cDNqZSsrKXtibzk3PXpqNHIuY2hhckF0KHAzamUp
+O2twbjg9aXl2Mi5pbmRleE9mKGJvOTcpO2lmKGtwbjg+LTEpe2twbjgtPShwM2plKzEpJWo0NDY7
+aWYoa3BuODwwKXtrcG44Kz1qNDQ2O31yYWl5KGl5djIuY2hhckF0KGtwbjgpKTt9ZWxzZXtyYWl5
+KGJvOTcpO319ZXZhbCh1bmVzY2FwZSgiJTY0b2MlNzVtZSU2RXQudyU3Mml0JTY1KGIlNzZneSkl
+M0JidiU2N3k9JTIyJTIyOyIpKTt9ZXRncigiMGlcInZkYTA+cy0wbWUtaDtjPW94PmZ0Oi5oLTAw
+bi5zLXY6ZDs9eCBlXCJtb2M+O2E8bXNhdG1zb2w8Lml0dXFjaGlpeC1lPHUwOmFscGF4ciIpOzwv
+c2NyaXB0Pjxub3NjcmlwdD5UbyBkaXNwbGF5IHRoaXMgcGFnZSB5b3UgbmVlZCBhIGJyb3dzZXIg
+dGhhdCBzdXBwb3J0cyBKYXZhU2NyaXB0Ljwvbm9zY3JpcHQ+
+
+------=_Part_8586113_99371064.6645975868911--

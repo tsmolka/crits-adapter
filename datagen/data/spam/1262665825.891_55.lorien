@@ -1,0 +1,52 @@
+Delivered-To: bruce@untroubled.org
+Received: (fqmail 24768 invoked from network); 05 Jan 2010 02:01:40 -0000
+Received: (qmail 11723 invoked from network); 5 Jan 2010 02:01:40 -0000
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+  by mx12.futurequest.net ([10.2.1.185])
+  with ESMTP via TCP; 05 Jan 2010 02:01:40 -0000
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+	id S1754149Ab0AECBQ (ORCPT <rfc822;bruce@untroubled.org>);
+	Mon, 4 Jan 2010 21:01:16 -0500
+Received: (majordomo@vger.kernel.org) by vger.kernel.org id S1753810Ab0AECBP
+	(ORCPT <rfc822;linux-kernel-outgoing>);
+	Mon, 4 Jan 2010 21:01:15 -0500
+Received: from web80004.mail.sp1.yahoo.com ([69.147.92.102]:32068 "HELO
+	web80004.mail.sp1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1753642Ab0AECBO (ORCPT
+	<rfc822;linux-kernel@vger.kernel.org>);
+	Mon, 4 Jan 2010 21:01:14 -0500
+X-Greylist: delayed 399 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 Jan 2010 21:01:14 EST
+Received: (qmail 9304 invoked by uid 60001); 5 Jan 2010 01:54:34 -0000
+DKIM-Signature:	v=1; a=rsa-sha256; c=relaxed/relaxed; d=sbcglobal.net; s=s1024; t=1262656474; bh=G0NkdBIQPcsZkAxcdXIYcL7A+T6BZzg0gMehaNvTGk4=; h=Message-ID:X-YMail-OSG:Received:X-Mailer:Date:From:Reply-To:Subject:To:MIME-Version:Content-Type; b=Oin4/FAHrOL13C1FDvyvKC+ZP8Bpe/baK6oUeEuSA2sIKdWawcENV47w0+com5bAU1HBzjC0RsKyk5AL9/HjD9Fso1EVYmRQAR34BPk6ttzdHvpnX0ruUBJtqMWHTEupJxVaL7WO0E7I9Z1MeGBedWcoOGKclkmPkDrGCpND2c4=
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;
+  s=s1024; d=sbcglobal.net;
+  h=Message-ID:X-YMail-OSG:Received:X-Mailer:Date:From:Reply-To:Subject:To:MIME-Version:Content-Type;
+  b=WtweU/f8PYbyPM5ktIl9ArFDIfGKYh4IRCRakSjlUkmyHJxN1yH/FfLW7evglBMi2lLbUdJy9yVgOcK58O6hOf/mezkU8WGx4fk2osRUM996KIX699XiPF3EP1kINqGi6rjKarUTyhLft1uD6p3JX/zRg7kk8j04qmytYg5MRYQ=;
+Message-ID: <542189.9289.qm@web80004.mail.sp1.yahoo.com>
+X-YMail-OSG: YMf_pZsVM1nBAEoMqWDLWocJz2wN8WXEIVEmix0jLsxzWjQBguWlMum8HPOlCeisPIy0zZQjZs8nPUOdSf9asVWZRPseiEkITJbVDslqrbtF_4BAR1jM54tYB_cuwHulsUr.cUcD.7hlMZmDmmoFEiGFMEKBxD7BxBmkP.VsJFvy7gNzAcnzcZ1qhs.jyo18jGVXJOxpw52ILqkH_L9R.BtocrTPKsoStEhLVLKyNSt7e83wm8rAaOkhjk9g_UUO03Iwik4jFFM1ccaagOKH6ev59uCE3lvCR334A6pKKvoDvyOJI9A_WJvZWY_udXo9a7tvArcOxn2VRmAT.QuyKM7jelH327Leu75t43r0lqi1GAdyZYH2Zm5rtX6A4_pscWUNTrDZn3NTgqCycGsMNnX4P6CmowUoRGSBXh5WculstU9SnRk1S1zYictxmcHLHTJovu9uVlEdd8DAgM4BehuNsWaqC.H7A5sHU8XeSX3FqqYUNLZFhCzFUNd5orIJd9wB7N9KuCy8I7rSgx76.NcpXjFq09BfAHTDqaeD7RJzdEnXBurmwoukVxIwKiTbQPoZtwKutEoAD_P3fXwcblu_wymfoyIyE22wTt3Upldy2A5xqvHaQIEMHGDfxSKfT2fzFnNWp0JBjZ_yx3w_pCqLi2Rc087rwa4n9o5Lk2u_ugexKzuWap2YuWASe1Wfj15ulFx6_tIxGdkHrt2S5Z4z1dnFjLuzey7gXeijAk11GVx1RRalcbFn.nHdDEijcziw0dVJx_Qr8jwq_n.65iJHRPmBIb5JJJiR.Q_nIzKh_oC41D1PN0x9UEX.6tMD_BI4VyEMA.JGr5xhjU3QbYQVgtQoB.p352e0eIeE_lNNZDn3x3NWW8QL6HnEVkT_T3khDfBRYUJvFSOuQkjh7j.ywszAtaovqlP__TPlcP9D_y2F1xINHvNz.ppDOh.K91y80vTaO1Hbulf4bxQSV_hmy_twAFkStYwJsFGXEVMnRaUkCD7DK8esyjgDxoB6FuTALiqQQMr3haNFp7JwZ5imfT7rVOhEVv4-
+Received: from [217.21.79.212] by web80004.mail.sp1.yahoo.com via HTTP; Mon, 04 Jan 2010 17:54:34 PST
+X-Mailer: YahooMailClassic/9.0.20 YahooMailWebService/0.8.100.260964
+Date:	Mon, 4 Jan 2010 17:54:34 -0800 (PST)
+From:	New Year Promo <kingbee56@sbcglobal.net>
+Reply-To: telecomgroup@9.cn
+Subject: Your email ID has been awarded 1,000,000,00 GBP. in our British telecom Promo
+To:	undisclosed recipients:;
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Sender:	linux-kernel-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-kernel.vger.kernel.org>
+X-Mailing-List:	linux-kernel@vger.kernel.org
+Content-Length: 293
+
+
+Names..
+Occupation..
+Address..
+Tel..
+Country..
+--
+To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please read the FAQ at  http://www.tux.org/lkml/

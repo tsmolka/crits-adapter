@@ -1,0 +1,100 @@
+Delivered-To: bruce@untroubled.org
+Received: (fqmail 26472 invoked from network); 25 Jan 2010 01:17:10 -0000
+Received: (qmail 31416 invoked from network); 25 Jan 2010 01:17:10 -0000
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+  by mx08.futurequest.net ([10.2.1.180])
+  with ESMTP via TCP; 25 Jan 2010 01:17:10 -0000
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+	id S1752853Ab0AYBQl (ORCPT <rfc822;bruce@untroubled.org>);
+	Sun, 24 Jan 2010 20:16:41 -0500
+Received: (majordomo@vger.kernel.org) by vger.kernel.org id S1751611Ab0AYBQk
+	(ORCPT <rfc822;linux-kernel-outgoing>);
+	Sun, 24 Jan 2010 20:16:40 -0500
+Received: from [210.246.86.191] ([210.246.86.191]:54219 "EHLO mail.moi.go.th"
+	rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+	id S1751042Ab0AYBQj convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-kernel@vger.kernel.org>);
+	Sun, 24 Jan 2010 20:16:39 -0500
+X-Greylist: delayed 401 seconds by postgrey-1.27 at vger.kernel.org; Sun, 24 Jan 2010 20:16:38 EST
+Received: (qmail 28501 invoked by uid 48); 25 Jan 2010 01:09:44 -0000
+Received: from syd-ult-slb1-vlan5.ii.net (syd-ult-slb1-vlan5.ii.net
+	[203.215.17.58]) by mail.moi.go.th (Horde MIME library) with HTTP; Mon, 25
+	Jan 2010 08:09:44 +0700
+Message-ID: <20100125080944.dyufw9tvvo8wwwk4@mail.moi.go.th>
+X-Priority: 3 (Normal)
+Date:	Mon, 25 Jan 2010 08:09:44 +0700
+From:	"mail.telia.com" <helpdesk@telia.com>
+Reply-to: thomaswilson@mcom.com
+To:	undisclosed-recipients:;
+Subject: =?utf-8?b?QsOkc3Rl?= mail.telia.com Post User
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset=UTF-8;
+	DelSp="Yes";
+	format="flowed"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+User-Agent: Internet Messaging Program (IMP) H3 (4.1.6)
+X-Originating-IP: 203.55.231.100
+X-Remote-Browser: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1;
+	Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR
+	3.0.30729; Media Center PC 6.0; InfoPath.2; OfficeLiveConnector.1.3;
+	OfficeLivePatch.0.0; Crazy Browser 2.0.1)
+Sender:	linux-kernel-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-kernel.vger.kernel.org>
+X-Mailing-List:	linux-kernel@vger.kernel.org
+Content-Length: 1991
+
+
+
+Bäste mail.telia.com Post User,
+
+
+Vi skrev till er den 25 januari 2010 att ge råd att du byter lösenord på
+ditt konto för att förhindra obehörig åtkomst till kontot efter
+nätverket instruktion vi kommunicerade tidigare.
+
+alla Mailhub system kommer att genomgå planerat underhåll. Access
+till din e-post via webmail-klienten kommer att vara otillgänglig  
+under en längre tid
+under denna uppfyllandeperiod. Vi håller på att uppgradera vår databas
+och e-post kontocentral I.E hemsida view. Vi skall ta bort gamla
+[https: / / mail.telia.com / l konton som inte längre är aktiva för att skapa
+mer utrymme för nya accountsusers. Vi har också undersökt ett stort
+säkerhetsgranskning att förbättra och höja
+vår nuvarande säkerhet.
+
+För att fortsätta använda våra tjänster du behöver för att uppdatera och
+nytt comfirmed ditt e-postkonto detaljer som efterfrågas nedan. Att slutföra
+kontot nytt comfirmation, måste du svara på detta mail omedelbart
+Ange ditt konto
+detaljer som efterfrågas nedan.
+
+
+Användarnamn:
+Lösenord:
+Övrig
+Framtida Lösenord:
+
+
+Underlåtenhet att göra detta kommer omedelbart göra ditt konto  
+inaktiveras från
+vår databas och service kommer inte att avbrytas så viktiga budskap kan
+också gå förlorade på grund av din sjönk till nytt comfirmed till oss  
+ditt konto
+detaljer.
+
+Vi ber om ursäkt för det besvär som detta orsakar dig under den här
+period, men lita på att vi är här för att ge dig bättre och ge
+mer teknik som kretsar kring e-post och internet. Det är också
+relevant, du understandthat vår huvudsakliga uppgift är för våra kunder,
+och för säkerheten i sina filer och data.
+
+
+COMFIRMATION KOD: mail.telia.com -/93-1A388-480 Technical Support Team
+--
+To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please read the FAQ at  http://www.tux.org/lkml/

@@ -1,0 +1,68 @@
+Delivered-To: bruce@untroubled.org
+Received: (fqmail 23279 invoked from network); 09 Oct 2010 15:32:57 -0000
+Received: (qmail 14678 invoked from network); 9 Oct 2010 15:32:57 -0000
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+  by mx15.futurequest.net ([10.2.1.189])
+  with ESMTP via TCP; 09 Oct 2010 15:32:57 -0000
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+	id S1756058Ab0JIPc2 (ORCPT <rfc822;bruce@untroubled.org>);
+	Sat, 9 Oct 2010 11:32:28 -0400
+Received: from nm11.bullet.mail.sp2.yahoo.com ([98.139.91.81]:27883 "HELO
+	nm11.bullet.mail.sp2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1754735Ab0JIPc1 (ORCPT
+	<rfc822;linux-kernel@vger.kernel.org>);
+	Sat, 9 Oct 2010 11:32:27 -0400
+X-Greylist: delayed 346 seconds by postgrey-1.27 at vger.kernel.org; Sat, 09 Oct 2010 11:32:26 EDT
+Received: from [98.139.91.69] by nm11.bullet.mail.sp2.yahoo.com with NNFMP; 09 Oct 2010 15:26:39 -0000
+Received: from [98.139.91.15] by tm9.bullet.mail.sp2.yahoo.com with NNFMP; 09 Oct 2010 15:26:39 -0000
+Received: from [127.0.0.1] by omp1015.mail.sp2.yahoo.com with NNFMP; 09 Oct 2010 15:26:39 -0000
+X-Yahoo-Newman-Property: ymail-3
+X-Yahoo-Newman-Id: 574267.2261.bm@omp1015.mail.sp2.yahoo.com
+Received: (qmail 12402 invoked by uid 60001); 9 Oct 2010 15:26:39 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s1024; t=1286637999; bh=i/uv+qfLUJoYARWXvVHGym7q2kEly59v15/WS0MlXQ4=; h=Message-ID:X-YMail-OSG:Received:X-Mailer:Date:From:Subject:To:MIME-Version:Content-Type; b=mlmvJlv4TPDTCngyMe/NcPoEZU86eMGis18xvvlU7Pqijd5RwLpMm4tG+7UKcVwSRATwKb3O+lSdsmwVOmL5cl5qdcn1qDkT70WcVzu6ey3qOb9VgbM+lAn+I9UT0xcAqsyKPSdf95EvA9CqcGbBY9PqoDiMqd0PTSYCZiYCJqc=
+Message-ID: <172839.1575.qm@web1105.biz.mail.sk1.yahoo.com>
+X-YMail-OSG: tt_DbcQVM1lbkNRoqaeh5kfwN7NZ11G9PJz6OJ31sUZbsYd
+ rkArJNcla_CAbKapG3HOORmiERTDTz9DKW3eHPXmM8nsJJtPbfR2ZjRulx_b
+ cFHARnYxhps2srdNJ6.eYMihXMGdIwKJME5lW7J0AFqrkNW3j4t4uQsGbYIp
+ 4P8hK8ISsWyRdT75Ivb1O5BnCWfA9Dp._dslrPo7vtepIFg5_K4qlFmiXBPG
+ 0jZ4qwuh4Q1XYVdddn39KfWxVPd8FIxdhCNYNy8jllLawryiJ7beKobzMeWr
+ 56i1Fpz.ygmls6Whr9E8ovKQub2ZpKU1MDMeeJl0jknEzyorLN0a89ae45lg
+ s9YElQPNfAKgcUCdtTDEnD1FOi6oiC0w.gg7deRiyPCxb6WgKuNZsGCKvdri
+ KN0lU7lhb5i2jfspniofTvxYBTjA6mpMb4ozEaajvzOnPAkfx1Pt1tsGNxtX
+ 1dL1nuyRXG0YWOwjCa57z_KLi5SygI7je4DDBRsjW6pIhWmYFgLuZik5Zd.d
+ o2fcGIc6G8U8KrOp6aZDaF06_uHvKncO6kV6B8PMBTO20hZMhsOFjox8RtGG
+ .Go24Im_TGZaswRYJ
+Received: from [41.56.38.189] by web1105.biz.mail.sk1.yahoo.com via HTTP; Sat, 09 Oct 2010 08:26:38 PDT
+X-Mailer: YahooMailClassic/11.4.9 YahooMailWebService/0.8.106.282862
+Date: Sat, 9 Oct 2010 08:26:38 -0700 (PDT)
+From: Fifa 2014 Award <fifaonline@vodana.net>
+Subject: Congratulations on your winnings!!!
+To: undisclosed recipients:;
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="0-1378177299-1286637998=:1575"
+Sender: linux-kernel-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-kernel.vger.kernel.org>
+X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Length: 723
+
+--0-1378177299-1286637998=:1575
+Content-Type: text/plain; charset=us-ascii
+
+
+Your email have won the Fifa 2014 Award
+Promotion,Kindly view the attachment for your Winning details
+--0-1378177299-1286637998=:1575
+Content-Type: message/external-body; access-type=x-deleted; length=91793
+
+
+Content-Type: application/pdf; name=FIFA2014
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="FIFA2014 WINNING NOTFIICATION.pdf"
+
+--0-1378177299-1286637998=:1575--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please read the FAQ at  http://www.tux.org/lkml/

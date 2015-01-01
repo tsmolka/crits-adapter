@@ -1,0 +1,99 @@
+Delivered-To: bruce@untroubled.org
+Received: (fqmail 13888 invoked from network); 11 Jan 2010 22:28:26 -0000
+Received: (qmail 4490 invoked from network); 11 Jan 2010 22:28:26 -0000
+Received: from web92201.mail.cnh.yahoo.com (web92201.mail.cnh.yahoo.com [203.209.250.114])
+  by mx08.futurequest.net ([10.2.1.180])
+  with SMTP via TCP; 11 Jan 2010 22:28:25 -0000
+Received: (qmail 64086 invoked by uid 60001); 11 Jan 2010 22:28:22 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.cn; s=s1024; t=1263248902; bh=L8b1rRLsmQMWoEwJJoRbX1xPBRbKnG9yhhOQQdNPFSA=; h=Message-ID:X-YMail-OSG:Received:X-Mailer:Date:From:Reply-To:Subject:To:MIME-Version:Content-Type; b=pO//uy5H+h+nLRk/SIvUgcGNVJ1nMwkjzvzq+OI6pS2KlR2r61vSpEHXeCizdpp/rDo3geSYxJ+m24Dffh6aYGbqkaVF9FK8rO2Q7bHs1i/R0vEJC0LdWmC7E6h7aw62QRMi29cKKZO8jh6hxflYhh5l0VnKfBqPeP2tOSRQH+g=
+DomainKey-Signature:a=rsa-sha1; q=dns; c=nofws;
+  s=s1024; d=yahoo.cn;
+  h=Message-ID:X-YMail-OSG:Received:X-Mailer:Date:From:Reply-To:Subject:To:MIME-Version:Content-Type;
+  b=50TXCKHFYRG2ZLVxc1cV++EG9G4Mt1Nvf+/yo52xUEDCBQyd9Yc9fPh02JlfusURZ5IQ6UEjU/2nvpVznkHU7KCJbY7CtXyo6B5fR/suuJk2LA4LF10p+yT8umIOGF3CPK4Y1GHty9Devz/NCsI9j4bl0COI/c7Umqf9GLMlkXQ=;
+Message-ID: <274454.63302.qm@web92201.mail.cnh.yahoo.com>
+X-YMail-OSG: PEUznMYVM1lKWZQiEn_bArTKneDMZOTi3W6fqTG5Ni9jWTbJJR3aMMhlo860lUYd6QqrCy13WfxxKqQf3bHmUQvPXkCUNdt1goK_ZVAnywqfwnPnH8D67mrgYDD.0mTOJ7KJmmiXUe6QVf2rWzZRrR54Q2iEdQjpCj5hYFXhCGFMT7D92TtV25UTLcdP5j5EL3.5lgRoD4evSyE5Cuhl99xjUHKYVA6OFPyxHkI7gtNJn18eJY7dnE7OpEF8D.DkcM__wU0ZjAcC4qfOTMqWyaAwXUwtIReYp1Y3T6zw5vN4YDmXtCjyIRvDURPw2OEXF8IVdZ.9O0ZxwmsrvNLqFZdqxILMEMcsAS0muBZrWOuRTrAYtSrp5yrPY5j8pSv5UhY_Ejuz7_lkyW2Vu9nm3QMr6v2TtWhvVegmtmRLHo09.DIWRHNDpaE9jh8SxxuVTkGjK_SQqRxu1JjHnB8TmP2cbM84QkLATMGmOwjWWqzMzZOr2x7o6sefAkmjC.lOzlh7Xa9cGpfYNqVBw11IuJjU1mV4okuN8xGuzfp_LuPplEzvOTb8Qr7fTFJjsc2kCC013IrrJx5eHDSBpqHedJJqRzlfIgNkUfxWj7jj2PmzeMyNOd0gPvL5crBCdPHAp8lzz5auClIdbi0YXOg24RltbmHTVrvgBvLTi6tRt7A3R8bTYHo3dYQOOGypHllZ4h7AYP_4D6t8mKxZlQpezSMEmhxygy5HvjSxntRnaAcA3PMCw61.rBN6fBO1F3fDAsd14YOjq7smRe5EAd2.mY2gPOH9BdZjqGWY0wf36JsIIIjHOSdnHkDiw0BHDBwIcYZ5h_ffrIGBSMR7mtPNEVEl6TKhMw62knPLO9S5wuta2kIMKUggI9Y6spqYizvWqSJ4WfPsgyTUB3fU7OucOHxlUk7WWfc15_fY.ON96vfbkdnITf1fi8FA4IrMSuOaPSWE5qRwbcZUucx1vXamsFllEOSBq6ZrPPrH.WDrkRLJkv.xgA9zJuzQq_xmgsOuYXhPbh5xbmpzrMoZb.HPnPF4._LFWfgO7NCeBaUvUKkHj5hsJS7QIHsdUa2mWhMi.xm0GqT0gBoGJ0qXClbQTDNIPb5qb2MMPuY5qZvtdGBmfEAbmZ8at_liFaT6yksgByOYIqiW_bk2rx6R8XBtqFk4tduYofnKwhvdpevaPc1fuT8ETz_KDinWo0d0pgnZf_OD0z5Kwz.2x8I8e3Fo1xk89D3QvO_oU8FREU6LD0PAIdMZJzkxd3XAa2l3KO8PP0aC7Zp4KBQkLaEIAUG1RqpQmNEpI.ayuKLNbRLEI7pGLqCXeubkHuV5kdvnktHn_YC0X2LnX3AreQsk1T3i7rEhXalcBX29M3hI2BODMJINGD6lkUn77sfQi_pd1iIA.4hzZFJgE7CSja4gHDnOMJ09Lw31yqtO0v0epclqhCRp2EWM8AYstR1GDR3uL1fs5MAZaL.y4oQXTbHE_5Kg7cCfxNvDROTPd_07hzAeAr..y74AwQrSg4IKZmFBIOa9zQDH785BIlz7csFm9i97sXH9OGz71JMhvNUZZkU1CFii31dlWIkLjCsjypW9v1f322KuYOfur9Hsx0j.zjT5ZJ9f7VZrWsZ8QZRtJY8bSkP3E4NQyWayA89qzoTtHPeaS0.PEpk8c2.a15GFN7y.9nDjotaBBM59mCzJiMEc5OCb09wrDFwD4eO2iL2bvJUJX8E2KPesaR0pHGlDZB6s1tsF4TFdnFToAiVT1GmtkIbyQn2BClfU3.OfZZ3rKrNwYDVf1d7_UlymwZFZUiHwnc6l8HMyQ2yTuIozEpa7LcXp.L0y5SBbBqjEXw4nmghYLiwcZ6P_6GTfLgfJIch_YKhL7VCLX7y1O7vib25BqCJGa86eVokIC7fN06yTqzsGkvbZRMs46tc-
+Received: from [41.207.30.228] by web92201.mail.cnh.yahoo.com via HTTP; Tue, 12 Jan 2010 06:28:21 CST
+X-Mailer: YahooMailClassic/9.0.20 YahooMailWebService/0.8.100.260964
+Date: Tue, 12 Jan 2010 06:28:21 +0800 (CST)
+From: austinekonan <justine_keita1@yahoo.cn>
+Reply-To: austinekonan@yahoo.co.jp
+Subject: From  Mrs. Austine Konan
+To: undisclosed recipients: ;
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="0-24322724-1263248901=:63302"
+Content-Length: 3892
+
+--0-24322724-1263248901=:63302
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+From=C2=A0 Mrs. Austine Konan
+16,Rue des jardins Cocody=20
+les Deux-Plateaux=20
+Abidjan Ivory Coast
+Veuillez me contacter a mon adresse suivante :
+=C2=A0Email: austinekonan@yahoo.co.jp=C2=A0=C2=A0
+
+Dearest,
+=C2=A0
+I am Mrs. Austine Konan from=C2=A0 Ivory Coast=C2=A0 I am a widow being tha=
+t I lost my husband.My husband was a serving director of the Cocoa exportin=
+g board until his death.
+=C2=A0
+He was assassinated by the rebels following the political uprising. Before =
+his death he made a deposit of Ten Million USA Dollars ($10,000,000.00)here=
+ in Ivory Coast=C2=A0 in security company .This fund he intended to buy a c=
+ocoa processing machine.
+=C2=A0
+I want you to help me for us to retrieve this fund and transfer it to your =
+account in your country or any safer place as you will be the beneficiary a=
+nd recipient of the fund .
+=C2=A0
+I have plans to do investment in your country, like real estate and industr=
+ial production. This is my reason for writing to you. Please if you are wil=
+ling to assist me and my only son Francis,indicate your interest in replyin=
+g soonest.
+=C2=A0
+Please if truly you want to assist me and my son kindly respond to my prive=
+t email address:=C2=A0austinekonan@yahoo.co.jp=20
+=C2=A0
+Thanks and best regards .
+Mrs.Austine Konan=0A=0A=0A      ___________________________________________=
+________________ =0A  =E5=A5=BD=E7=8E=A9=E8=B4=BA=E5=8D=A1=E7=AD=89=E4=BD=
+=A0=E5=8F=91=EF=BC=8C=E9=82=AE=E7=AE=B1=E8=B4=BA=E5=8D=A1=E5=85=A8=E6=96=B0=
+=E4=B8=8A=E7=BA=BF=EF=BC=81 =0Ahttp://card.mail.cn.yahoo.com/
+--0-24322724-1263248901=:63302
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<table cellspacing=3D"0" cellpadding=3D"0" border=3D"0" ><tr><td valign=3D"=
+top" style=3D"font: inherit;"><DIV><STRONG>From&nbsp; Mrs. Austine Konan<BR=
+>16,Rue des jardins Cocody <BR>les Deux-Plateaux <BR>Abidjan Ivory Coast<BR=
+>Veuillez me contacter a mon adresse suivante :<BR>&nbsp;Email: </STRONG><A=
+ href=3D"mailto:austinekonan@yahoo.co.jp"><STRONG>austinekonan@yahoo.co.jp<=
+/STRONG></A><STRONG>&nbsp;&nbsp;</STRONG></DIV>
+<DIV><BR><STRONG>Dearest,<BR>&nbsp;<BR>I am Mrs. Austine Konan from&nbsp; I=
+vory Coast&nbsp; I am a widow being that I lost my husband.My husband was a=
+ serving director of the Cocoa exporting board until his death.<BR>&nbsp;<B=
+R>He was assassinated by the rebels following the political uprising. Befor=
+e his death he made a deposit of Ten Million USA Dollars ($10,000,000.00)he=
+re in Ivory Coast&nbsp; in security company .This fund he intended to buy a=
+ cocoa processing machine.<BR>&nbsp;<BR>I want you to help me for us to ret=
+rieve this fund and transfer it to your account in your country or any safe=
+r place as you will be the beneficiary and recipient of the fund .<BR>&nbsp=
+;<BR>I have plans to do investment in your country, like real estate and in=
+dustrial production. This is my reason for writing to you. Please if you ar=
+e willing to assist me and my only son Francis,indicate your interest in re=
+plying soonest.</STRONG></DIV>
+<DIV><STRONG></STRONG>&nbsp;</DIV>
+<DIV><STRONG>Please if truly you want to assist me and my son kindly respon=
+d to my privet email address:&nbsp;</STRONG><A href=3D"mailto:austinekonan@=
+yahoo.co.jp"><STRONG>austinekonan@yahoo.co.jp</STRONG></A><STRONG> </STRONG=
+></DIV>
+<DIV><STRONG></STRONG>&nbsp;</DIV>
+<DIV><STRONG>Thanks and best regards .<BR>Mrs.Austine Konan</STRONG></DIV><=
+/td></tr></table><br>=0A=0A=0A      <hr size=3D1><a href=3D"http://cn.rd.ya=
+hoo.com/mail_cn/tagline/card/*http://card.mail.cn.yahoo.com/">  =E5=A5=BD=
+=E7=8E=A9=E8=B4=BA=E5=8D=A1=E7=AD=89=E4=BD=A0=E5=8F=91=EF=BC=8C=E9=82=AE=E7=
+=AE=B1=E8=B4=BA=E5=8D=A1=E5=85=A8=E6=96=B0=E4=B8=8A=E7=BA=BF=EF=BC=81</a>
+--0-24322724-1263248901=:63302--

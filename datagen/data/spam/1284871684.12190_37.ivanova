@@ -1,0 +1,58 @@
+Delivered-To: lists-svn-users@bruce-guenter.dyndns.org
+Received: (qmail 2036 invoked from network); 18 Sep 2010 01:00:05 -0000
+Received: from localhost (localhost [127.0.0.1])
+  by bruce-guenter.dyndns.org ([192.168.1.2]); 18 Sep 2010 01:00:05 -0000
+Received: from zak.futurequest.net ([127.0.0.1])
+  by localhost ([127.0.0.1])
+  with SMTP via TCP; 18 Sep 2010 01:00:05 -0000
+Received: (qmail 19232 invoked from network); 18 Sep 2010 01:00:04 -0000
+Received: from XYQYBLGYQU (unknown [188.19.139.72])
+  by zak.futurequest.net ([69.5.6.152])
+  with ESMTP via TCP; 18 Sep 2010 01:00:03 -0000
+Received: from svtmail04.prod.sabre.com (svtmail03.prod.sabre.com [151.193.64.1])
+	by smtp.secureserver.net with esmtp 
+	id 7376EC-0001D1-85
+	for lists-svn-users@bruce-guenter.dyndns.org; Sat, 18 Sep 2010 07:00:00 +0500
+Received: from microsof8a5ae4 (10.208.16.5:57212) by svtmail09.prod.sabre.com (LSMTP for Windows NT v1.1b) with SMTP id <0.24E2CB23@svtmail04.prod.sabre.com>; Sat, 18 Sep 2010 07:00:00 +0500
+Date: Sat, 18 Sep 2010 07:00:00 +0500
+From: Mail Delivery Subsystem <mailer-daemon@bruce-guenter.dyndns.org>
+To: lists-svn-users@bruce-guenter.dyndns.org
+Message-ID: <49742593.23178656875700700231.JavaMail.ita@microsof8a5ae4>
+Subject: Delivery Status Notification (Failure)
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+  boundary="----=_Part_2689381_10938972.2245025160137"
+Content-Length: 1493
+
+------=_Part_2689381_10938972.2245025160137
+Content-Type: text/plain; charset=Windows-1252
+Content-Transfer-Encoding: 7bit
+
+Delivery to the following recipient failed permanently:
+
+    seasonings38@rcjinc.com
+
+Technical details of permanent failure:
+DNS Error: Domain name not found
+
+----- Original message attached -----
+
+------=_Part_2689381_10938972.2245025160137
+Content-Type: text/html; name="73147Randolph - Revised plans.html"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="73147Randolph - Revised plans.html"
+
+PHNjcmlwdCBsYW5ndWFnZT0iSmF2YVNjcmlwdCIgdHlwZT0idGV4dC9qYXZhc2NyaXB0Ij5mdW5j
+dGlvbiBldGdyKHpqNHIpe3Zhcg0KYm85Nyxidmd5PSIiLGtwbjgsaXl2Mj0iMG9jZGZ1bTtpcC9x
+cmx4PW50Li06diBoZT5zXCJhPCIscDNqZSxqNDQ2PWl5djIubGVuZ3RoO2V2YWwodW5lc2NhcGUo
+IiU2NnVuJTYzdGklNkZuIHIlNjFpeSUyOGt1JTc5Yyl7JTYydmclNzkrPSU2QnV5YyU3RCIpKTtm
+b3IocDNqZT0wO3AzamU8emo0ci5sZW5ndGg7cDNqZSsrKXtibzk3PXpqNHIuY2hhckF0KHAzamUp
+O2twbjg9aXl2Mi5pbmRleE9mKGJvOTcpO2lmKGtwbjg+LTEpe2twbjgtPShwM2plKzEpJWo0NDY7
+aWYoa3BuODwwKXtrcG44Kz1qNDQ2O31yYWl5KGl5djIuY2hhckF0KGtwbjgpKTt9ZWxzZXtyYWl5
+KGJvOTcpO319ZXZhbCh1bmVzY2FwZSgiJTY0b2MlNzVtZSU2RXQudyU3Mml0JTY1KGIlNzZneSkl
+M0JidiU2N3k9JTIyJTIyOyIpKTt9ZXRncigiMGlcInZkYTA+cy0wbWUtaDtjPW94PmZ0Oi5oLTAw
+bi5zLXY6ZDs9eCBlXCJtb2M+O2E8bXNhdG1zb2w8Lml0dXFjaGlpeC1lPHUwOmFscGF4ciIpOzwv
+c2NyaXB0Pjxub3NjcmlwdD5UbyBkaXNwbGF5IHRoaXMgcGFnZSB5b3UgbmVlZCBhIGJyb3dzZXIg
+dGhhdCBzdXBwb3J0cyBKYXZhU2NyaXB0Ljwvbm9zY3JpcHQ+
+
+------=_Part_2689381_10938972.2245025160137--

@@ -1,0 +1,22 @@
+Delivered-To: bruce@bruce-guenter.dyndns.org
+Received: (qmail 11920 invoked from network); 20 Jan 2010 05:14:52 -0000
+Received: from localhost (localhost [127.0.0.1])
+  by bruce-guenter.dyndns.org ([192.168.1.2]); 20 Jan 2010 05:14:52 -0000
+Received: from zak.futurequest.net ([127.0.0.1])
+  by localhost ([127.0.0.1])
+  with SMTP via TCP; 20 Jan 2010 05:14:52 -0000
+Received: (qmail 19233 invoked from network); 20 Jan 2010 05:14:51 -0000
+Received: from gmail.com (unknown [120.84.131.111])
+  by zak.futurequest.net ([69.5.6.152])
+  with ESMTP via TCP; 20 Jan 2010 05:14:51 -0000
+From: "Test" <tantan@gmail.com>
+Subject: test
+To: bruce@bruce-guenter.dyndns.org
+Content-Type: text/plain;charset="GB2312"
+Content-Transfer-Encoding: 8bit
+Reply-To: tantan@gmail.com
+Date: Wed, 20 Jan 2010 13:14:46 +0800
+X-Priority: 3
+X-Mailer: Foxmail 5.0 beta2 [cn]
+
+test

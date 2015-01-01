@@ -1,0 +1,34 @@
+Delivered-To: lists-linux-xfs@bruce-guenter.dyndns.org
+Received: (qmail 13387 invoked from network); 18 Sep 2010 12:36:14 -0000
+Received: from localhost (localhost [127.0.0.1])
+  by bruce-guenter.dyndns.org ([192.168.1.2]); 18 Sep 2010 12:36:14 -0000
+Received: from zak.futurequest.net ([127.0.0.1])
+  by localhost ([127.0.0.1])
+  with SMTP via TCP; 18 Sep 2010 12:36:14 -0000
+Received: (qmail 12580 invoked from network); 18 Sep 2010 12:36:13 -0000
+Received: from GGCPGRHJ (unknown [117.241.192.178])
+  by zak.futurequest.net ([69.5.6.152])
+  with ESMTP via TCP; 18 Sep 2010 12:36:11 -0000
+Return-path: <lists-linux-kernel@bruce-guenter.dyndns.org>
+Received: from [117.241.192.178] (port=6367 helo=prasad)
+	by restylerschoice.com.inbound15.mxlogicmx.net with asmtp 
+	id 6291BE-000864-97
+	for <lists-linux-kernel@bruce-guenter.dyndns.org>; Sat, 18 Sep 2010 18:06:08 +0530
+Message-ID: <AAD47CB0308D4010BD5A4B37DC2628B2@prasad>
+From: "Amparo Lang" <securesbtug8@restylerschoice.com>
+To: <lists-linux-kernel@bruce-guenter.dyndns.org>
+Subject: hello
+Date: Sat, 18 Sep 2010 18:06:08 +0530
+MIME-Version: 1.0
+Content-Type: text/plain;
+	format=flowed;
+	charset="iso-8859-1";
+	reply-type=original
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049
+X-Mras: Ok
+
+how are you?

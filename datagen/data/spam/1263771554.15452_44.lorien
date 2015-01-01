@@ -1,0 +1,51 @@
+Delivered-To: em-ca-bruceg@em.ca
+Received: (qmail 22829 invoked from network); 17 Jan 2010 22:52:32 -0000
+Received: from 87-231-81-146.rev.numericable.fr (87-231-81-146.rev.numericable.fr [87.231.81.146])
+  by churchill.factcomp.com ([24.89.90.248])
+  with ESMTP via TCP; 17 Jan 2010 22:52:32 -0000
+Return-path: <bruceg@em.ca>
+Received: from [87.231.81.146] by mail4.uqam.ca
+        by mx69.mail.ru with esmtp 
+        id 1NU4t5-000OU4-00
+        for bruceg@em.ca; Mon, 18 Jan 2010 00:05:27 +0100
+Received-SPF: none mail4.uqam.ca
+X-Mru-BL: 0:4:0
+X-Mru-PTR: web57401.mail.re1.yahoo.com
+X-Mru-NR: 1
+X-Mru-OF: FreeBSD (ethernet/modem)
+X-Mru-RC: US
+Received: from [87.231.81.146]by mail4.uqam.ca; Mon, 18 Jan 2010 00:05:27 +0100
+X-Yahoo-Newman-Property: ymail-3
+X-Yahoo-Newman-Id: 205490.53541.bm@omp114.mail.gq1.yahoo.com 
+Received: (qmail 76171 invoked by uid 60001); 10 Jan 2010 20:59:49 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s1024; t=1263157189; bh=h+G3Spu9TWGRb0TI9iW803HlAXM+S6P1J4OHYGyORrE=; h=Message-ID:X-YMail-OSG:Received:X-Mailer:Date:From:Subject:To:MIME-Version:Content-Type; b=aFTGJYUSQrUPKEt4rYCinYlX8sb1jlWnWDIgVFfb3PtLowkFw90FkUQ9fx9piq0+I0kjKB6n58NxoQPBiPPCdhsabyOZdCq6mzwpHK1+Ri3EBpJ9mTblsN4JlKgQzMzcLQRbdz8hmFvhNOC0hL7RjIY+z48fEdjAaWlUUNgXvkY=
+DomainKey-Signature:a=rsa-sha1; q=dns; c=nofws;
+  s=s1024; d=yahoo.com;
+  h=Message-ID:X-YMail-OSG:Received:X-Mailer:Date:From:Subject:To:MIME-Version:Content-Type;
+  b=q1Q4GuPTKqMR5jbrk9ZYO7WIFZG877kXv4X3joafGP6cPkoifkKcPNNyahYDnYejD25fmGBFIQqNjX9ZDqbgPGAYfjKd0OnBFVQxK0jSNKoYYmp9u68aUaZRM930xTCc3Nqf3XFbZhBB5DfdAlybPcKB7prhgG4gWtQZqUpYFDc=;
+Message-ID: <01ca97d1$f05bfd80$9251e757@telip>
+X-YMail-OSG: Uv0X0b0VM1kzBJQ.1ZJL6tjLzvsz_1GtA2zJnYXlgvlXNDBoaXPKzBqMLcTKV9vd4z2c.Owk3ZMwJjP1SF9u0DGr9gWYJU4spnMuygCQwZW5Y8.Xtq8j40We8XezL0_7Zi4P4FkSopu4YlmA14h_AojDoO_.M4lNnYIZ7KJdbzOH2udrRQAd12Eeekp4J0BZUmZ2r51DNwJwEjtQEdUJ4zbMqA6UBuDq4wYFi5gz9mD3MFuyYL3dALUbeC6qLvG.lEUPfEc4BXr4jzECMrygQCZaIgGn
+Received: from [87.231.81.146] mail4.uqam.ca; Mon, 18 Jan 2010 00:05:27 +0100
+X-Mailer: YahooMailClassic/9.0.20 YahooMailWebService/0.8.100.260964
+Date: Mon, 18 Jan 2010 00:05:27 +0100
+From: <bruceg@em.ca>
+Subject: =?koi8-r?B?99nXz8Qg9O/wLTEwINcgZ29vZ2xlICYgeWFuZGV4?=
+To: <bruceg@em.ca>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+X-Spam: Not detected
+X-Mras: Ok
+X-EsetId: 341B8229334366692B1D827C3B1726
+Content-Length: 247
+
+
+Создание web-сайтов
+Продвижение и качественная оптимизация.
+Вывод ТОП-10 в google & yandex
+Сайты визитки, Интернет-магазины
+Индивидуальный подход, качественный и оригинальный дизайн.
+ 
+Телефоны для справок:
+067 308-13-14
+068 127-86-64
+Константин

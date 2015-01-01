@@ -1,0 +1,34 @@
+Delivered-To: cvs@bruce-guenter.dyndns.org
+Received: (qmail 851 invoked from network); 18 Sep 2010 17:11:37 -0000
+Received: from localhost (localhost [127.0.0.1])
+  by bruce-guenter.dyndns.org ([192.168.1.2]); 18 Sep 2010 17:11:37 -0000
+Received: from zak.futurequest.net ([127.0.0.1])
+  by localhost ([127.0.0.1])
+  with SMTP via TCP; 18 Sep 2010 17:11:37 -0000
+Received: (qmail 21272 invoked from network); 18 Sep 2010 17:11:36 -0000
+Received: from cable190-248-49-182.une.net.co (unknown [190.248.49.182])
+  by zak.futurequest.net ([69.5.6.152])
+  with ESMTP via TCP; 18 Sep 2010 17:11:35 -0000
+Return-path: <cvs@bruce-guenter.dyndns.org>
+Received: from [190.248.49.182] (port=5748 helo=marquez561e784)
+	by mail2.wb.com with asmtp 
+	id 661867-000368-98
+	for <cvs@bruce-guenter.dyndns.org>; Sat, 18 Sep 2010 19:10:28 +0100
+Message-ID: <534F965598114EEB9BA48E5B4F7D321C@marquez561e784>
+From: "Tia Singer" <viburnums10@rotted.com>
+To: <cvs@bruce-guenter.dyndns.org>
+Subject: hello
+Date: Sat, 18 Sep 2010 19:10:28 +0100
+MIME-Version: 1.0
+Content-Type: text/plain;
+	format=flowed;
+	charset="iso-8859-1";
+	reply-type=original
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049
+X-Mras: Ok
+
+how are you?

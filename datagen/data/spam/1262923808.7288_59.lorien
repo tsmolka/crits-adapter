@@ -1,0 +1,54 @@
+Delivered-To: bruce@untroubled.org
+Received: (fqmail 23764 invoked from network); 08 Jan 2010 01:12:06 -0000
+Received: (qmail 21065 invoked from network); 8 Jan 2010 01:12:06 -0000
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+  by mx06.futurequest.net ([10.2.1.177])
+  with ESMTP via TCP; 08 Jan 2010 01:12:06 -0000
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+	id S1754608Ab0AHBLn (ORCPT <rfc822;bruce@untroubled.org>);
+	Thu, 7 Jan 2010 20:11:43 -0500
+Received: (majordomo@vger.kernel.org) by vger.kernel.org id S1754578Ab0AHBLm
+	(ORCPT <rfc822;linux-kernel-outgoing>);
+	Thu, 7 Jan 2010 20:11:42 -0500
+Received: from [200.90.144.6] ([200.90.144.6]:36474 "EHLO email.coteor.net.bo"
+	rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+	id S1754518Ab0AHBLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+	Thu, 7 Jan 2010 20:11:42 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by email.coteor.net.bo (Postfix) with ESMTP id 891462B2332;
+	Thu,  7 Jan 2010 20:51:33 -0400 (BOT)
+X-Virus-Scanned: amavisd-new at coteor.net.bo
+Received: from email.coteor.net.bo ([127.0.0.1])
+	by localhost (email.coteor.net.bo [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id b0yJjoUBImBi; Thu,  7 Jan 2010 20:51:33 -0400 (BOT)
+Received: from email.coteor.net.bo (email.coteor.net.bo [192.168.1.19])
+	by email.coteor.net.bo (Postfix) with ESMTP id 1A8852B232F;
+	Thu,  7 Jan 2010 20:51:31 -0400 (BOT)
+Date:	Thu, 7 Jan 2010 20:51:31 -0400 (BOT)
+From:	Jorge Vargas <jvargas@coteor.net.bo>
+Reply-To: Canadian Agent <trevorallan24@gala.net>
+Message-ID: <31967468.20301262911891103.JavaMail.root@email>
+Subject: Good News!!!
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 1
+Importance: high
+X-Originating-IP: [78.138.3.238]
+X-Mailer: Zimbra 5.0.16_GA_2921.DEBIAN4.0 (zclient/5.0.16_GA_2921.DEBIAN4.0)
+To:	undisclosed-recipients:;
+Sender:	linux-kernel-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-kernel.vger.kernel.org>
+X-Mailing-List:	linux-kernel@vger.kernel.org
+Content-Length: 495
+
+Your e-mail address has made you, a winner of 2,500,000GBP in the Canadian Lottery Promo. Contact our British Agent for more details. Mr. Trevor Allan e-mail: trevorallan24@gala.net , Tel:+447031979972.
+
+Thank You.
+Lotto Co-ordinator (Jorge Vargas )
+--
+To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please read the FAQ at  http://www.tux.org/lkml/

@@ -1,0 +1,34 @@
+Delivered-To: cvs@bruce-guenter.dyndns.org
+Received: (qmail 3837 invoked from network); 19 Sep 2010 01:10:01 -0000
+Received: from localhost (localhost [127.0.0.1])
+  by bruce-guenter.dyndns.org ([192.168.1.2]); 19 Sep 2010 01:10:01 -0000
+Received: from zak.futurequest.net ([127.0.0.1])
+  by localhost ([127.0.0.1])
+  with SMTP via TCP; 19 Sep 2010 01:10:01 -0000
+Received: (qmail 3462 invoked from network); 19 Sep 2010 01:10:00 -0000
+Received: from TTZBFKI (unknown [112.140.200.90])
+  by zak.futurequest.net ([69.5.6.152])
+  with ESMTP via TCP; 19 Sep 2010 01:09:59 -0000
+Return-path: <cvs@bruce-guenter.dyndns.org>
+Received: from [112.140.200.90] (port=3095 helo=pc3)
+	by arp.dada.it with asmtp 
+	id 37762F-000030-68
+	for <cvs@bruce-guenter.dyndns.org>; Sun, 19 Sep 2010 10:09:56 +0900
+Message-ID: <991BDB13F27B48CABC77548A01B81588@pc3>
+From: "Reinaldo Rutherford" <washeseqq3@raasm.com>
+To: <cvs@bruce-guenter.dyndns.org>
+Subject: hello
+Date: Sun, 19 Sep 2010 10:09:56 +0900
+MIME-Version: 1.0
+Content-Type: text/plain;
+	format=flowed;
+	charset="iso-8859-1";
+	reply-type=original
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049
+X-Mras: Ok
+
+how are you?

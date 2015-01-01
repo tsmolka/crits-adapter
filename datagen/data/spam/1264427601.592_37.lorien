@@ -1,0 +1,31 @@
+Delivered-To: bruce@untroubled.org
+Received: (fqmail 25243 invoked from network); 25 Jan 2010 12:56:41 -0000
+Received: (qmail 354 invoked from network); 25 Jan 2010 12:56:41 -0000
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+  by mx13.futurequest.net ([10.2.1.186])
+  with ESMTP via TCP; 25 Jan 2010 12:56:41 -0000
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+	id S1753282Ab0AYM4X (ORCPT <rfc822;bruce@untroubled.org>);
+	Mon, 25 Jan 2010 07:56:23 -0500
+Received: from 81.202.181.134.dyn.user.ono.com ([81.202.181.134]:55840 "HELO
+	eaqxbq.user.ono.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with SMTP id S1752541Ab0AYM4W (ORCPT
+	<rfc822;linux-kernel-outgoing@vger.kernel.org>);
+	Mon, 25 Jan 2010 07:56:22 -0500
+X-Greylist: delayed 302 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Jan 2010 07:56:21 EST
+Message-ID: <4B5D936C.2080503@aimcom.nl>
+Date:	Mon, 25 Jan 2010 13:56:03 +0100
+Illegal-Object:	Syntax error in From: address found on vger.kernel.org:
+	From:	Viagra on www.na47.com <culotte@aimcom.nl>
+			^	     ^-illegal period in phrase
+		 \-phrases containing '.' must be quoted
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.7) Gecko/20100111 Thunderbird/3.0.1
+MIME-Version: 1.0
+From:	<culotte@aimcom.nl>
+To:	linux-kernel-outgoing@vger.kernel.org
+Subject: chees ecake  soera baja  queru lousl y  heroi nize
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Length: 44
+
+concu pisce nt  sadly  inter ne  mourn ers

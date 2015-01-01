@@ -1,0 +1,53 @@
+Delivered-To: em-ca-bruceg@em.ca
+Received: (qmail 25638 invoked from network); 3 Jan 2010 16:00:37 -0000
+Received: from malaria.procc.fiocruz.br (malaria.procc.fiocruz.br [157.86.152.1])
+  by churchill.factcomp.com ([24.89.90.248])
+  with ESMTP via TCP; 03 Jan 2010 16:00:37 -0000
+Received: from www.redefiocruz.fiocruz.br (dengue.procc.fiocruz.br [10.24.24.4])
+	by malaria.procc.fiocruz.br (8.14.3/8.14.3) with ESMTP id o03G16Lw028691;
+	Sun, 3 Jan 2010 14:01:06 -0200
+Received: from 189.77.44.34 (proxying for 41.220.75.16)
+        (SquirrelMail authenticated user fpb-coxim)
+        by www.redefiocruz.fiocruz.br with HTTP;
+        Sun, 3 Jan 2010 12:53:46 -0200 (BRST)
+Message-ID: <38800.189.77.44.34.1262530426.squirrel@www.redefiocruz.fiocruz.br>
+Date: Sun, 3 Jan 2010 12:53:46 -0200 (BRST)
+Subject: Maintenance Notice.
+From: "Webmail Admin" <webmail_upgrade@webmaster.com>
+Reply-To: webmail_support@mail2webmaster.com
+User-Agent: SquirrelMail/1.4.4
+MIME-Version: 1.0
+Content-Type: text/plain;charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+X-Priority: 3 (Normal)
+Importance: Normal
+Content-Length: 1200
+
+
+
+
+Webmail user's Maintenance Notice
+
+This message was sent automatically by a program on Webmail which
+periodically checks the size of inbox, where new messages are received.
+The program is run weekly to ensure no one's inbox grows too large. If
+your inbox becomes too large, you will be unable to receive new email.
+Just before this message was sent, you had 18 Megabytes (MB) or more of
+messages stored in your inbox on your Webmail.
+To help us re-set your SPACE on our database prior to maintain your
+INBOX,you must reply to this e-mail and enter your:
+
+Current User name: { }
+and Password: { }
+
+You will continue to receive this warning message periodically if your
+inbox size continues to be between 18 and 20 MB.If your inbox size grows
+to 20 MB, then a program on Bates Webmail will move your oldest email to a
+folder in your home directory to ensure that you will continue to be able
+to receive incoming email. You will be notified by email that this has
+taken place. If your inbox grows to 25 MB, you will be unable to receive
+new email as it will be returned to the sender.
+After you read a message, it is best to REPLY and SAVE a copy.
+
+Thank you for your cooperation.
+Webmail Help Desk

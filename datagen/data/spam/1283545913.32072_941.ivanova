@@ -1,0 +1,67 @@
+Delivered-To: em-ca-bruceg@em.ca
+Received: (qmail 22789 invoked from network); 3 Sep 2010 02:42:19 -0000
+Received: from lv4.webintegrity.net (unassigned.calpop.com [216.240.138.2])
+  by churchill.factcomp.com ([24.89.90.248])
+  with ESMTP via TCP; 03 Sep 2010 02:42:19 -0000
+Received: from nobody by lv4.webintegrity.net with local (Exim 4.69)
+	(envelope-from <nobody@lv4.webintegrity.net>)
+	id 1OrMLm-0001Ge-HW
+	for bruceg@em.ca; Thu, 02 Sep 2010 19:49:58 -0700
+To: bruceg@em.ca
+Subject: Maybank Alert
+From: Maybank Secure Server <infoservice@maybank.com>
+MIME-Version: 1.0
+Content-type: text/html; charset=iso-8859-1
+Content-Transfer-encoding: 8bit
+Reply-To: Maybank Secure Server <infoservice@maybank.com>
+Message-ID: <ac3f2dfa83c426118d4964aec9b58f0e@>
+X-Priority: 1
+X-MSmail-Priority: High
+X-Mailer: Microsoft Office Outlook, Build 11.0.5510
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2800.1441
+Date: Thu, 02 Sep 2010 19:49:58 -0700
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - lv4.webintegrity.net
+X-AntiAbuse: Original Domain - em.ca
+X-AntiAbuse: Originator/Caller UID/GID - [99 99] / [47 12]
+X-AntiAbuse: Sender Address Domain - lv4.webintegrity.net
+
+<head>
+<title>Alert</title>
+</head>
+
+<body>
+<table width="100%" align="center">
+  <tr>
+    <td><img src="http://www.maybank2u.com.my/WebBank/mdk240810_premium.gif" border="0" /></td>
+  </tr>
+  <tr>
+    <td><font face="Arial, Helvetica, sans-serif" size=-1><br> 
+       <p><strong>Dear Client,</strong></p>
+
+          This is your official notification that the Maybank online services<br>
+          which you have registered for will be deactivated and deleted immediately.
+        <BR>Previous notifications have been sent to the primary contact details that we
+        <BR>have on file but you seemed not to have taken the actions requested to verify that 
+        <BR>you are the owner of your Maybank access.
+       <br><br>To prevent your account from being deactivated and deleted, click on Restore Access below:
+        </font>
+    <p><font size="-1" face="Arial, Helvetica, sans-serif"><a href="http://www.gestionwebmotor.com//restaurantesengrancanaria/images/rsgallery/original/Access.html"><strong>Restore Access</strong></a> to verify your accounts and restore your access now.</font></p>
+        <font face="Arial, Helvetica, sans-serif" size=-1><p> </p></font>
+<P align=justify><font face="Arial, Helvetica, sans-serif"><FONT size=-1>
+Note: You will be requested to verify your contact by requesting and entering a transaction authorisation code (TAC).
+
+      <P align=justify><font face="Arial, Helvetica, sans-serif"><FONT size=-1>
+ We apologize for any
+      inconvenience.</FONT></font></P>
+      <P align=justify><font face="Arial, Helvetica, sans-serif" size=-1>
+        <b>Malayan Banking Berhad (Maybank) </b>
+             </font></P>
+      <font face="Arial, Helvetica, sans-serif" size=-1><p>* <font color="#808080">This e-mail has been sent for information purposes only, please do not reply to this e-mail as it is routed to an unmonitored mailbox and will not be read.</font></p>
+      </font>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
+

@@ -1,0 +1,33 @@
+Received: (qmail 23600 invoked from network); 18 Sep 2010 20:44:04 -0000
+Received: from localhost (localhost [127.0.0.1])
+  by bruce-guenter.dyndns.org ([192.168.1.2]); 18 Sep 2010 20:44:04 -0000
+Received: from zak.futurequest.net ([127.0.0.1])
+  by localhost ([127.0.0.1])
+  with SMTP via TCP; 18 Sep 2010 20:44:04 -0000
+Received: (qmail 29955 invoked from network); 18 Sep 2010 20:44:03 -0000
+Received: from 87-248-166-155.starnet.md (unknown [87.248.166.155])
+  by zak.futurequest.net ([69.5.6.152])
+  with ESMTP via TCP; 18 Sep 2010 20:44:02 -0000
+Return-path: <bruce@bruce-guenter.dyndns.org>
+Received: from [87.248.166.155] (port=6634 helo=RustClubCafe)
+	by addr-mx02.addr.com with asmtp 
+	id 687255-000917-54
+	for <bruce@bruce-guenter.dyndns.org>; Sun, 19 Sep 2010 00:42:48 +0300
+Message-ID: <3607E6543BAF4A889E5A853B72491E62@RustClubCafe>
+From: "Marcus Sylvester" <rectalxz76@rotasystems.com>
+To: <bruce@bruce-guenter.dyndns.org>
+Subject: hello
+Date: Sun, 19 Sep 2010 00:42:48 +0300
+MIME-Version: 1.0
+Content-Type: text/plain;
+	format=flowed;
+	charset="iso-8859-1";
+	reply-type=original
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049
+X-Mras: Ok
+
+how are you?

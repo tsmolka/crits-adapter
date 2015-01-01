@@ -1,0 +1,66 @@
+Delivered-To: bruce@untroubled.org
+Received: (fqmail 16402 invoked from network); 18 Sep 2010 19:51:21 -0000
+Received: (qmail 1415 invoked from network); 18 Sep 2010 19:51:21 -0000
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+  by mx08.futurequest.net ([10.2.1.180])
+  with ESMTP via TCP; 18 Sep 2010 19:51:21 -0000
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+	id S1757856Ab0IRTvD (ORCPT <rfc822;bruce@untroubled.org>);
+	Sat, 18 Sep 2010 15:51:03 -0400
+Received: from web1215.biz.mail.gq1.yahoo.com ([67.195.14.62]:42534 "HELO
+	web1215.biz.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1757649Ab0IRTu7 (ORCPT
+	<rfc822;linux-kernel@vger.kernel.org>);
+	Sat, 18 Sep 2010 15:50:59 -0400
+Received: (qmail 37841 invoked by uid 60001); 18 Sep 2010 19:44:17 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s1024; t=1284839057; bh=bYU1v5aX7py63c7C4sb4TDg1c6yZdSz3uJjSDrcnSmI=; h=Message-ID:X-YMail-OSG:Received:X-RocketYMMF:X-Mailer:Date:From:Reply-To:Subject:To:MIME-Version:Content-Type; b=S87N8AAm4/wr67V0S110teSgwPHXQz9a7B1DypbLfyDJLe/ZHU77Wfdn1XHSNkacDThMvJkgpzqrI5eVNdrTOC1wgCjfgiN+4r+UfLAElk001HnAch5Xbl/eIWr8EOc/+xGAatTfvmSoalsTda/ZbNKjGqGr8rAdymBuTfrOPW0=
+Message-ID: <24186.35906.qm@web1215.biz.mail.gq1.yahoo.com>
+X-YMail-OSG: dzOY3hQVM1kMq7VbZac_tVW1L.tJ_vqFKdtP3md9ToViGNj
+ 3YQdpWZUG0c4c8qR2ZQp9EApcWNvn9ABZ9ZK8dPbKFf7iEUvHjnJvTpiMXan
+ P6y.4bFDE6qm9Bvcr9aUUyUNgbkkJAi82BvgB4AoJa7iVyd0Oqf6rS0ZEJGj
+ MJLmX0wMmPE9ryHnX987qtDmLnBrxw6Vylmbv.1.LaGP4qm8lQ5EMDTSuZ26
+ BOVxyafujxh1NW3a7RcEt1N.i63xWr9aJxQw2k2uUL_pKco75cPs5sO_v2lX
+ 4t0nc0HKvFjjdQa9xJdt_JdrZJmkSj7d7OloaqzJHVKdezKcNv1JcGsAbr8w
+ 53YLTbUafT3Q2vDOBQGChr8Jo4wnGZsjjgzVPzCe8ihC_E1Ou1XjlJ30bz8T
+ 1Wn37cxfDpWISEUtbatkI5yNdBgI7eYFAvRbIvvSuWEKp.g4HsM7ERkytYl.
+ dLbP.RwxDAGvMHW3mBYswoXu9Z0XfyRTj
+Received: from [41.28.10.53] by web1215.biz.mail.gq1.yahoo.com via HTTP; Sat, 18 Sep 2010 12:44:16 PDT
+X-RocketYMMF: billzz020@att.net
+X-Mailer: YahooMailClassic/11.4.9 YahooMailWebService/0.8.105.279950
+Date: Sat, 18 Sep 2010 12:44:16 -0700 (PDT)
+From: "Mrs. Agnes Jonas Savimbi" <www201045@rediffmail.com>
+Reply-To: robertkamara2002@gala.net
+Subject: PLEASE, I NEED YOUR HELP.
+To: undisclosed recipients:;
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="0-1709678605-1284839056=:35906"
+Sender: linux-kernel-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-kernel.vger.kernel.org>
+X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Length: 783
+
+--0-1709678605-1284839056=:35906
+Content-Type: text/plain; charset=us-ascii
+
+PLEASE OPEN THE ATTACHMENT AND
+Contacting my son. 
+Name: Robert Kamara Savimb
+Tel No: + 27 738 600 007 
+Email:robertkamara2002@gala.net
+
+Beloved,
+--0-1709678605-1284839056=:35906
+Content-Type: message/external-body; access-type=x-deleted; length=34010
+
+
+Content-Type: application/msword; name=GREETING
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="GREETING FROM AGNES SAVIMBI,PLEASE REPLY.doc"
+
+--0-1709678605-1284839056=:35906--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please read the FAQ at  http://www.tux.org/lkml/

@@ -1,0 +1,52 @@
+Delivered-To: inquiries@untroubled.org
+Received: (fqmail 4968 invoked from network); 18 Jan 2010 08:38:53 -0000
+Received: (qmail 20614 invoked from network); 18 Jan 2010 08:38:53 -0000
+Received: from mail.sheratonakron.com (mail.sheratonakron.com [66.219.165.30])
+  by mx10.futurequest.net ([10.2.1.182])
+  with ESMTP via TCP; 18 Jan 2010 08:38:53 -0000
+Received: from moneygram.com ([65.223.25.163]) by mail.sheratonakron.com with Microsoft SMTPSVC(6.0.3790.3959);
+	 Mon, 18 Jan 2010 03:38:52 -0500
+From: Moneygram<memberservice@moneygram.com>
+To: inquiries@untroubled.org
+Subject: Restore your online account
+Date: 18 Jan 2010 00:44:54 -0800
+Message-ID: <20100118004454.7C492FE08126594B@moneygram.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+	boundary="----=_NextPart_000_0012_6AFD8797.77795EC4"
+Return-Path: memberservice@moneygram.com
+X-OriginalArrivalTime: 18 Jan 2010 08:38:52.0752 (UTC) FILETIME=[AA04B500:01CA9819]
+Content-Length: 1029
+
+This is a multi-part message in MIME format.
+
+------=_NextPart_000_0012_6AFD8797.77795EC4
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+
+Dear MoneyGram member,
+
+We are sorry to inform you that your MoneyGram Online Account has 
+been suspended. A high number of failed login attempts have been 
+recorded on your online account. As a security measure we had to 
+temporarily suspend your account.
+
+To restore your account we have attached a form to this email. 
+Please download the form and follow the instructions on your 
+screen.
+
+We apologize for any inconvenience this may have caused.
+Sincerely, the MoneyGram security team.
+
+
+© 2005 - 2010 MoneyGram. All rights reserved.
+
+------=_NextPart_000_0012_6AFD8797.77795EC4
+Content-Type: message/external-body; access-type=x-deleted; length=3975
+
+
+Content-Type: application/octet-stream; name="restore_your_account.html"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="restore_your_account.html"
+
+------=_NextPart_000_0012_6AFD8797.77795EC4--

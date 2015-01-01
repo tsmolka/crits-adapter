@@ -1,0 +1,71 @@
+Delivered-To: bruce@untroubled.org
+Received: (fqmail 10289 invoked from network); 16 Jan 2010 11:55:15 -0000
+Received: (qmail 17085 invoked from network); 16 Jan 2010 11:55:15 -0000
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+  by mx02.futurequest.net ([10.2.1.172])
+  with ESMTP via TCP; 16 Jan 2010 11:55:15 -0000
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+	id S1753669Ab0APLym (ORCPT <rfc822;bruce@untroubled.org>);
+	Sat, 16 Jan 2010 06:54:42 -0500
+Received: (majordomo@vger.kernel.org) by vger.kernel.org id S1753290Ab0APLyl
+	(ORCPT <rfc822;linux-kernel-outgoing>);
+	Sat, 16 Jan 2010 06:54:41 -0500
+Received: from n7c.bullet.mail.ac4.yahoo.com ([76.13.13.84]:29187 "HELO
+	n7c.bullet.mail.ac4.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1753246Ab0APLyk (ORCPT
+	<rfc822;linux-kernel@vger.kernel.org>);
+	Sat, 16 Jan 2010 06:54:40 -0500
+X-Greylist: delayed 371 seconds by postgrey-1.27 at vger.kernel.org; Sat, 16 Jan 2010 06:54:40 EST
+Received: from [76.13.13.25] by n7.bullet.mail.ac4.yahoo.com with NNFMP; 16 Jan 2010 11:48:29 -0000
+Received: from [68.142.237.87] by t4.bullet.mail.ac4.yahoo.com with NNFMP; 16 Jan 2010 11:48:29 -0000
+Received: from [66.196.97.154] by t3.bullet.re3.yahoo.com with NNFMP; 16 Jan 2010 11:48:29 -0000
+Received: from [127.0.0.1] by omp207.mail.re3.yahoo.com with NNFMP; 16 Jan 2010 11:48:29 -0000
+X-Yahoo-Newman-Property: ymail-5
+X-Yahoo-Newman-Id: 137980.46018.bm@omp207.mail.re3.yahoo.com
+Received: (qmail 47845 invoked by uid 60001); 16 Jan 2010 11:48:28 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s1024; t=1263642508; bh=U+8yXdduhXeYtKelujOE+0wHSOW+UnqPijviFWnKz3s=; h=Message-ID:X-YMail-OSG:Received:X-RocketYMMF:X-Mailer:Date:From:Reply-To:Subject:To:MIME-Version:Content-Type; b=IlKEXwE3A6wc2Xj+dVHwTg97EIXrGbo+yVUrgS3EalgRIcjVxvvKl1ct8AzdMxhsSJcnfrpBzbnA0T8r2fVif+erdYR1OrPP+my1zq6SM/IiIuL5ElKU7zhKYe4eFV1SRqG4vOk3vKqngG5QAgpeRAIb7Z5ilb9LCxJFRzjru2U=
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;
+  s=s1024; d=yahoo.com;
+  h=Message-ID:X-YMail-OSG:Received:X-RocketYMMF:X-Mailer:Date:From:Reply-To:Subject:To:MIME-Version:Content-Type;
+  b=oDJdY0A1W4RRkO+/EncBmeu1WyHtC9bA9WX2tRJ2ZY4bg9APduzyRhdi1shoayhL9cW+/1GmB4AA3YL8Uu1/ZtpMqvFZVaw0jojJSzgPM3oksj1EvPDV69IlqRDDBGxiOMCXscqH6E2B2sdEgNHSl+JHX79ui/9bJF2QivKNxjw=;
+Message-ID: <830578.47841.qm@web84205.mail.re3.yahoo.com>
+X-YMail-OSG: 2wEz8koVM1mFpkRIrh2UKnOzFlw_3OhDszJbuHSw.sgKAuRYbzP8TbvqPIlL1QQHlyC2SfFmzb5mrFrcOB8JzyAFyRzZmw3ak27BxPL_uQKyJ9B0BIApngwsOWmbiGReMwpDH6l7GQhzdX30xDEtQtYJ.b4cDM.qSeMvGzd581WUlMUujNskmBR0vfnP0x7i3shgYG3bxyop4EoBtphvxRj2tWw8Z41IAFutDGYmh0en5e9GT05Sufr.RGLZczyGG6AloFLG8VGe9.skAGfv8ydKKVJV.__2EH2HcvaVOCnETvpJnoa653seUPdHLn2.IG.kGmtrVGPqgE810VI7iYMesqNZ2L5uEZq4vIc8zrrUkYZtmDSkOx5J1k2OkZmUFI62DWqY6mORnPDY.VusnJW67cji5ty8lIGEy1TFpoA.M9n87tqhIlVDvJRSjtb77G3X7Il3ms5HSRjMl1CHlqSWzcc0CDVbvR3iHiB7NOwXpLB0oP_CI3K1FeEoJII_isRBYEQXznBsqlGib.pFoAfNPfLHAM82aWxW_eYPAs3FXvmODTZJOTEt5BCpypItbrGRnFummkHPkCegENgm90JTBQRQ4DB0lwMH2mhEYYV5LXL95hZFwZDPtgA.1xPonoqyS1crPlhtByiPPLyluHM9izRixcUswAYh1FUDAi0ENEA8UzJzXP.gJJWVG_SIXRVLivbAjn6c5whioP9oMahRvsodsC6ocVufJ.YG0uCOZKILnQ2UJYJSrGtxszJzgCDv4B7TuYNt0ckrvKS286280MVCDf6EvPRrw8vm7w4vAwgPpPeZGwNa9YL5kkYZiyNvN5PDUBcUa4xD27Cjaj585Gn1OPQPxdjn0xo.FygomsRs5GoBploWbwo39w4Zln22_Lr0byLmO9TKOzMSc8Y2k4A9v7lN3yk2X6XnXyXcLr5DbOxfjXQ1_npkvg.3eIMTHyFaoVGSa8gohtf2Glvdpl9MDdmLqx62ifrMcTeYhdyWWdZpdi20IGqWhRuvZA5OrQei8n4vcCZ8klMaPfCb2PKxvjulRmvAxLyMiOi65WCW.TwQ2bOiIGFsNvNV9sEo02aoV1Ia2YXC6mI.dDhJ5cuNhjcStSlCJx85FNodU3868NwDwUYJOgTMCi2HK48N_padKn.lPAny24loVDzMYd4xhAvNePL6i9grf2WUQkvyCdkH_LxgUvdPtzEFcdeORbO5BR9smLayJM9v_QI_m8F0EvUS9o6VWYHefe7SM6alFgfzxa2oaTpoBylm2fpkcVW.oUBDaR9d2.emcCiR05O9U50qkSROQzBJDUvGHefereQ2csYk8vfh6pXeBHjdS0SLSyVGrrmV8dHKHw7ihAGx.gcoLbucNOn4czs3tWVWWwY2okcu8ig7hM3De9HdXiZvXSucgnl_zKJZH_tJRWTbdMfMYXJ9Chaomt3JxyoTb9Ctz_hK6t5UYutwVhC6uR7jaKNbp8w1zLmqoph823tju8wy1XabfBWOoR.vC8qiLXLPbtKsXazDnA_ETXAclkHtJiZdmFUTb8naGgmJq29JkUlW3Ambg1NP8jMXBNvmwIscNW_I4l56.YDMkziUJRneOAlFgQ11zkB60wmi0SMDyc0hPU2LIRVz7jEicfGaw8jlodmCsRcZIigTCG5.ZX854Ah8o_dvImsQe5V3k.._xvkEkJAkKskRhKrundmd1PSiW.7X5ylY2w9AesItfRexyr10QEi0UGcK2Q2DzyY9LcloqF05T81feyNhKDnCE81Z8pN5HP.3XWLkqAqZOylWw6f09dXkqPClMBwpzwCeBwkVMVOITPZE0rRlFTulMTq8Ly4ITD1KwbmUK1uF_GHMUGAqEg91a_qWfC1X3JKCIoN2PBWGOZPbN8.XAvZ4ksEQmHlfGgHKbDV4vrohKJ6J2SgNTbc9kN1IQi6HtJMXj_gjY7SnQlMvLv66D0S2lLncx_1MrtPW8XWc4d26h.nI6asj1PB4mqg1sexIIwpSRGBwPJXyj3r8cD33._lO04Jk0Fv6o4mkIx2Wi0ThNx2t8ToH4lqhEyAH0YiQkYM48weR57G_CAeBzVFYNEcchEBlIddRbUPuYWjpG9_NO7JYKPnJcJaSEMYK8lXWXI3Xt5bkqA2qX9xlAhTuGYDug4sUYzWJuedx8iNDmph2Vi5E__89onqpEr7EjRib7oVSTCgBiy1JY6OLlUxgvckOwe1NLwKVTkppE25wicAhCyRV51rd1OMmW4PFLRTPuncmeejUA7DtTLdY6WJ3VPmrL04vbC8hJIk8VCLX38HZh3Vi_jsJOasj5HYhXCdmM6tdlmsWzYfJTuYAuEWhzpt3UTFRcUlZkDZCjmsVTA7oTnbc5XM5.PovRQFNbmJInJFxiPIhFsPttQiUhus0kINexCfEPOIefuPrQWnlR9PhArzkd4tkFMSIb539rh6b9tc7W_BdMeRGpGd9c3A2jqvOEG3ycWfC1.6iuZV6VpQ157bocsanhMph2ZLwZUjqEOw_NKtRa7jOFmGeC9Cy9FrasgH1zM3Gx4a11K.trL7bDv00O11DxSwKcoGGP.I6coHmTncBPP8bg4xlNp693BMa6s7sRrFfMyLJDVVmGshmnt__vUsUCMGb3frWejIA4uzwiSRofrgTMl6ALndMoz02EqPSSb2lg9LxL5OxR4nmNu6L92VXvfJg9.FQYOtNjCx6lzCz3ch.NjFsfAtQnhFeGwNS7eHGrx1dC5ht9czFLmDK7KjE2WbAE_ycpNeeNuW7H_Iyuh_K6zqTjq5nhzS0lImCK12La3W5CJq1NRXi2CGtoa8otTEsT_CZrqzNgPq.4m4BWIMSHebKsqtR54rgoiciTl7hchVpNcY78pwgrZ6qdgBGbO2Oj2d32KB6GdGW7fZdwBz4hd_KC2.mus6HSLgnxI9Vv1Rt8u5x8b4dniaeskPcni8pON71trSmi0iGO2nOkfS7L8oPf2fPy9ikIE7g98UcaLYL1xJl13rCiR8ECJQCECUmodkvnHZhTVmkKaD5BiPbfBOvaQDnGr5m4MJylijZnTTrs4dha0ACarsezopjTlD8gMg49wGW6WQDmIIQyTPQCcwTObR4N.DrMFIvrHDBUrU0sJ4p6ySGk.0OK9zQCBF.ZNgKM2UwKhUC1HWDBxv1ByFST1vQAo8jxYHh3V355tIsv4yx9mIPYvXJVij1kUAkE3RXg58ct0HeVgrIdQrzO9PTwbr84VBRhCcxbCIacJK3cuU9wHA_FQwVkhVcO1TrP8OxqyTyUE9eHAGAfpbCYkkFCbgNfWIDPJ91v.W8Z2BDVXYCpNdDP1WpIDHEnfzwQVyMXFhIva.g59Szn5MB4f7EuKO59o.Fk7mNKpH_kqPgC3zeuzkm1_QP8wHT8GHTmuEgmzc_pD9S.cHiKIKxJVYj6k7wJCj85JSO7AfUtYn1Ta0xMvAzH8pW4PddxZkDwvulR0NnaDgjpMIC7v3R6BFH9A6_O4oQEGE.BZh0BcXYJ0cdHXpXLxavWwzWEIKpOvx9kToMs.ZBBKlpEfM8OfNeVpWtwI0AJ0nXYaCpqvZTg4AOnajmA3y34g0QnkMZu5avryXlq.63QF1LYCVRQLUpv5T7ITiasU8bRbCDPPHM8w5Tpcfe0kcVRjnI0Gczm_iz5N5FhhLjylPE8DhLumJDuBCL..3lCK1KNLU5eRzms7Cgz5F1TpdmNDkXxrOtgLL3gmFDleqFs.pZ24IGuBOuvgUK1.8qJcHt51Wd9g9EmyH.1wAdAAzcVlJEfPOKnsZ0.VkXu05lwI6RFY1Wb9C4A4j_j2k470sL5jYQojT_zWD4Z2tl9IayQb2xUFdLO9wW7gdY8VjSfF3RQ1QJ4d6eujaRwmnOc0i7lps1EzyNlzbofVh8JE9fx9zwPm8KSdO.V1s8cAvzlJ9IrvwX5Qmzoc.Yz7fjdJcGrgArKV7J4fmg1DgC3brIuYGHLVaEUfReceived: from [41.242.195.129] by web84205.mail.re3.yahoo.com via HTTP; Sat, 16 Jan 2010 03:48:28 PST
+X-RocketYMMF: ga_couple1
+X-Mailer: YahooMailClassic/9.0.20 YahooMailWebService/0.8.100.260964
+Date: Sat, 16 Jan 2010 03:48:28 -0800 (PST)
+From: dr david sasi <dr.davidsasi@yahoo.com>
+Reply-To: drdavidsasi1954@gmail.com
+Subject: CRUDE OIL SALE AND LICENSE
+To: undisclosed recipients:;
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="0-1688257999-1263642508=:47841"
+Sender: linux-kernel-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-kernel.vger.kernel.org>
+X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Length: 770
+
+--0-1688257999-1263642508=:47841
+Content-Type: text/plain; charset=us-ascii
+
+Dear Sir/Madam,
+
+Please open the attachment and found my mail personally addressed to you.I will be expecting your urgent response.
+
+Thank you,
+Dr.david sasi
+--0-1688257999-1263642508=:47841
+Content-Type: message/external-body; access-type=x-deleted; length=29150
+
+
+Content-Type: application/msword; name=FORM
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="FORM Dr David Sasi.doc"
+
+--0-1688257999-1263642508=:47841--
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please read the FAQ at  http://www.tux.org/lkml/

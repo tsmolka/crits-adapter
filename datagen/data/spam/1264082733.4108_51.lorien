@@ -1,0 +1,148 @@
+Delivered-To: bruce@untroubled.org
+Received: (fqmail 9830 invoked from network); 21 Jan 2010 01:45:12 -0000
+Received: (qmail 25892 invoked from network); 21 Jan 2010 01:45:12 -0000
+Received: from web87012.mail.ird.yahoo.com (web87012.mail.ird.yahoo.com [87.248.114.64])
+  by mx01.futurequest.net ([10.2.1.171])
+  with SMTP via TCP; 21 Jan 2010 01:45:12 -0000
+Received: (qmail 21184 invoked by uid 60001); 21 Jan 2010 01:45:10 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=btinternet.com; s=s1024; t=1264038310; bh=qky2L2VyDAambnV1UP1p7wOUww89cln1KP+MBwKT02Y=; h=Message-ID:X-YMail-OSG:Received:X-Mailer:Date:From:Reply-To:Subject:To:MIME-Version:Content-Type; b=BhMx2y1FHRq5YuYDXo6KJxdHd9sS0uvzx3iGz97jEkv5+I4QGb4m/Aav9B8ZLThj/VSs6+YZ+yPKE/xhPR7R+j2ek8MITspqfeQld6bpU3yc0vkTCrmwC6A4liL8aRgtYO54jIPxp2z7mrZY1J15I2DCG+IQQbxDcj79jtTvlsU=
+DomainKey-Signature:a=rsa-sha1; q=dns; c=nofws;
+  s=s1024; d=btinternet.com;
+  h=Message-ID:X-YMail-OSG:Received:X-Mailer:Date:From:Reply-To:Subject:To:MIME-Version:Content-Type;
+  b=Wr/HYcQJyuMe+knNxTqxWD45wLqITIoAiqvhO6pl88T8eHI87XuD/Tl/kn9PJMhikHU0cChTb//dc+ElITIdYqemt3jmgekQfPAtLWT0b6pJN1iWBtDRjfapLTVboJjhTqWDTjShl2AUF8H96bl0hFsVNK9X7++UAwpKlZulHws=;
+Message-ID: <671959.20820.qm@web87012.mail.ird.yahoo.com>
+X-YMail-OSG: _8jBpQ8VM1lMuOCJyYd5Jj5347TePtUsN8PjSE26QFGUuLKMS4Jc0MOsZw0efhEHHQRvNI8.IR06g1uKFHSVKH6rLer8DylJgCB44BmxIo79TvNsjqI3MDOMaaqvIAhEdUwfkc5r1VNxUSqhCWH5ahwrTDbVZ0G1ZaWJfAnlLVygH74Gbm0.XiVEaqljr4J2GGjhuW9lPADmSlnEbBtS6MGKcMUsMNrmaJIeN8cwnMq0WCJHMZWdE8sQqAQIpeGB8SAe4yMsFhHXS7b0XlqXzhuhcE.2KBBss5azxRil26mlkyv1q_TGHc3mX3yJY9wB74r501Qd__Bv7OFQSzP9yjPDbQLCkKy9SatUOoKao4wdYS38YFmUS7f0q33WrCPmsVFtXH9lVSCVfWLsLUlRg3MMZduRny4uBBCiJpjAFhQIswNIlpbS3KC8ISlAgLvfpCTfkfBIWSTJKInkbU_yr5mp0a2OA3K3JISVXUBWlprlDQaasrHj4UNts9vzw4OQARV8Cr8h.7X7VqgjQxk6.kxb82MVqoZhi3g0XdylgB2DxuJSCDeg7Yojf4i8KDlK.2luKCFJL3NPzQfPKZpQ4gvO_WmRw0jgwXJ58g5oyPDoULB5x4U7whgpM6OxgwOToQoYibBsJ4MYyVHzqEGoon3WpLTeo7rN__MZ6iYOW2N6EozuebkufVhsS65Ha2NFKroloOATqPeMJ3pt_BIfptAOgYETYlv_2koFqvO02JrkNpm.5S4jup9qvqKICRSbtMJmH6Vi4npcdZMSHuBhBpiiDHfujp_4uXEuG_n13niAUHeJqtoOf9qbqrOOOKStSswEtHr8kNKWL8ibeQLOK1kA28Stkmmtba3AtJR9tG6EKOjrQF6t3LYYlZmr.EDz1CdqYLBdKYfjo4pp1tECAZt90KF0DckbjaejA6wxoHmSO4pwOiFS_eqixyQ8H6C_W3i17MFxQnQoX8v0m5wOGOxSxMKN5ijTZj7RxbfohmKEy9RzM2as0Fhw8FKyJzwuZK9ETJPzW1Cgl8lunj9xzImf5VGNYT.iUvQV1RLyoqp5HmQQa9AJbbMpHSiswXDsoBuuhFl0GBzf3eZHNomIvSGsM7n_6eJoNSvdnSwFCn4QvFNDKbFAottUVXZ2ZYWJih71uzhiK.DETCr_rgD4zyhMz7Xw_FA4WUVEGST1kH9MQjI9a66FXXbWxRzL4xR_pT8jBA--
+Received: from [41.207.196.32] by web87012.mail.ird.yahoo.com via HTTP; Thu, 21 Jan 2010 01:45:10 GMT
+X-Mailer: YahooMailClassic/9.1.10 YahooMailWebService/0.8.100.260964
+Date: Thu, 21 Jan 2010 01:45:10 +0000 (GMT)
+From: KONE SUSAN <kone.susan@btinternet.com>
+Reply-To: kone_susan10@yahoo.co.jp
+Subject: Dearest one,
+To: undisclosed recipients: ;
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="0-1993303226-1264038310=:20820"
+
+--0-1993303226-1264038310=:20820
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+Dearest one,
+
+Good day, I am Susan Kone the only daughter of Mr.Simon Kone a licensed sol=
+id mineral (gold, diamond, etc) exporter before he passed away.=20
+Before his untimely death, my father apparently married a woman who became =
+my stepmother because my mother died when I was six years. My stepmother al=
+ready have 2 children for her former husband who are almost my age before s=
+he got married to my father, and they came with her to live in my Father's =
+house. I discovered that there was some ill feeling from my stepmother towa=
+rds me since after the death of my late Dad, since after then I have been b=
+adly treated, being forced to undertake work befitting like a servant in my=
+ own father's house. When my father died instead of being in the state of m=
+ourns as custom and traditional demanded, she went as much as desired and c=
+laimed my father's house properties etc that in future regarded as a possib=
+le danger to my live.=20
+Before my father passed away recently, he called to informed me privately t=
+hat he had a deposit=A0=A0 valued three million five hundred thousand USD (=
+$3,500.000.00usd) in a bank here in Ivory Coast which he intend to move to =
+abroad to his foreign associate for investment on my behalf, this money was=
+ acquired from the diamond/gold export contract he secured and executed und=
+er the umbrella of the government.
+
+Truly I don't know you but considering my situation and security, couple wi=
+th an uncontrollable crisis between me and my stepmother, I discover my lif=
+e is no more safe here. I therefore confided on your assistance and write w=
+ith due respect and ask for your kind assistance to please help me and get =
+these fund transfer to your country and lodge the fund to your account in y=
+our country on my behalf as my late father's foreign associate for investme=
+nt.
+
+Meanwhile I am willing to offer you 20% of the total amount for your assist=
+ance after the successful move of these money to your country for investmen=
+t; I have plans to do investment in your country, like real estate, industr=
+ial production or any other lucrative investment you bring to my notice in =
+your country when I come to live with you.=20
+Please if you are willing to assist me, indicate your interest so that I ca=
+n communicate with you for more details and immediate procedure.=20
+Thanks and waiting for your urgent response.
+Yours sincerely.
+Susan Kone=20
+=A0
+=A0
+=A0
+=A0
+--0-1993303226-1264038310=:20820
+Content-Type: text/html; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<table cellspacing=3D"0" cellpadding=3D"0" border=3D"0" ><tr><td valign=3D"=
+top" style=3D"font: inherit;"><P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm=
+ 0pt; LINE-HEIGHT: 12pt"><STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #33=
+3333"><FONT face=3D"Times New Roman">Dearest one,</FONT></SPAN></STRONG><B>=
+<SPAN style=3D"FONT-SIZE: 10pt; COLOR: #333333"><BR><BR><STRONG><FONT face=
+=3D"Times New Roman">Good day, I am Susan Kone the only daughter of Mr.Simo=
+n Kone a licensed solid mineral (gold, diamond, etc) exporter before he pas=
+sed away. </FONT></STRONG></SPAN><STRONG><SPAN style=3D"COLOR: black"><?xml=
+:namespace prefix =3D o ns =3D "urn:schemas-microsoft-com:office:office" />=
+<o:p></o:p></SPAN></STRONG></B></DIV>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: 12pt"><STRO=
+NG><FONT face=3D"Times New Roman"><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #3=
+33333">Before his untimely death, my father apparently married a woman who =
+became my stepmother because my mother died when I was six years. My stepmo=
+ther already have 2 children for her former husband who are almost my age b=
+efore she got married to my father, and they came with her to live in my Fa=
+ther's house. I discovered that there was some ill feeling from my stepmoth=
+er towards me since after the death of my late Dad, since after then I have=
+ been badly treated, being forced to undertake work befitting like a servan=
+t in my own father's house. When my father died instead of being in the sta=
+te of mourns as custom and traditional demanded, she went as much as desire=
+d and claimed my father's house properties etc that in future regarded as a=
+ possible danger to my live.</SPAN><SPAN style=3D"COLOR: black"><FONT size=
+=3D3>
+ <o:p></o:p></FONT></SPAN></FONT></STRONG></DIV>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: 12pt"><STRO=
+NG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #333333"><FONT face=3D"Times New =
+Roman">Before my father passed away recently, he called to informed me priv=
+ately that he had a deposit&nbsp;&nbsp; valued three million five hundred t=
+housand USD ($3,500.000.00usd) in a bank here in Ivory Coast which he inten=
+d to move to abroad to his foreign associate for investment on my behalf, t=
+his money was acquired from the diamond/gold export contract he secured and=
+ executed under the umbrella of the government.</FONT></SPAN></STRONG><B><S=
+PAN style=3D"FONT-SIZE: 10pt; COLOR: #333333"><BR><BR><FONT face=3D"Times N=
+ew Roman"><STRONG>Truly I don't know you but considering my situation and s=
+ecurity, couple with an uncontrollable crisis between me and my stepmother,=
+ I discover my life is no more safe here. I therefore confided on your assi=
+stance and write with due respect and ask for your kind assistance to pleas=
+e
+ help me and get these fund transfer to your country and lodge the fund to =
+your account in your country on my behalf as my late father's foreign assoc=
+iate for investment.</STRONG><BR><BR><STRONG>Meanwhile I am willing to offe=
+r you 20% of the total amount for your assistance after the successful move=
+ of these money to your country for investment; I have plans to do investme=
+nt in your country, like real estate, industrial production or any other lu=
+crative investment you bring to my notice in your country when I come to li=
+ve with you.</STRONG></FONT></SPAN><STRONG><SPAN style=3D"COLOR: black"><FO=
+NT size=3D3><FONT face=3D"Times New Roman"> <o:p></o:p></FONT></FONT></SPAN=
+></STRONG></B></DIV>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: 12pt"><STRO=
+NG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #333333"><FONT face=3D"Times New =
+Roman">Please if you are willing to assist me, indicate your interest so th=
+at I can communicate with you for more details and immediate procedure. </F=
+ONT></SPAN></STRONG><B><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #333333"><BR>=
+<FONT face=3D"Times New Roman"><STRONG>Thanks and waiting for your urgent r=
+esponse.</STRONG><BR><STRONG>Yours sincerely.</STRONG><BR><STRONG>Susan Kon=
+e</STRONG></FONT></SPAN><STRONG><SPAN style=3D"COLOR: black"><FONT size=3D3=
+><FONT face=3D"Times New Roman"> <o:p></o:p></FONT></FONT></SPAN></STRONG><=
+/B></DIV>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"C=
+OLOR: black"><FONT size=3D3><FONT face=3D"Times New Roman">&nbsp;<o:p></o:p=
+></FONT></FONT></SPAN></STRONG></DIV>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: black; FONT-FAMILY: Arial">&nbsp;<o:p></o:p></SPAN><=
+/STRONG></DIV>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><FONT size=3D3><=
+FONT face=3D"Times New Roman">&nbsp;<o:p></o:p></FONT></FONT></STRONG></DIV=
+>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><FONT size=3D3><FONT fac=
+e=3D"Times New Roman">&nbsp;<o:p></o:p></FONT></FONT></DIV></td></tr></tabl=
+e>
+--0-1993303226-1264038310=:20820--

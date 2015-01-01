@@ -1,0 +1,53 @@
+Delivered-To: bruce@untroubled.org
+Received: (fqmail 21587 invoked from network); 19 Jan 2010 04:12:24 -0000
+Received: (qmail 12250 invoked from network); 19 Jan 2010 04:12:24 -0000
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+  by mx13.futurequest.net ([10.2.1.186])
+  with ESMTP via TCP; 19 Jan 2010 04:12:23 -0000
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+	id S1754478Ab0ASEMP (ORCPT <rfc822;bruce@untroubled.org>);
+	Mon, 18 Jan 2010 23:12:15 -0500
+Received: (majordomo@vger.kernel.org) by vger.kernel.org id S1753442Ab0ASEMO
+	(ORCPT <rfc822;linux-kernel-outgoing>);
+	Mon, 18 Jan 2010 23:12:14 -0500
+Received: from n62.bullet.mail.sp1.yahoo.com ([98.136.44.35]:39340 "HELO
+	n62.bullet.mail.sp1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1752438Ab0ASEMN (ORCPT
+	<rfc822;linux-kernel@vger.kernel.org>);
+	Mon, 18 Jan 2010 23:12:13 -0500
+Received: from [69.147.84.145] by n62.bullet.mail.sp1.yahoo.com with NNFMP; 19 Jan 2010 04:12:04 -0000
+Received: from [69.147.65.162] by t8.bullet.mail.sp1.yahoo.com with NNFMP; 19 Jan 2010 04:12:04 -0000
+Received: from [127.0.0.1] by omp407.mail.sp1.yahoo.com with NNFMP; 19 Jan 2010 04:12:04 -0000
+X-Yahoo-Newman-Property: ymail-3
+X-Yahoo-Newman-Id: 789834.39093.bm@omp407.mail.sp1.yahoo.com
+Received: (qmail 75009 invoked by uid 60001); 19 Jan 2010 04:12:04 -0000
+DKIM-Signature:	v=1; a=rsa-sha256; c=relaxed/relaxed; d=sbcglobal.net; s=s1024; t=1263874324; bh=usqBKe27bLQ+N64WXvS0ZNc2dw022RDo5OznvLb5UEY=; h=Message-ID:X-YMail-OSG:Received:X-Mailer:Date:From:Reply-To:To:MIME-Version:Content-Type; b=HBaDBioCELxe7wBQ29zrF8pmg0E7Ys4LR7Ahp0+xnBvPlw+peIzcTb3/qST2Bg7zAgT+YeRpdIiH+DNYM/9jU6a6kaQp2CbSI+x26SsqyGg4m7tb++fO9tepYbeK5xKtVG3SmUuq6ER7CWnJPU2w0xwpGZRlWEfvxryO5hrwJlo=
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;
+  s=s1024; d=sbcglobal.net;
+  h=Message-ID:X-YMail-OSG:Received:X-Mailer:Date:From:Reply-To:To:MIME-Version:Content-Type;
+  b=rKxexXKMyrAi8uIalnlVIfPU/aAnRWhjyH5faPZ7wsvtUqzxhgr0GCBzIIYMpVsCwYYvpBxQKh/lCzSa76c23TT5WgDkc/ycuOogDEB7IA4wYjGthbmyO27pZ1Ykq/8OXJ+LZluLYXV5OxP+S1GpQtyCihjrX8HdElR7LTVZsHo=;
+Message-ID: <467641.73507.qm@web180613.mail.sp1.yahoo.com>
+X-YMail-OSG: eZDmFc4VM1mIHan2_OU8GeBfl5NUNFQaaH9VRnvUfumhCDg9gHIXy1lfy2V37p8wpTrTa5jZmwRRpgk82_DVzioVRnnuIDsFbiOYAtAavTkSBi9FCkYgzAhh7nZ63UuXZlmu1JMyNUVTCZBe5klRD93zs6hgo3spSw3kuEwlarvPUqNGb_sS1U.J.J9Cy2408r6GUBsEXRQumMQOcGaYvk0rZ64YHp9O.0jrv59k0G1C5U_b1fc6_rMNea8KWy3p31OOs0btQZcZgRDpcEeE7dXwD5dueO4_G1IJBF7cUMHbqRO.kz6yPcd60zIjsa8YNqyGTFw3Muxbe2tAOoOgx.Zer1XyMuJDxkM9FAUECEvGEJkNFpifgOpxRzBOMXkbT_bvyCjtWLHsthyf4doEpCgGWOZrX14DcSbor7dD6mrqd6FOV5ptRcw.0ChCZ9V8K3myqCgd9hHq75jIdMAuEPBpg.vF1xgFVpD2giym2E6hXlj8j_YodFm46ZYiHQQTJIY9b7IbfBaxyehWlMulWaorRiElptU3ahN.k2ravZyZsFiRaR97p61KV_hJh0Q7GVFDP4nIilfZXzZ8m0LE6VsP5og8UZJnhyGaIfeD8omMzDHcFt2ob0gW.iGIJIMAwg0gcrHibnhwAbVeewLrMmsPB2o4_kpytTpV9jvnufxuRzjSFUtjXRv71LDZBxt8M57Wy26UDS3yhmVUOIKV_iBM03RAYZFVU1qXFUueGT_3h_WXu.PDnmzLhJ7Ckcb3PaA5O6X2x.ZDg5LwnfdgeQ3vrct0veNAo_SjIz9x5EHrVu7yAgM4E4sKvxzdzA0J4Ta9c0XD77Aw6E8JB5wtIflBhmfvQtciCvLCnNoIUTFxW5DXzqqioldLD4Pe_SrR6Or.dHAH5jcgxauh6u9hOxY0_lWjjgGdU7gktdmAtGlwHVdqqfSTOa4FWDq8xGnG6weW4Z_zTxGGhzKTBEgPs_8IOsxmO0DcLcI8UsllTGquGuD.xD0imyPHedzXjXTWexGJMdfnKw--
+Received: from [68.234.1.18] by web180613.mail.sp1.yahoo.com via HTTP; Mon, 18 Jan 2010 20:12:04 PST
+X-Mailer: YahooMailClassic/9.0.20 YahooMailWebService/0.8.100.260964
+Date:	Mon, 18 Jan 2010 20:12:04 -0800 (PST)
+From:	"Sgt. Ken Holland" <sgtdjones@sbcglobal.net>
+Reply-To: sgt.kenh@yahoo.com.hk
+To:	undisclosed recipients:;
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Sender:	linux-kernel-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-kernel.vger.kernel.org>
+X-Mailing-List:	linux-kernel@vger.kernel.org
+Content-Length: 654
+
+Permit me to approach you in this manner.I am Sgt. Ken Holland of the US Marine in Ba'qubah,Iraq. We got the sum of $15,500,000.00 we made from some Crude Oil Money deal that i will want you to help us receive. Since we are working here on Official capacity we cannot keep this funds hence my contacting you. If you are interested, do get back to me so that i can give you further details.
+
+Sgt. Ken Holland
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please read the FAQ at  http://www.tux.org/lkml/

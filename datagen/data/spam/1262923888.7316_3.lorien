@@ -1,0 +1,315 @@
+Delivered-To: webmaster@ezmlm.org
+Received: (fqmail 3868 invoked from network); 08 Jan 2010 00:58:44 -0000
+Received: (qmail 3560 invoked from network); 8 Jan 2010 00:58:43 -0000
+Received: from n13a.bullet.mail.mud.yahoo.com (n13a.bullet.mail.mud.yahoo.com [68.142.207.51])
+  by mx11.futurequest.net ([10.2.1.184])
+  with SMTP via TCP; 08 Jan 2010 00:58:43 -0000
+Received: from [209.191.108.97] by n13.bullet.mail.mud.yahoo.com with NNFMP; 08 Jan 2010 00:58:43 -0000
+Received: from [67.195.9.83] by t4.bullet.mud.yahoo.com with NNFMP; 08 Jan 2010 00:58:42 -0000
+Received: from [98.137.27.131] by t3.bullet.mail.gq1.yahoo.com with NNFMP; 08 Jan 2010 00:58:42 -0000
+Received: from [127.0.0.1] by omp205.mail.gq1.yahoo.com with NNFMP; 08 Jan 2010 00:58:42 -0000
+X-Yahoo-Newman-Property: ymail-3
+X-Yahoo-Newman-Id: 637920.56115.bm@omp205.mail.gq1.yahoo.com
+Received: (qmail 86769 invoked by uid 60001); 8 Jan 2010 00:58:42 -0000
+Message-ID: <507866.85874.qm@web180511.mail.gq1.yahoo.com>
+X-YMail-OSG: g0FV5hwVM1kVYIoevfZVSzQKcd2CsP2q.IYuFkCB5QlPj_56TY7RIZnj84yOJYueACy2zvUw_cb5sl2A0j9I.wMn9rW6fGsIqSt31cFm4FUhecvicz02b4vzfeHJcqwqDj.PIMpNxe3nHBa.LeiPFc0CKi4i50mG2oeFXBUW.ZzSJz2.syff.76Lc1tgoUuEPH8uSfg6doiw6kL_ZY9jtaaaygj2e4IXRPM_C5c3iBygk8Zs3YRlFEgdYdSSg_2tFE2UnBdzSdSoxm46f3oLQWDGldV8sxgP9hQuzTEfqvExNQTNA5l5bkFzcRGbS5N3udxRtIzEk4Uh2Dok6fkwa_MHJp.BddTffaW.vqN.ih0MrYXkyFNXjT2KW9URQJMyudpsWIyjLsyV_IROJhJtE.jNKpZ9vKyT5A0S6HZXn3nFnUItpCxOACM4maMgc7RgGwKHYWCOsIxKaop4cYIQtXMNMdFoBG18oGj7q730loAFpq4X9YGoWFC17M5WV1LgW4ZiTCN2CPnK8uGKmRzs63csL609Di6HRMIovRIPWawU_UcBdqhqcGKhY._saFG7GMqX35wDlEGLnD6UBfy_sD8nA7z7DMsK0758ZdtMyvItGIPajITNoikuEZ.ngy1DS9l4NE2MrHXrhXsKRI3z6i40KDIbdv9XYNIGlH1vYUMVYevf_YB6VwJqdtpovFUs.t0yg2wBvSlQXujnwogopwBYfDSQPFR3FcmpMMd_Tx7hdNQKyyu8fqbhYjRMEh91V9nwh2xzcfW1viqgO7u4RsDFYVQ8AqdWkicwJDJEeDZVxklRcrc2vh8hqO.33.B.P6KXdkAc2Csb1zkFyzCFO08wx7YChQXIPeOZJCOtqhGA_b3Wjf_ayzsrcfEncA1wkqbxq6Sfk8.MHWtQZ1KoUUrFMgUgyWczbcE2DnBexGWUQnBHF1HrQ3FigFKF2_dadgSwoJn9YPNWp_JOUeJjVfq68t7vI2IceGXeOX30ySQHJ9LQaN3euqWKoH7zBFoyXM6pWsqSD5Y2d4PvGPLb2ttl0S3J2q5A1uwoE0TTG7jqx3SS5qeO9tYpNv1LC3LQr1Kv0uOqB8be_1r7EgncKtxAouB3dTXM5LQJkwvXeNr1Oi4TOwudGBxbvByIyo0GKrfNFXVfYsKuz2PgjHss83tfuC5NXWZPFYcwowDQ8F7XNoK.C2hFKM7UgD0TZDoioh1ssGmzaIVJJTf5EwN_TSLzcIGhXfufBPBL2YiMg4EYm0ra1OegxnqhskbWlTIlxufAiJIatqFLyUwuWXJ7IzGYEjtkZAMbivuL5F4HktWbjLQKrVcJawcfqxvHwAAt.CzNhrFWU_nXDFiSqhQ0X_pABGvvTqHAV90lIkTJbeyZCkWPWz600BgdaUWNnU6xAy5QSkt1S9eiGqdkBjNJat2t0LQ02il9juPU2WWR2nHH15jzJP5YmI19lCCsIT7Iw.xMta2cvtD2HKvy6u0D9kT5oJUSffHHlWmuBgDMklKPWUTaowh8WslfbdVHg209jVddImwUa2FcposTNZzRo_TcZOfUbjiijnxRpzx86mMp_MiJtH0pOzEIXLQfARgUkfyqhAbMoo5CKTW1dgxXehEeWnVmMESIGViJye_jJtfY_3k1Jw1AUOfJ8hLaLUEEQO8iGKPBQLzEoJHjMO_lg_ZWePszVLwIj_ejl.6hUfqeZ800TrB31quCbPa2KXqST_nsJAQQNv0chKBJDFJrAAXXg0Sna0xG45WbUPwBsYuGNvN4l1ydX7rtp8pO7ZITOLnEZS4S6Zd22k7xnZVy01Qq1WkzEgGE_GU_wrPW6QJlnTlwF18KFaoMq0PIeVEW2.ckle8eh257Fmk92dfOJ0JQKZi1hxLPQDVvwLfduzPiNw8I1N12weFZpPLYl63wPqSv2g2AeTo_.aphOB8PjmrjQMTSEqF3z8ytEwoab5HejAdmAD_OSUpFut9sV_8lom18iydfskgMPhY4IO01WKy5YAa84BD8rd_3QL1hvfcgcXWia97L9NP6wipL2CmtmSXLqmgywiGkPiCWgwteZb24H1n.v0I.wMYjXAoFs6EeesAdDkO.EKqZsUVDhE5VF0Hnqa0nRL9CXI0PnYeZGObzTMkufXz8gcYntnPna2ZZFFdnX3J9jJQwJNzaZ_.bLarfe2zkoPQZA9i4SYJoCTDgHcvujMbyxr6uhPOqAT6BfzoclA_cr.P0RlsDkUfFpyhWPCQZqSksyyXGHJ3IYuDD4eR7MtOk4ntTsX9U.gqjIkbGVGrukcPD2mzAF85aomXU3wvTKFwb9nUA29j2DA4iQiY5KH9nd9VQK_wvzRJENux.MYpAFDpXSw_KgB4wlSAftPej3NT8EbyhGUcywKSMZGlWY0qjD_hmlQmXBDyvgA4VZiwfgv9n4roJGP1v53rDyuaRwtgInOU7QmeJfyX_ILJZnPxg2MZ4lY.3NGNdixpliA8KC6B7ntTuf0ahgD.v4hmOSBY2AF31bQkjGqs_3UkZUxPD85EiwwxRjUW4thoJ8o4nIim5ygi1d34ujdvsb_5MvuvyMAVHgxpgHgh_s_Yv..kjEl.rcLFSNFVaouYrNA55W7Q9hyH_cYlUKSo5w99WSddp01_9YCqx2oY5qO9v0oaoyYycPMOIt5QfqNfzLVwst2YpH1gSwkP4.JvtvJPDPuNFtPWujsKR42fSCDxE4YcDbM9jW5BNy22GcIEg5nnNenext3nVH4BVP35b9fcYCh_HMXAzEWMMtOJBig8vlxlvfKDt.pcdDz1Lcq5CH5EkkVFSzjrYm1VWTbUg7JK4H6EivqWalSzZ3T8-
+Received: from [41.217.65.3] by web180511.mail.gq1.yahoo.com via HTTP; Thu, 07 Jan 2010 16:58:42 PST
+X-Mailer: YahooMailClassic/9.0.20 YahooMailWebService/0.8.100.260964
+Date: Thu, 7 Jan 2010 16:58:42 -0800 (PST)
+From: "MR.PETER ATWATER" <jamesbrown1083@att.net>
+Reply-To: mrpeteratwater@hotmail.com
+Subject: REF-INSTRUCTION TO CREDIT YOUR BANK ACCOUNT
+To: undisclosed recipients: ;
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="0-2027037900-1262912322=:85874"
+
+--0-2027037900-1262912322=:85874
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+
+=A0
+
+
+
+BARCLAYS BANK PLC.=20
+CLAPHAM JUNCTION BRANCH,=20
+7 ST JOHNS HILL,=20
+SW 11 1 TN, LONDON
+www.barclaysbank.co.uk
+=A0
+=A0
+ATTN:VALUABLE CUSTOMER=A0 ,
+=A0=20
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 REF-I=
+NSTRUCTION TO CREDIT YOUR BANK ACCOUNT=20
+=A0
+This is to notify you about the status of your fund=A0 presently in my desk=
+.. After due vetting and evaluation of=A0 your Inheritance file which The Mi=
+nistry of Finance of the=A0 Federal Republic of Nigeria Forwarded us to see=
+ to your=A0 immediate payment.=20
+=A0
+
+From our findings you have been going through hard ways by=A0 paying a lot =
+of charges to see to the release of your fund=A0 ($5 000, 000, 00 ) which h=
+as been delayed.=A0 We advice that you stop further communication with any=
+=A0 correspondence from Nigeria. You don't have to pay=A0 any charges to re=
+ceive your Inheritance fund anymore as you=A0 have met up with the whole re=
+quirements, your=A0 representatives in Nigeria will tell you to still go ah=
+ead=A0 with them but on your own risk.=20
+=A0
+
+The only thing required from you is=A0for you to insure=A0this fund through=
+ one of the assigned insurrance company from nigeria the originofyour fund.=
+=A0We will help you to see that you=A0insure this fund=A0so that=A0 our ban=
+k will effect immediate transfer of your inheritance=A0 sum ($5 000, 000, 0=
+0) in to your designated bank account.
+=A0
+=A0 Please get back to us with below informations.
+=A0
+FULL NAME........................
+HOME ADDRESS....................
+PHONE NUMBER.................
+OCCUPATION.............
+DRIVERS LICENCE
+
+If you follow up our directives your fund will reflect in=A0 your account w=
+ithin five working Bank days from the day you=A0=A0insure this fund. Do not=
+ go through anybody again but=A0 through this Bank if you really want your =
+fund.
+
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=20
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 YO=
+UR SINCERELY,=20
+
+Mr. Peter W. Atwater.=20
+
+=A0
+
+
+Managing Director
+BARCLAYS BANK PLC LONDON.=20
+=A0=A0
+--0-2027037900-1262912322=:85874
+Content-Type: text/html; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<table cellspacing=3D"0" cellpadding=3D"0" border=3D"0" ><tr><td valign=3D"=
+top" style=3D"font: inherit;"><DIV><FONT face=3DArial size=3D2></FONT><BR>&=
+nbsp;</DIV>
+<BLOCKQUOTE dir=3Dltr style=3D"PADDING-RIGHT: 0px; PADDING-LEFT: 5px; MARGI=
+N-LEFT: 5px; BORDER-LEFT: #000000 2px solid; MARGIN-RIGHT: 0px">
+<DIV><FONT face=3DArial size=3D2>
+<DIV class=3DEC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_MsoNormal style=3D"L=
+INE-HEIGHT: 14.4pt"><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #00007f; FONT-FA=
+MILY: Arial"><STRONG><FONT color=3D#000000 size=3D4><EM><IMG style=3D"WIDTH=
+: 342px; HEIGHT: 71px" height=3D28 alt=3DBarclays src=3D"http://www.barclay=
+s.co.uk/images_new/home/barclays_logo.gif" width=3D164></EM></FONT></STRONG=
+></SPAN></DIV>
+<DIV class=3DEC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_MsoNormal><STRONG><F=
+ONT size=3D4><EM><SPAN>BARCLAYS BANK PLC. </SPAN><SPAN style=3D"FONT-SIZE: =
+10pt; COLOR: black; FONT-FAMILY: Arial"></SPAN></EM></FONT></STRONG></DIV>
+<DIV class=3DEC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_MsoNormal style=3D"L=
+INE-HEIGHT: 14.4pt"><SPAN><STRONG><FONT size=3D4><EM>CLAPHAM JUNCTION BRANC=
+H, </EM></FONT></STRONG></SPAN></DIV>
+<DIV class=3DEC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_MsoNormal style=3D"L=
+INE-HEIGHT: 14.4pt"><STRONG><FONT size=3D4><EM><SPAN>7 ST JOHNS HILL, </SPA=
+N><SPAN style=3D"FONT-SIZE: 10pt; COLOR: black; FONT-FAMILY: Arial"></SPAN>=
+</EM></FONT></STRONG></DIV>
+<DIV class=3DEC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_MsoNormal style=3D"L=
+INE-HEIGHT: 14.4pt"><SPAN><STRONG><FONT size=3D4><EM>SW 11 1 TN, LONDON</EM=
+></FONT></STRONG></SPAN></DIV>
+<DIV class=3DEC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_MsoNormal style=3D"L=
+INE-HEIGHT: 14.4pt"><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #00007f; FONT-FA=
+MILY: Arial"><FONT color=3D#000000 size=3D4><STRONG><A href=3D"http://www.b=
+arclaysbank.co.uk"><EM>www.barclaysbank.co.uk</EM></A></STRONG></FONT></SPA=
+N></DIV>
+<DIV class=3DEC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_MsoNormal style=3D"L=
+INE-HEIGHT: 14.4pt"><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #00007f; FONT-FA=
+MILY: Arial"></SPAN>&nbsp;</DIV>
+<DIV class=3DEC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_MsoNormal style=3D"L=
+INE-HEIGHT: 14.4pt"><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #00007f; FONT-FA=
+MILY: Arial"><EM></EM></SPAN>&nbsp;</DIV>
+<DIV class=3DEC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_MsoNormal style=3D"L=
+INE-HEIGHT: 14.4pt"><FONT size=3D4><STRONG>ATTN:VALUABLE CUSTOMER&nbsp; ,</=
+STRONG></FONT></DIV>
+<DIV class=3DEC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_MsoNormal style=3D"L=
+INE-HEIGHT: 14.4pt"><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #00007f; FONT-FA=
+MILY: Arial"><FONT color=3D#000000 size=3D4><STRONG><EM>&nbsp; </EM></STRON=
+G></FONT></SPAN></DIV>
+<DIV><FONT size=3D4><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp; <EM>REF-INSTRUCTION TO CREDIT YOUR BANK ACCOUNT </EM></STR=
+ONG></FONT></DIV><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #00007f; FONT-FAMIL=
+Y: Arial"></SPAN>
+<DIV><FONT size=3D4><STRONG></STRONG></FONT>&nbsp;</DIV>
+<DIV><I><SPAN style=3D"FONT-SIZE: 14pt; COLOR: navy; FONT-FAMILY: Arial"><S=
+PAN style=3D"FONT-SIZE: 10pt; COLOR: #00007f; FONT-FAMILY: Arial"><FONT col=
+or=3D#000000 size=3D4><STRONG>This is to notify you about the status of you=
+r fund&nbsp; presently in my desk. After due vetting and evaluation of&nbsp=
+; your Inheritance file which The Ministry of Finance of the&nbsp; Federal =
+Republic of Nigeria Forwarded us to see to your&nbsp; immediate payment. </=
+STRONG></FONT></SPAN></SPAN></I></DIV>
+<DIV><FONT size=3D4><STRONG></STRONG></FONT>&nbsp;</DIV><I><SPAN style=3D"F=
+ONT-SIZE: 14pt; COLOR: navy; FONT-FAMILY: Arial"><SPAN style=3D"FONT-SIZE: =
+10pt; COLOR: #00007f; FONT-FAMILY: Arial">
+<DIV><BR><FONT color=3D#000000 size=3D4><STRONG>From our findings you have =
+been going through hard ways by&nbsp; paying a lot of charges to see to the=
+ release of your fund&nbsp; ($5 000, 000, 00 ) which has been delayed.&nbsp=
+; We advice that you stop further communication with any&nbsp; corresponden=
+ce from Nigeria. You don't have to pay&nbsp; any charges to receive your In=
+heritance fund anymore as you&nbsp; have met up with the whole requirements=
+, your&nbsp; representatives in Nigeria will tell you to still go ahead&nbs=
+p; with them but on your own risk. </STRONG></FONT></DIV>
+<DIV><FONT color=3D#000000 size=3D4><STRONG></STRONG></FONT>&nbsp;</DIV>
+<DIV><BR><FONT color=3D#000000 size=3D4><STRONG>The only thing required fro=
+m you is&nbsp;for you to insure&nbsp;this fund through one of the assigned =
+insurrance company from nigeria the originofyour fund.&nbsp;We will help yo=
+u to see that you&nbsp;insure this fund&nbsp;so that&nbsp; our bank will ef=
+fect immediate transfer of your inheritance&nbsp; sum ($5 000, 000, 00) in =
+to your designated bank account.</STRONG></FONT></DIV>
+<DIV><FONT color=3D#000000 size=3D4><STRONG>&nbsp;</STRONG></FONT></DIV>
+<DIV><FONT color=3D#000000 size=3D4><STRONG>&nbsp; Please get back to us wi=
+th below informations.</STRONG></FONT></DIV>
+<DIV><STRONG><FONT color=3D#000000 size=3D4></FONT></STRONG>&nbsp;</DIV>
+<DIV><STRONG><FONT color=3D#000000 size=3D4>FULL NAME......................=
+...</FONT></STRONG></DIV>
+<DIV><STRONG><FONT color=3D#000000 size=3D4>HOME ADDRESS...................=
+..</FONT></STRONG></DIV>
+<DIV><STRONG><FONT color=3D#000000 size=3D4>PHONE NUMBER.................</=
+FONT></STRONG></DIV>
+<DIV><STRONG><FONT color=3D#000000 size=3D4>OCCUPATION.............</FONT><=
+/STRONG></DIV>
+<DIV><STRONG><FONT color=3D#000000 size=3D4>DRIVERS LICENCE</FONT></STRONG>=
+</DIV>
+<DIV><BR><FONT color=3D#000000 size=3D4><STRONG>If you follow up our direct=
+ives your fund will reflect in&nbsp; your account within five working Bank =
+days from the day you&nbsp;&nbsp;insure this fund. Do not go through anybod=
+y again but&nbsp; through this Bank if you really want your fund.<BR></STRO=
+NG></FONT></SPAN></DIV>
+<DIV class=3DEC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_EC_MsoNormal style=3D"L=
+INE-HEIGHT: 14.4pt"></SPAN></I><STRONG><FONT size=3D4><FONT color=3D#000000=
+><I><SPAN style=3D"FONT-SIZE: 14pt; COLOR: navy; FONT-FAMILY: Arial"><SPAN>=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN></SPAN></I><SPAN style=3D"=
+FONT-SIZE: 14pt; COLOR: navy; FONT-FAMILY:
+ Arial"><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></FONT></FONT></STRONG></DIV=
+>
+<P class=3DMsoNormal style=3D"MARGIN: 0in 0in 0pt"><SPAN style=3D"FONT-SIZE=
+: 10pt; FONT-FAMILY: Arial"><STRONG><FONT size=3D4><SPAN>&nbsp;</SPAN><I>&n=
+bsp;</I></FONT></STRONG></SPAN><STRONG><FONT size=3D4><I><SPAN style=3D"FON=
+T-SIZE: 10pt; FONT-FAMILY:
+ Arial">&nbsp;&nbsp;<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN></SPAN></I><SPAN
+ style=3D"FONT-SIZE: 10pt; FONT-FAMILY:
+ Arial"><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN>=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;</SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN></SPAN></FONT><
+/STRONG><FONT color=3D#000000><I><SPAN style=3D"FONT-SIZE: 10pt; COLOR: nav=
+y; FONT-FAMILY: Arial"><SPAN><STRONG><FONT size=3D4>&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;<FONT color=3D#000000><SPAN style=3D"FONT-SIZE: 10pt; CO=
+LOR: navy; FONT-FAMILY: Arial"><SPAN><STRONG><FONT size=3D4><FONT color=3D#=
+000000>&nbsp;</FONT></FONT></STRONG></SPAN></SPAN>&nbsp; YOUR SINCERELY,</F=
+ONT></FONT></STRONG></SPAN></SPAN></I> </FONT></DIV>
+<P class=3DMsoNormal style=3D"MARGIN: 0in 0in 0pt"><FONT color=3D#000000></=
+FONT>
+<P class=3DMsoNormal style=3D"MARGIN: 0in 0in 0pt"><FONT size=3D4><STRONG>M=
+r. Peter W. Atwater.</STRONG></FONT>=20
+<DIV><SPAN style=3D"FONT-SIZE: 14pt"><EM><FONT face=3D"courier, monaco, mon=
+ospace, sans-serif"><STRONG><FONT size=3D4><A href=3D"http://images.google.=
+com.ng/imgres?imgurl=3Dhttp://www.galtmile.com/images/calypso/saghir.jpg&am=
+p;imgrefurl=3Dhttp://www.galtmile.com/calypso.html&amp;usg=3D__yw3wKXW27FHv=
+bjE_qupbXVwqIkw=3D&amp;h=3D400&amp;w=3D300&amp;sz=3D25&amp;hl=3Den&amp;star=
+t=3D2&amp;um=3D1&amp;tbnid=3DhBhPR4kRtM_3gM:&amp;tbnh=3D124&amp;tbnw=3D93&a=
+mp;prev=3D/images%3Fq%3DMr.%2BPeter%2BW.%2BAtwater.%2BManaging%2BDirector%2=
+Bbarclays%2Bbank%2Bpicture%26hl%3Den%26sa%3DN%26um%3D1"><IMG style=3D"BORDE=
+R-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-B=
+OTTOM: 1px solid" height=3D124 src=3D"http://t3.gstatic.com/images?q=3Dtbn:=
+hBhPR4kRtM_3gM:http://www.galtmile.com/images/calypso/saghir.jpg" width=3D9=
+3></A></FONT></STRONG></FONT></EM></SPAN></DIV>
+<DIV><SPAN style=3D"FONT-SIZE: 14pt"><FONT face=3D"courier, monaco, monospa=
+ce, sans-serif"><FONT size=3D4><FONT face=3DArial size=3D2></FONT><U></FONT=
+>&nbsp;</DIV></SPAN><SPAN></SPAN></U></FONT>
+<DIV style=3D"LINE-HEIGHT: 14.4pt">
+<DIV>
+<DIV><STRONG><FONT size=3D4>Managing Director</FONT></STRONG></DIV>
+<DIV><SPAN style=3D"FONT-SIZE: 10pt; COLOR: navy; FONT-FAMILY: Arial"><SPAN=
+><STRONG><FONT size=3D4><EM><FONT color=3D#000000>BARCLAYS BANK PLC LONDON<=
+/FONT>.</EM></FONT></STRONG></SPAN></SPAN> </DIV>
+<DIV><STRONG><FONT face=3D"Comic Sans MS" size=3D4></FONT></STRONG>&nbsp;</=
+DIV></DIV></DIV>&nbsp;</FONT></DIV></BLOCKQUOTE></td></tr></table>
+--0-2027037900-1262912322=:85874--
+

@@ -1,0 +1,126 @@
+Delivered-To: em-ca-bruceg@em.ca
+Received: (qmail 3663 invoked from network); 5 Jan 2010 00:38:08 -0000
+Received: from web28414.mail.ukl.yahoo.com (web28414.mail.ukl.yahoo.com [87.248.110.163])
+  by churchill.factcomp.com ([24.89.90.248])
+  with SMTP via TCP; 05 Jan 2010 00:38:08 -0000
+Received: (qmail 28898 invoked by uid 60001); 5 Jan 2010 00:49:54 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.co.uk; s=s1024; t=1262652594; bh=pK9IVwkf+kZPB0gt+0RHQn0iE4VXDI+57/E6u/qMNyA=; h=Message-ID:X-YMail-OSG:Received:X-Mailer:Date:From:Reply-To:Subject:To:MIME-Version:Content-Type; b=zZ9bg/niOBLTS+sTWn+qFE6oqHg9537PsVmZRR/1GCZ9Byc4YqyJCnezTMYvN7FRXIpFBkUFmc0j0VTmIc/cbVxM03GgJ+qCCoBBEFYZbcDGUHIHxMJkDpN+HOtKoPIHGWGFodtylVJBbJDTBhOSsg6hKUHedEogXvsBriC6p/4=
+DomainKey-Signature:a=rsa-sha1; q=dns; c=nofws;
+  s=s1024; d=yahoo.co.uk;
+  h=Message-ID:X-YMail-OSG:Received:X-Mailer:Date:From:Reply-To:Subject:To:MIME-Version:Content-Type;
+  b=IkUv1rMJM2bXebUzC5+GPf+jeCbt+zmPrYxGYGYLwyFrjjoO8l6XObCfKv5cvIt/Zuxedtu+jU8K8790wHVddAKcB+5MEsbQ3v7pwbQ4BahmlXfKgI8GrsiOnbq96nphnMEpTv+OtdcwrOepxr4nABv3+RFjRS5LuXDM/j9XqHQ=;
+Message-ID: <565784.27699.qm@web28414.mail.ukl.yahoo.com>
+X-YMail-OSG: fqoXXs0VM1mGwtIpUD.FRzli4BI2P7FkcXUMPuaGIUOJP5KrskCJkfNJC4uqK3USq_tI3VZ7YAP6d72LipetElBDajPp2Q8kxJlC_Ks8mVK5axrY_o0tMkvqVqe8M_0LPOZVr7to9UFEv4qUKPVzEBysuFHDG_K6kC6r5gzNwKzSHo2oIWDx289AAYoK_.pkiRL4F1QRDNupP2YAXDYpdUjk3sDOam14BcaRYgpCEjfPNJonTwDkepRB8Ii10BmFzl0Pm9aE_tDMHBSdDs2ZTcnebNzXpDCIhohTfvAMo1iMrg0WJ8Gd9ylmOU9ckHEKhKqPpQJAB_p9NAS5fadR8Kp2iE5TrQYIJ5yE8_uJbR55xpS6VmpeLycPPQuz39HAu48jEsBZAH8OlpCj5f7.zhbLW_9w0ErK.BxDxYFnwMhJQ1npxbhu5Sb_IC0hj_j29ZiW9wDSI3cfkxP.ROIHDQ.evvlJ29k31ah9YGBoTk3cVoIjqwVnJ7XoxR4DX5B7iVKZHJQzSmRUOvoskOph.kWX4UxihuAL4atf4Q146HFDcfeCtTvWHTGGoB0auF7shMD5tQJiVfyPImfdlzVOUPcS966z8jIxoI.z.FPL0PCE7f3L1obrd1sYp0yZHOdoklVEzyT43.CRUiNar1tSpiHs6IgBbgm4XibXuY8gzfvaijQ42H.9Y5vR6a6USIaj6mGoLp029uhPDbiGig88ahvmN6LkobUyNinbw4hEingLQDmwzFKQwAFGoKWMFNnLI5wc.ecS_N3iU51viv7B0utMQ0ArgSUFemglKzDQIoV2gH4AHACSvmxHpXC.aS0k8.tnluD1frWFwz2r3t2NsDjzGFrb7yWdpX3X0Iv2TVb3Lx1pIcZG2S2ZekW4sSC7HjIFnH6wu2Up8zolibQifFDFXqMy3NWdgDifDyHtmvtsZ9oXlj8vrdSjMeikYlg4Rvsk9qxpg83TX9VkR1J.RtqoTJniOWsA0wClMglc3wky_lEV3NeRCDauqsDhpg6PsNIssfWSszn5_CbSuf2NxbMuQ0XPaSpLC3yFy9DRLEn9Hcq6laX085wUJDYFgFFTILXruA91tWIlzd21rU2mvRQKegiv.vJTA_9UHur5LIA1fm.9B_DlGI9hWwz4rXd7SjxQvR38vPZA6hoK6dczH6cTwBBiD4Yw2FxBZ36txVWhfIO9wW2VwFuyEPlq0dIwvu5fAjIbSt.Bqu1lnqjXRKhZF.hYxNOS43Y5GSuJYUyoXTywxaumXniTti5Njr4j7fZtKqgaO4vbhseQBCB4EidQjO0x8678JnC5RgOc1TdHyjKN.MZpDlBLWX0VHGdRYUiYiZrtwK2z_iUXrHk427cyji7yVbrINmSepRrTN9gdW2DyJ58dSBX3av44DFrP76cnoQpbgyQtJYUQwdW2OYqSWape2qyXOPl4oyNyq5kC8DmrdzcVnZZWGdJdFJlmAGSVTZaw_gmkYlF4SROOd2Vvc4e0xFvh2QhxBj3j7HZEThqV63Vhr0ie2ie3e2JRu4FSy30-
+Received: from [41.208.177.67] by web28414.mail.ukl.yahoo.com via HTTP; Mon, 04 Jan 2010 16:49:54 PST
+X-Mailer: YahooMailClassic/9.0.20 YahooMailWebService/0.8.100.260964
+Date: Mon, 4 Jan 2010 16:49:54 -0800 (PST)
+From: "Mr.Abraham Abdul" <paulsonjohn70@yahoo.co.uk>
+Reply-To: abrahamabdulkk@live.com
+Subject: Dear friend,
+To: undisclosed recipients: ;
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="0-2100714867-1262652594=:27699"
+
+--0-2100714867-1262652594=:27699
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+Dear friend,
+First,=A0 I must solicit your confidence in this letter. I am Mr.Abraham Ab=
+dul, the director of Assets and Treasures in a deposit company where I work=
+.
+
+I am writing you this letter to=A0 seek your partnership co-operation in re=
+ceiving a total amount of $4.1M (Four Million,one Hundred Thousand United S=
+tates dollars) which was deposited with our company here in=A0 Senegal Daka=
+r.This total amount was deposited as a family treasure with my company=A0 b=
+y late Mr..Samuel Dokie, a Liberian citizen and personal aid to President C=
+harles Taylor.Mr.Samuel Dokie,his wife and two Children were killed by rebe=
+ls loyal to the President=A0 near Kuru village during the past crisis in Li=
+beria. Since the untimely death of Mr.Samuel=A0 Dokie and his family, the m=
+anagement of my company has mandated my office to make=A0 several enquiries=
+ to locate any of his extended relatives, but no fruitful result was achiev=
+ed=A0 as all my efforts also proved unsuccessful to locate any member of hi=
+s family.
+
+Before my=A0 observation in this development, I discovered that late Mr.Sam=
+uel Dokie did not make an=A0 HEIR/WILL.=A0 The management has been delibera=
+ting on how to revert this fund to the=A0 company's account since I have be=
+en unsuccessful in locating the relatives for over 3=A0 years now. It is th=
+erefore upon this discovery that I and my junior colleague in my=A0 departm=
+ent decide to seek your consent to present you as the next of kin or relati=
+on to the=A0 eased so that we will quickly move this money out of Senegal t=
+o be delivered in your care as the next of kin or relation entitled to inhe=
+rit this fund. All arrangement to move this deposited fund has been put in =
+place and all I require is your honest and sincere partnership co-operation=
+ to enable us see this money secured into a reliable custody.
+
+As an insider in the company, I have all the necessary legal documents that=
+ will back up the claim of this deposit and I guarantee you that this fund =
+movement will=A0 be executed under a legitimate arrangement that will prote=
+ct both of us from any breach of the law. On smooth completion and receipt =
+of this total deposited fund, you will be entitled to your own share of the=
+ total sum as gratification. We agreed that 35% of this money will=A0 be fo=
+r you as our receiving partner, while 65% would be for me and my junior col=
+league.=A0 Thereafter I will visit your country for disbursement and furthe=
+r investment plans.You have been advised to keep this information a top sec=
+ret as we are still working in the company=A0 and intend to resign from ser=
+vice after this money is received in your secured bank account.
+
+I shall furnish you with further details and necessary procedures with whic=
+h to=A0 make a quick shipment progress.
+I suggest you get back to me immediately through my confidential email addr=
+ess (abrahamabdulkk@live.com)
+=A0stating your wish in this urgent matter.
+Thanks for your anticipated co-operation and best regards.
+Mr.Abraham .P. Abdul.=0A=0A=0A      
+--0-2100714867-1262652594=:27699
+Content-Type: text/html; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<table cellspacing=3D"0" cellpadding=3D"0" border=3D"0" ><tr><td valign=3D"=
+top" style=3D"font: inherit;">Dear friend,<br>First,&nbsp; I must solicit y=
+our confidence in this letter. I am Mr.Abraham Abdul, the director of Asset=
+s and Treasures in a deposit company where I work.<br><br>I am writing you =
+this letter to&nbsp; seek your partnership co-operation in receiving a tota=
+l amount of $4.1M (Four Million,one Hundred Thousand United States dollars)=
+ which was deposited with our company here in&nbsp; Senegal Dakar.This tota=
+l amount was deposited as a family treasure with my company&nbsp; by late M=
+r..Samuel Dokie, a Liberian citizen and personal aid to President Charles T=
+aylor.Mr.Samuel Dokie,his wife and two Children were killed by rebels loyal=
+ to the President&nbsp; near Kuru village during the past crisis in Liberia=
+. Since the untimely death of Mr.Samuel&nbsp; Dokie and his family, the man=
+agement of my company has mandated my office to make&nbsp; several enquirie=
+s
+ to locate any of his extended relatives, but no fruitful result was achiev=
+ed&nbsp; as all my efforts also proved unsuccessful to locate any member of=
+ his family.<br><br>Before my&nbsp; observation in this development, I disc=
+overed that late Mr.Samuel Dokie did not make an&nbsp; HEIR/WILL.&nbsp; The=
+ management has been deliberating on how to revert this fund to the&nbsp; c=
+ompany's account since I have been unsuccessful in locating the relatives f=
+or over 3&nbsp; years now. It is therefore upon this discovery that I and m=
+y junior colleague in my&nbsp; department decide to seek your consent to pr=
+esent you as the next of kin or relation to the&nbsp; eased so that we will=
+ quickly move this money out of Senegal to be delivered in your care as the=
+ next of kin or relation entitled to inherit this fund. All arrangement to =
+move this deposited fund has been put in place and all I require is your ho=
+nest and sincere partnership co-operation to enable us see this
+ money secured into a reliable custody.<br><br>As an insider in the company=
+, I have all the necessary legal documents that will back up the claim of t=
+his deposit and I guarantee you that this fund movement will&nbsp; be execu=
+ted under a legitimate arrangement that will protect both of us from any br=
+each of the law. On smooth completion and receipt of this total deposited f=
+und, you will be entitled to your own share of the total sum as gratificati=
+on. We agreed that 35% of this money will&nbsp; be for you as our receiving=
+ partner, while 65% would be for me and my junior colleague.&nbsp; Thereaft=
+er I will visit your country for disbursement and further investment plans.=
+You have been advised to keep this information a top secret as we are still=
+ working in the company&nbsp; and intend to resign from service after this =
+money is received in your secured bank account.<br><br>I shall furnish you =
+with further details and necessary procedures with which to&nbsp;
+ make a quick shipment progress.<br>I suggest you get back to me immediatel=
+y through my confidential email address (abrahamabdulkk@live.com)<br>&nbsp;=
+stating your wish in this urgent matter.<br>Thanks for your anticipated co-=
+operation and best regards.<br>Mr.Abraham .P. Abdul.</td></tr></table><br>=
+=0A=0A=0A=0A      
+--0-2100714867-1262652594=:27699--

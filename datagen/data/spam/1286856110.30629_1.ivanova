@@ -1,0 +1,62 @@
+Delivered-To: bruce@untroubled.org
+Received: (fqmail 5754 invoked from network); 08 Oct 2010 22:46:43 -0000
+Received: (qmail 13154 invoked from network); 8 Oct 2010 22:46:43 -0000
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+  by mx01.futurequest.net ([10.2.1.171])
+  with ESMTP via TCP; 08 Oct 2010 22:46:43 -0000
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+	id S1755404Ab0JHWqJ (ORCPT <rfc822;bruce@untroubled.org>);
+	Fri, 8 Oct 2010 18:46:09 -0400
+Received: from spandex.richmond.edu ([141.166.24.59]:43108 "EHLO
+	spandex2.richmond.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752635Ab0JHWqH (ORCPT
+	<rfc822;linux-kernel@vger.kernel.org>);
+	Fri, 8 Oct 2010 18:46:07 -0400
+X-Greylist: delayed 8961 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Oct 2010 18:46:07 EDT
+Received: from polyester.richmond.edu (polyester.richmond.edu [141.166.24.28])
+	by spandex2.richmond.edu (8.13.8/8.13.8) with ESMTP id o98KGa4l001366
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+	Fri, 8 Oct 2010 16:16:36 -0400
+Received: from rocky.richmond.edu (rocky.richmond.edu [141.166.8.73])
+	by polyester.richmond.edu (8.13.8/8.13.8) with ESMTP id o98KGZGQ014964
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+	Fri, 8 Oct 2010 16:16:35 -0400
+Received: from spidermail.richmond.edu (localhost.localdomain [127.0.0.1])
+	by rocky.richmond.edu (8.13.1/8.13.1) with ESMTP id o98KGX2R020513;
+	Fri, 8 Oct 2010 16:16:33 -0400
+Received: from 41.178.123.250
+        (SquirrelMail authenticated user ms5ge)
+        by spidermail.richmond.edu with HTTP;
+        Fri, 8 Oct 2010 16:16:35 -0400
+Message-ID: <835c383d0006c8b160cda218d4e00e41.squirrel@spidermail.richmond.edu>
+Date:	Fri, 8 Oct 2010 16:16:35 -0400
+Subject: Attention
+From:	"Mail Account Update" <noreply@update.com>
+Reply-To: noreply@update.com
+User-Agent: SquirrelMail/1.4.20
+MIME-Version: 1.0
+Content-Type:	text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Priority: 3 (Normal)
+Importance: Normal
+X-Scanned-By: MIMEDefang 2.67 on 141.166.24.28
+To:	unlisted-recipients:; (no To-header on input)
+Sender:	linux-kernel-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-kernel.vger.kernel.org>
+X-Mailing-List:	linux-kernel@vger.kernel.org
+Content-Length: 396
+
+
+
+
+Due to recent upgrade of our webmail server. Click on the following link
+to verify the status of your email account
+
+http://webverification.co.cc/
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please read the FAQ at  http://www.tux.org/lkml/

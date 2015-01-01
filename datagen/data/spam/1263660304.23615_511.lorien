@@ -1,0 +1,356 @@
+Delivered-To: em-ca-bruceg@em.ca
+Received: (qmail 12788 invoked from network); 16 Jan 2010 13:09:37 -0000
+Received: from n7-vm0.bullet.mail.in.yahoo.com (n7-vm0.bullet.mail.in.yahoo.com [202.86.4.134])
+  by churchill.factcomp.com ([24.89.90.248])
+  with SMTP via TCP; 16 Jan 2010 13:09:37 -0000
+Received: from [202.86.4.171] by n7.bullet.mail.in.yahoo.com with NNFMP; 16 Jan 2010 13:22:21 -0000
+Received: from [203.104.18.55] by t2.bullet.in.yahoo.com with NNFMP; 16 Jan 2010 13:22:21 -0000
+Received: from [127.0.0.1] by omp107.mail.in2.yahoo.com with NNFMP; 16 Jan 2010 13:22:21 -0000
+X-Yahoo-Newman-Property: ymail-5
+X-Yahoo-Newman-Id: 483909.38604.bm@omp107.mail.in2.yahoo.com
+Received: (qmail 76781 invoked by uid 60001); 16 Jan 2010 13:22:21 -0000
+Message-ID: <90628.76707.qm@web95704.mail.in.yahoo.com>
+X-YMail-OSG: 0n29A6gVM1nbnVojNUn1CJnJ42x8czaqN9Ims2s4qIBJNbiBOzEVVVMfRoOwhNEVvF.kzUj3ehi4fMDva0X8fAUxqDCu5uUT_n_Mki_nBlJ9HGH8Xoi.Rz37eiMB_YVtihYyYTZ97mbwMwo8S05av3w.0tsh_bUbbOV1byeOXT1018jtZFDP6_WYC4TICRH4oDAdEl2EKMo05vh8PCXWpALlmpXIiPR1NyaCZ1.wP2xCEmlf_1hP6HsO2ZzybLcYR8RIYEhFME4Pkuj2DqjOV.ST2rXf73uRjau1QcQkALH4yPfe8_a2_LUIG9Gm9aGJrQtN3olrC3DESvB4z2o96xyXN70CLdH3eGYd9PE8vrgzmM6BNsHJ1EAsZZ_M.gq_JBHELfZItF9wANer1jeP3nwlUYB8Vl9MJ20lAGtnKs3jrHNS1H1LGPMZ2TOQ4eymYd.uX9BKqWmKq2llA5QczxpF5dGd67omkQhjnoOdGSBDYZgUgABYsDWkykdgsi928HoJ.d1xJ9J2Nl.8Lt9ri5GRZkZ3Y4MlrERYeSXOqqh1iu9XzBlVLMya.wrHpBcV3PZb_m5a1SFS83ojewoNOx5LefLDLQnVakeIdkTH.ezINT0O8Rhl5pvfkV285CB7QfJ71H3voogwgS.UW_iKMowEFO1BG2R9snoiTqRlJ3kVSbQ6k8HbHHJBGDMDkmPofuX0O2.1si8C.X9QoN7o24BE2jj46huDHm6bkjOI2VUluVvpZZGpCiWL_S00lV2EVcm89ZgvbrmJcIFdgGYs5ZzF.neBRPsV7NwzcZmwh.z_iwpixj6yBhIDJl92K2H9x.jY3HQZHm2UgRhWDeeA2J.mtIFjhxzsW0RWMjnQyyurEjrfOn3HmJImSAI_CoOHzGRcjIPM4qnLJwsy8oFz8tfo.yY.vYNw83OeKo8SMdikyh16c6GIlHkXkc3mz2DHKxuUiZxS6CS3IJ0INedRxV2Qp6FEVgoSrsFrV9ELmhbsFzNHr9DRT8sxncJUq56r56xDfHa9BCRT3MyTTeH2083aYlmOjKP0QazdZZbiS6_sHTBTqCX16htKtIjANvAjdH_obmr6rBt8WczYGiUYvE0l58I2DB3QcNzDVFXENt8AjX6Qe6fveYsM.lcvGkbKtCE3i.tLGISvpO1J3HGVTkKDounz1vBQoPVsPdtJYbwtiNCquAmB0ZZp4mLtZIwtqatVNLXuGQPl4j8vihlx4Ci1aGhV75LVdijl7qzwEXV9c4ikw2LwsGp.hzpaKcj1WQ3XnIFKgnd2e3a4O7W.wUab4yfzaYoL81bN5VI5yXP1QVLgRZ4nHjY124nBfMCPb6JpzX2G_8PdgA9j66KtIIdvdCnZRHljZYkBoSlmyKxY3a7K7BfGYntIoR32Ce.y0aOgKd713MFtwPmG5k48L1H0HqVS6iN0NmCtiHFmPWnC.0TuCJCa0Wb5zYDq.R_ak3nvWyQogZ0Aq6sCWzn8nV8.RsQEgMU0mYrxodDWcGc1JIzMv02dzI5yRzbNFcWHZDbpXz06sdmdBbkVLW_WnPiGFNkGu3Rarg6rAlgiyxbdbtxU24sK95lQ9E2vgq8q5rji9IT._ZFqCTELp8gWpNrSHv7lT5ylL5FJpYDhWxBcjz9kCXFYujdT9Q1omEn2plWznkfXNSELvb38PnMoowXSfTYuM61F0dauJhXgi2uQtRGS1YDOTAJi7vbtioq5kQmCaGPXPSopkHF8L2yVs3TmPGO92Eh0K0jJnuJkTwNJRWxRso_Jt_iJV3jsZFhLj7aOJW_lA.UsqWgY2wcKuLJc.71aVpU9vLpJNTKZn7dSsrL3DW8r35WsTkVpjUeC9qqDA9O3oOcB3JFWTDIl5hzg24bwRg0u9CnfSwVFAybNnlJkhgeIp2KGk9CWUPtb2kKjAV5UzdmrMcwzf4QfcxWhFwZwuzk7C0VyFPJyNfVPHD_ICR9vkEkH74CUFy0QZU15nEh3wdrjtGfoT_U_hRWypP8ScYmxTpfP3j6hARhAG2hmGKBwr7r9ex_LFpzlQdDoI20T10cLxUf_Cju6FPoevtLnyDuSL0YEwYnN6PXtRQjR6yvLjTRGrlDq.z7LI1BsLFKEO5PDf_1sVahCQXyl9._FREdgkyBNyTYOtCrVpSdY8JrYu_CszNrV0iReoSS6V9hsZLaOOKhqKVJKNFBwh87wFVWmSa8IOLmzK39P81ehKAlDFObCGorpNCfSNEvLOVxo.7cOXN7KkKTetjAIEm4hdkldbI8U0ajEWOw.efDPE.MlvKZ40lcWmaZ_FLUb6hZ4kAAjvtgTjGi.jOulsa__m4Yh2f65ZpIXUyZ_C_X8rgXc780aOK.jAbmc5Q7wEvmige7DNtW1sPFO0bpNNFnvmZ8WYL90XXXaAHVYTWmIDoo3kgMEkDgJ6aQFvTom5hkUrg__a9bgf.c2HoFjqS2L5hssfgkf93A8RKVuNwVqkM5VMHfvQpTrOaMqwhQXKssY5RueeX0PPmi5ldWNv_YU1jiQKdMT0bSsNtDqSELSbYNCIWWc1cPd7LCPkGt6xDsiTSmp8cPTNJwdxEEC1G00hc84c7ibfl0HkRl7SEXK4s2kZGvQs5tll..S_ldJyaJcZjJV5L_iOEgygyvOKBuN4OwiOUu.oueRmn3Im5pab96nqhrb5z6.Bhz.IsE04uWTJ_0iPNZWUcJZ1qylUtjZsZ0M8vtD2BoykmjS1DH_AelFld7O_IomCtnPBqaIvZrLHMhrCwV16ID.j3ikoUhIoHx5vsabdkKwDq54GYlspwml4OmLZenNYGuzqXhPJv1Y2bgjXBeZ6jzvRPHfiuGZ1RFnUeKwHPHZzg4t6ykJOUHjbYmLGY7.csy6Y4YVp3elsoUxR7ZFH9XTGdhgZL5J0dCW8Bmr2xCm1ptaP5GM1Ko0inXSfYFTiJLFpd6b2Aaw1D.9BAdvMKD2LE.qP7vLuChQdmaZpfJD9.3QTKOKEBGF3sx9iM08l9UIxCLD9ciSPYR6hI.SHU9DQfQPWH2mS0OLB_wlm8gKGockoVP9sQ7.a8.nSldpsQvr7CszB5c5._5UE9TkmTdLE4W32agQncqx2Ax2DLDjNPqpgoPIZ3wzGX5qKk63txXd4N.ZxnEZy7hRVTaboCxYd61jTk7lcFuor_pCEJ57gcFCJTAPYLJwxlmPdT5sp85Ljx1stXESWDt7LgsKJXD6g.1ejzWacBfk9KRGp8LNpGhvxTbcUYXiyRomw7F2XfpFKASlEq2XsrglpooYEYm3.ARwfoXbFFTY2BeYujDCr2xihMiuCFrMLxtcDGao7yFVEk4eKiGSbR55URWzKFXP16fWmpqGNZ6p.wzmoJjiJV2v_7zv62E2J2j1YG9e2Tkjo4e2vvwS9ktuZBydRkIdwNfJbUat6Zwo8qxrwqA1v16wQID8FOUKbZBsvbG4iV98H58wm3zb1ifR.ADdNW.1MX7_alIIhp3FZcU_G7a23ZawWAWIyIqD0k4Hzm.SyEjMC37BZVQU5ha_2g.91zXkP26rXuufK1Xa7tM4Lwt9TYza1MuCczMzAnZacQ168WI.VkaZkd6CtWGK5aMHuRht.ync1V8fCPQsAw9LlBea4vZgVVN.b_6ar7UyE7bfb.Rv6tbCAI.SklAmD3IxqKL1.iaOOBvhg.xl3QBN9kZI5_nZHKNnTnJyXDBpkBv6g06EEryc_fz8DMmLwlyIA.H5i8Gt2YpcVml1C5mRn4.05jtPVZAxgl6vo7APgVmSyLRve8NyizyNzuhs9yImcoUBkbbDyuCAz1idfUgL2X648V4jTHksBbGqNfUlLhClx9vjJBffwsZfS2pUXVYIYV7ca5C8Cr6qlwWTFgXcMWyGyxabfW5L.Yc8K6vhzPaQIw--
+Received: from [41.203.226.90] by web95704.mail.in.yahoo.com via HTTP; Sat, 16 Jan 2010 18:52:20 IST
+X-RocketYMMF: cbffcbnnf
+X-Mailer: YahooMailClassic/9.1.10 YahooMailWebService/0.8.100.260964
+Date: Sat, 16 Jan 2010 18:52:20 +0530 (IST)
+From: INTERNATIONAL PROMOTIONS/PRIZE AWARD LONDON MILLION INT & NATIONAL LOTTERY PROMOTION BURKINA FASO <claiming_prize@hotmail.fr>
+Reply-To: claimingoff1@aim.com
+Subject: !!!CONGRATULATION!!!!!!CONGRATULATION!!!!!!CONGRATULATION!!!!!!CONGRATULATION!!!
+To: undisclosed recipients: ;
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="0-439570851-1263648140=:76707"
+
+--0-439570851-1263648140=:76707
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=20
+
+
+UNITED KINGDOM IN COLABRATION WITH GOLD MINING COMPANY.=20
+=A0
+INTERNATIONAL PROMOTIONS/PRIZE AWARD LONDON MILLION INT & NATIONAL LOTTERY =
+PROMOTION OUAGADOUGOU BURKINA FASO,AVENUE KWAME NKRUMAH 01 BP .=20
+=A0
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 WINNING/AWARD FINAL NOTIFICAT=
+ION=20
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0 =A0www.acculotto.com
+=A0
+=A0=20
+
+MOTTO : CELEBRATING THE DIFFERENCE YOU'VE MADE=20
+950,000.00 Euros =A0EMAIL SELECTION AWARD WINNING=A0 PRIZE=A02010=20
+=A0=20
+=A0!!!CONGRATULATION!!!=20
+=A0=20
+Dear Lucky Winner,=20
+We are pleased to inform you of the result of the E-MAILS LOTTERY RAFFLE DR=
+AW an=A0=A0International program held on the=A0 29th of=A0DECEMBER 2009.You=
+r e-mail address was attached to the following informations=20
+=A0=A0=A0=A0=A0=20
+
+(1) TICKET NUMBER:=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 6325698-44596-222=20
+(2) SERIAL NUMBER:=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 BATCH/410-32659=20
+(3) LUCKY DRAW NUMBER:=A0 4014-236985744=20
+=A0=20
+which consequently won in the 2nd category, you have therefore been approve=
+d for a lump sum payment of(950,000.00 Euros=A0Nine Hundred and fifty Thous=
+and Euros) .=20
+=A0=20
+NOTE: Due to mix up of some numbers and names, we ask that you keep your wi=
+nning information confidential until your claim has been processed and your=
+ money remitted to you. This is part of our security protocols to avoid dou=
+ble claiming and unwarranted abuse of this program by some participants.=20
+=A0=20
+All participants were selected through a computer ballot system drawn from =
+over 20,000 company and 30,000,000 individual email addresses from all over=
+ the world.=20
+=A0=20
+=A0This promotional program takes place every year. This lottery was promot=
+ed and sponsored by International software organization committee, we hope =
+with part of your winning you will take part in our next coming (1million e=
+uro) international lottery.=20
+=A0=20
+To file for your claim, Please contact the claiming Agent stated below to r=
+eceive your winning Money immediately:=20
+=A0=20
+NAME: MR=A0=A0COLINS SMITH.=20
+Email:=A0(claimingoff1@aim.com)=20
+
+=A0CONGRATULATIONS: Contact your claim agent for due processing and remitta=
+nce of your prize money to a designated account of your choice. Remember, y=
+ou must contact your claims officer not later than=20
+30/01/2010. After this date, all funds will be returned as unclaimed.=20
+=A0=20
+NOTE: In order to avoid unnecessary delays and complications, please rememb=
+er to quote your reference numbers in every one of your Correspondences wit=
+h your officers.=20
+=A0=20
+Furthermore,should there be any change of your address, do inform your clai=
+ms officer as soon as possible.=20
+=A0=20
+Congratulations again from all our staff and thank you for being part of ou=
+r Promotions program.=20
+=A0=20
+We wish you continued good fortunes.=20
+Best regards.=20
+=A0=20
+The Management,=20
+Lottery Organisation.=A0
+MR=A0 BASHIM HUSSAN=0A=0A=0A      The INTERNET now has a personality. YOURS=
+! See your Yahoo! Homepage. http://in.yahoo.com/
+--0-439570851-1263648140=:76707
+Content-Type: text/html; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<table cellspacing=3D"0" cellpadding=3D"0" border=3D"0" ><tr><td valign=3D"=
+top" style=3D"font: inherit;"><DIV id=3Dyiv1058295883>&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <IMG height=3D137 al=
+t=3D"" src=3D"http://www.mailcentro.com/images/globe.gif" width=3D136><STRO=
+NG><IMG height=3D60 src=3D"http://cdn.fastclick.net/fastclick.net/cid56344/=
+congratulations468x60.gif" width=3D468 border=3D0><BR></STRONG><SPAN><FONT =
+size=3D3><FONT color=3D#444444>
+<DIV>
+<DIV class=3DEC_EC_EC_EC_EC_EC_EC_EC_EC_EC_RTE><STRONG>UNITED KINGDOM IN CO=
+LABRATION WITH GOLD MINING COMPANY. </STRONG></DIV>
+<DIV class=3DEC_EC_EC_EC_EC_EC_EC_EC_EC_EC_RTE><STRONG></STRONG>&nbsp;</DIV=
+></DIV>
+<DIV><STRONG>INTERNATIONAL PROMOTIONS/PRIZE AWARD LONDON MILLION INT &amp; =
+<SPAN class=3Dyshortcuts id=3Dlw_1262597933_0 style=3D"CURSOR: hand; BORDER=
+-BOTTOM: #0066cc 1px dashed">NATIONAL LOTTERY</SPAN> PROMOTION OUAGADOUGOU =
+BURKINA FASO,AVENUE KWAME NKRUMAH 01 BP . </STRONG></DIV>
+<DIV><STRONG></STRONG>&nbsp;</DIV>
+<DIV><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp; WINNING/AWARD FINAL NOTIFICATION </STRONG></DI=
+V>
+<DIV>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp; &nbsp;<A href=3D"http://www.acculotto.com/" target=3D_blank rel=
+=3Dnofollow><FONT color=3D#0000ff><STRONG><SPAN class=3Dyshortcuts id=3Dlw_=
+1262597933_1>www.acculotto.com</SPAN></STRONG></FONT></A></DIV>
+<DIV><STRONG></STRONG>&nbsp;</DIV></FONT></FONT></SPAN>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><SPAN style=3D"FONT-SIZE=
+: 10pt; COLOR: black; FONT-FAMILY: Arial">&nbsp;</SPAN>=20
+<DIV></DIV>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: red; FONT-FAMILY: Garamond">MOTTO : CELEBRATING THE =
+DIFFERENCE YOU'VE MADE</SPAN></STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR=
+: black; FONT-FAMILY: Arial"></SPAN>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><SPAN style=3D"FONT-SIZE=
+: 12pt"><STRONG><SPAN style=3D"COLOR: #cc00cc; FONT-FAMILY: Garamond"><FONT=
+ face=3DVerdana color=3D#ff1e1e size=3D2>950,000.00 Euros </FONT>&nbsp;EMAI=
+L SELECTION AWARD WINNING&nbsp; PRIZE&nbsp;2010</SPAN></STRONG></SPAN>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><SPAN style=3D"FONT-SIZE=
+: 10pt; COLOR: black; FONT-FAMILY: Arial">&nbsp;</SPAN>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #007f40; FONT-FAMILY: Garamond">&nbsp;</SPAN></STRON=
+G><STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #cc6633; FONT-FAMILY: Gara=
+mond">!!!CONGRATULATION!!!</SPAN></STRONG><SPAN style=3D"FONT-SIZE: 10pt; C=
+OLOR: black; FONT-FAMILY: Arial"></SPAN>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><SPAN style=3D"FONT-SIZE=
+: 10pt; COLOR: black; FONT-FAMILY: Arial">&nbsp;</SPAN>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana">Dear Lucky Winner,</S=
+PAN></STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: black; FONT-FAMILY: Ari=
+al"></SPAN>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana">We are pleased to inf=
+orm you of the result of the E-MAILS LOTTERY RAFFLE DRAW an&nbsp;&nbsp;Inte=
+rnational program held on the&nbsp;</SPAN></STRONG><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: red; FONT-FAMILY: Verdana"><FONT color=3D#000000> </=
+FONT><FONT color=3D#ff0000>29th of&nbsp;DECEMBER 2009</FONT>.</SPAN></STRON=
+G><STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verd=
+ana">Your e-mail address was attached to the following informations</SPAN><=
+/STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: black; FONT-FAMILY: Arial"><=
+/SPAN>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: black; FONT-FAMILY: Verdana">&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp; </SPAN></STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: black; FONT-=
+FAMILY: Arial"></SPAN>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"C=
+OLOR: black; FONT-FAMILY: Verdana"></SPAN></STRONG><SPAN style=3D"FONT-SIZE=
+: 10pt; COLOR: black; FONT-FAMILY: Arial"></SPAN>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #cc3366; FONT-FAMILY: Verdana">(1) TICKET NUMBER:</S=
+PAN></STRONG><STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #ff00cc; FONT-F=
+AMILY: Verdana">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp; </SPAN></STRONG><STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR=
+: red; FONT-FAMILY: Verdana">6325698-44596-222</SPAN></STRONG><SPAN style=
+=3D"FONT-SIZE: 10pt; COLOR: black; FONT-FAMILY: Arial"></SPAN>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #cc3333; FONT-FAMILY: Verdana">(2) SERIAL NUMBER:&nb=
+sp;</SPAN></STRONG><STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #ff00cc; =
+FONT-FAMILY: Verdana">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp; </SPAN></STRONG><STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR=
+: red; FONT-FAMILY: Verdana">BATCH/410-32659</SPAN></STRONG><SPAN style=3D"=
+FONT-SIZE: 10pt; COLOR: black; FONT-FAMILY: Arial"></SPAN>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #cc3333; FONT-FAMILY: Verdana">(3) </SPAN></STRONG><=
+SPAN class=3Dyshortcuts><STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #cc3=
+333; FONT-FAMILY: Verdana"><SPAN style=3D"CURSOR: hand"><SPAN class=3Dyshor=
+tcuts style=3D"CURSOR: hand; BORDER-BOTTOM: #0066cc 1px dashed"><SPAN class=
+=3Dyshortcuts id=3Dlw_1257242440_2 style=3D"CURSOR: hand; BORDER-BOTTOM: #0=
+066cc 1px dashed"><SPAN class=3Dyshortcuts id=3Dlw_1258140770_1 style=3D"CU=
+RSOR: hand; BORDER-BOTTOM: #0066cc 1px dashed"><SPAN class=3Dyshortcuts id=
+=3Dlw_1262597933_2 style=3D"CURSOR: hand; BORDER-BOTTOM: #0066cc 1px dashed=
+">LUCKY DRAW</SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></STRONG></SPAN><STRO=
+NG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #cc3333; FONT-FAMILY: Verdana"> N=
+UMBER:</SPAN></STRONG><STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #ff00c=
+c; FONT-FAMILY: Verdana">&nbsp; </SPAN></STRONG><STRONG><SPAN style=3D"FONT=
+-SIZE: 10pt; COLOR: red;
+ FONT-FAMILY: Verdana">4014-</SPAN></STRONG><SPAN class=3Dyshortcuts><SPAN>=
+<STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: red; FONT-FAMILY: Verdana"><=
+SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPA=
+N><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><=
+SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPA=
+N><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN><SPAN class=3Dyshortcuts><SPAN =
+class=3Dyshortcuts id=3Dlw_1257242440_3><SPAN class=3Dyshortcuts id=3Dlw_12=
+58140770_2><SPAN class=3Dyshortcuts id=3Dlw_1262438018_0><SPAN class=3Dysho=
+rtcuts
+ id=3Dlw_1262597933_3>236985744</SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></=
+SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN>=
+</SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPA=
+N></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></S=
+PAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN></SPAN><=
+/SPAN></SPAN></STRONG></SPAN></SPAN>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><SPAN style=3D"FONT-SIZE=
+: 10pt; COLOR: black; FONT-FAMILY: Arial">&nbsp;</SPAN>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: black; FONT-FAMILY: Verdana">which consequently won =
+in the 2nd category, you have therefore been approved for a lump sum paymen=
+t of(<FONT color=3D#ff1e1e>950,000.00 Euros&nbsp;Nine Hundred and fifty Tho=
+usand Euros</FONT>) </SPAN></STRONG><STRONG><SPAN style=3D"FONT-SIZE: 10pt;=
+ COLOR: #cc6633; FONT-FAMILY: Verdana">. </SPAN></STRONG>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #cc6633; FONT-FAMILY: Verdana"></SPAN></STRONG>&nbsp=
+;=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #cc6633; FONT-FAMILY: Verdana"></SPAN></STRONG><STRO=
+NG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #cc3333; FONT-FAMILY: Verdana">NO=
+TE: </SPAN></STRONG><STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #000033;=
+ FONT-FAMILY: Verdana">Due to mix up of some numbers and names, we ask that=
+ you keep your winning information confidential until your claim has been p=
+rocessed and your money remitted to you. This is part of our security proto=
+cols to avoid double claiming and unwarranted abuse of this program by some=
+ participants. </SPAN></STRONG>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana"></SPAN></STRONG>&nbsp=
+;=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana">All participants were=
+ selected through a computer ballot system drawn from over 20,000 company a=
+nd 30,000,000 individual email addresses from all over the world.</SPAN></S=
+TRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: black; FONT-FAMILY: Arial"></S=
+PAN>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><SPAN style=3D"FONT-SIZE=
+: 10pt; COLOR: black; FONT-FAMILY: Arial">&nbsp;</SPAN>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: black; FONT-FAMILY: Verdana">&nbsp;This promotional =
+program takes place every year. This lottery was promoted and sponsored by =
+International software organization committee, we hope with part of your wi=
+nning you will take part in our next coming (1million euro) international l=
+ottery. </SPAN></STRONG>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: black; FONT-FAMILY: Verdana"></SPAN></STRONG><SPAN s=
+tyle=3D"FONT-SIZE: 10pt; COLOR: black; FONT-FAMILY: Arial"></SPAN>&nbsp;=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana">To file for your clai=
+m, Please contact the claiming Agent stated below to receive your winning M=
+oney immediately: </SPAN></STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: bl=
+ack; FONT-FAMILY: Arial"></SPAN>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><SPAN style=3D"FONT-SIZE=
+: 10pt; COLOR: black; FONT-FAMILY: Arial">&nbsp;</SPAN>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana">NAME: <SPAN class=3Dy=
+shortcuts id=3Dlw_1258140770_3><FONT color=3D#000000>MR&nbsp;<FONT face=3DA=
+rial>&nbsp;COLINS SMITH</FONT>.</FONT></SPAN></SPAN></STRONG>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><SPAN><STRONG>Email:&nbs=
+p;</STRONG>(<A href=3D"http://us.mc510.mail.yahoo.com/mc/compose?to=3Dclaim=
+ingoff1@aim.com" target=3D_blank rel=3Dnofollow><SPAN class=3Dyshortcuts id=
+=3Dlw_1262597933_4>claimingoff1@aim.com</SPAN></A>)</SPAN>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><SPAN><BR></SPAN>&nbsp;<=
+SPAN style=3D"FONT-FAMILY: Comic Sans MS"><SPAN style=3D"COLOR: #0000ff"><S=
+PAN style=3D"FONT-SIZE: 10pt; FONT-FAMILY: Verdana, Geneva, Arial, Sans-ser=
+if"><STRONG><STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #cc3333; FONT-FA=
+MILY: Verdana">CONGRATULATIONS</SPAN></STRONG><STRONG><SPAN style=3D"FONT-S=
+IZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana">: Contact your claim agent=
+ for due processing and remittance of your </SPAN></STRONG><SPAN class=3Dys=
+hortcuts><STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #000033; FONT-FAMIL=
+Y: Verdana"><SPAN class=3Dyshortcuts id=3Dlw_1257189716_3><SPAN class=3Dysh=
+ortcuts id=3Dlw_1257242552_4><SPAN class=3Dyshortcuts id=3Dlw_1258140770_4>=
+<SPAN class=3Dyshortcuts id=3Dlw_1262597933_5>prize money</SPAN></SPAN></SP=
+AN></SPAN></SPAN></STRONG></SPAN><STRONG><SPAN style=3D"FONT-SIZE: 10pt; CO=
+LOR: #000033; FONT-FAMILY: Verdana"> to a designated account of your choice=
+.. Remember, you must contact
+ your claims officer not later than</SPAN></STRONG><EM><STRONG><SPAN style=
+=3D"FONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana"> </SPAN></STRONG=
+></EM><SPAN style=3D"FONT-SIZE: 10pt; COLOR: black; FONT-FAMILY: Arial"></S=
+PAN>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #cc3366; FONT-FAMILY: Verdana"><FONT color=3D#ff0033=
+>30/01/2010</FONT><EM>.</EM></SPAN><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #=
+000033; FONT-FAMILY: Verdana"><EM> </EM></SPAN></STRONG><STRONG><SPAN style=
+=3D"FONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana">After this date,=
+ all funds will be returned as unclaimed.</SPAN></STRONG>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana">&nbsp;</SPAN></STRONG=
+><SPAN style=3D"FONT-SIZE: 10pt; COLOR: black; FONT-FAMILY: Arial"></SPAN>=
+=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #cc3300; FONT-FAMILY: Verdana">NOTE</SPAN></STRONG><=
+STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana=
+">: In order to avoid unnecessary delays and complications, please remember=
+ to quote your reference numbers in every one of your Correspondences with =
+your officers. </SPAN></STRONG>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana"></SPAN></STRONG>&nbsp=
+;=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana">Furthermore,should th=
+ere be any change of your address, do inform your claims officer as soon as=
+ possible. </SPAN></STRONG>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana"></SPAN></STRONG>&nbsp=
+;=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana">Congratulations again=
+ from all our staff and thank you for being part of our Promotions program.=
+ </SPAN></STRONG><SPAN style=3D"FONT-SIZE: 10pt; COLOR: black; FONT-FAMILY:=
+ Arial"></SPAN>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><SPAN style=3D"FONT-SIZE=
+: 10pt; COLOR: black; FONT-FAMILY: Arial">&nbsp;</SPAN>=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana">We wish you continued=
+ </SPAN></STRONG><SPAN class=3Dyshortcuts><STRONG><SPAN style=3D"FONT-SIZE:=
+ 10pt; COLOR: #000033; FONT-FAMILY: Verdana"><SPAN class=3Dyshortcuts id=3D=
+lw_1257189716_4 style=3D"BACKGROUND: none transparent scroll repeat 0% 0%; =
+CURSOR: hand; BORDER-BOTTOM: medium none"><SPAN class=3Dyshortcuts id=3Dlw_=
+1257242552_5 style=3D"BACKGROUND: none transparent scroll repeat 0% 0%; CUR=
+SOR: hand; BORDER-BOTTOM: medium none"><SPAN class=3Dyshortcuts id=3Dlw_125=
+8140770_5><SPAN class=3Dyshortcuts id=3Dlw_1262597933_6>good fortunes</SPAN=
+></SPAN></SPAN></SPAN></SPAN></STRONG></SPAN><STRONG><SPAN style=3D"FONT-SI=
+ZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana">. </SPAN></STRONG><SPAN sty=
+le=3D"FONT-SIZE: 10pt; COLOR: black; FONT-FAMILY: Arial"></SPAN>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana">Best regards. </SPAN>=
+</STRONG>
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana"></SPAN></STRONG>&nbsp=
+;=20
+<P class=3DMsoNormal style=3D"MARGIN: 0cm 0cm 0pt"><STRONG><SPAN style=3D"F=
+ONT-SIZE: 10pt; COLOR: #000033; FONT-FAMILY: Verdana">The Management, <BR><=
+STRONG>Lottery Organisation.</STRONG>&nbsp;<BR>MR&nbsp; BASHIM HUSSAN</SPAN=
+></STRONG></STRONG></SPAN></SPAN></SPAN></DIV></DIV></td></tr></table><br>=
+=0A=0A=0A=0A      <!--1--><hr size=3D1></hr> =0AThe INTERNET now has a pers=
+onality. YOURS! <a href=3D"http://in.rd.yahoo.com/tagline_yyi_1/*http://in.=
+yahoo.com/" target=3D"_blank">See your Yahoo! Homepage</a>.
+--0-439570851-1263648140=:76707--
+

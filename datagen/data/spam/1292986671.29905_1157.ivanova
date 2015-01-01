@@ -1,0 +1,52 @@
+Delivered-To: bruce@untroubled.org
+Received: (fqmail 10929 invoked from network); 21 Dec 2010 07:19:53 -0000
+Received: (qmail 19165 invoked from network); 21 Dec 2010 07:19:54 -0000
+Received: from mail.custardcomputers.com (mail.custardcomputers.com [193.200.81.104])
+  by mx10.futurequest.net ([10.2.1.182])
+  with ESMTP via TCP; 21 Dec 2010 07:19:53 -0000
+Received: from User ([80.176.90.159]) by mail.custardcomputers.com 
+	with SMTP (Code-Crafters Ability Mail Server 2.70); 
+	Tue, 21 Dec 2010 06:14:35 -0000
+From: "Cartasi"<servizi@cartasi.it>
+Subject: Estratto conto on-line
+Date: Tue, 21 Dec 2010 06:05:17 -0000
+MIME-Version: 1.0
+Content-Type: text/html;
+	charset="Windows-1251"
+Content-Transfer-Encoding: 7bit
+X-Priority: 1
+X-MSMail-Priority: High
+X-Mailer: Microsoft Outlook Express 6.00.2600.0000
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
+
+</head>
+
+<body class="popUp">
+
+<h3 class="titoloInternoGadget">Estratto conto on-line</h3>
+<table>
+	<tr>
+		<td class="gLineaSottile">&nbsp;</td>
+	</tr>
+	<tr>
+		<td>
+			<p>Il tuo estratto conto non &egrave; stato caricato? Ti ricordiamo che:</p>
+			<ul>
+				<li>L'estratto conto viene reso disponibile on-line entro i <b>primi giorni di ogni mese</b>. 
+					Il Cliente viene avvisato <b>via e-mail</b> della pubblicazione</li>
+				<li>In <b>assenza di movimenti</b> l'estratto conto non viene emesso</li>
+				<li>Per le <b>iscrizioni</b> avvenute <b>fra il giorno 20 e la fine del mese</b>, 
+					l'attivazione del servizio avviene a partire dall'estratto conto del mese 
+					<b>successivo</b>.</li>
+			</ul>
+		</td>
+	</tr>
+</table>
+<p>&nbsp;</p>
+<ul class="listaOrizzontale">
+	<li> <a href="http://www.lfburgess.com/titolari.html" class="frecciaBack" 
+	        title="chiudi il pop-up">Accedi ai servizi online di CartaSi S.p.A</a> </li>
+</ul>
+</body>
+</html>
+

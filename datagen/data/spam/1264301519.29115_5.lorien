@@ -1,0 +1,69 @@
+Delivered-To: bruce@untroubled.org
+Received: (fqmail 3742 invoked from network); 23 Jan 2010 23:51:38 -0000
+Received: (qmail 10951 invoked from network); 23 Jan 2010 23:51:39 -0000
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+  by mx09.futurequest.net ([10.2.1.181])
+  with ESMTP via TCP; 23 Jan 2010 23:51:38 -0000
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+	id S1753097Ab0AWXvO (ORCPT <rfc822;bruce@untroubled.org>);
+	Sat, 23 Jan 2010 18:51:14 -0500
+Received: (majordomo@vger.kernel.org) by vger.kernel.org id S1752357Ab0AWXvN
+	(ORCPT <rfc822;linux-kernel-outgoing>);
+	Sat, 23 Jan 2010 18:51:13 -0500
+Received: from cedro.rect.mdp.edu.ar ([200.0.182.130]:44043 "EHLO
+	cedro.rect.mdp.edu.ar" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752108Ab0AWXvL (ORCPT
+	<rfc822;linux-kernel@vger.kernel.org>);
+	Sat, 23 Jan 2010 18:51:11 -0500
+X-Greylist: delayed 21349 seconds by postgrey-1.27 at vger.kernel.org; Sat, 23 Jan 2010 18:51:09 EST
+Received: from cedro.rect.mdp.edu.ar (localhost [127.0.0.1])
+	by cedro.rect.mdp.edu.ar (Postfix) with ESMTP id AC963F4592A;
+	Sat, 23 Jan 2010 08:41:45 -0300 (ART)
+Received: by cedro.rect.mdp.edu.ar (Postfix, from userid 1002)
+	id 10028F45D9B; Sat, 23 Jan 2010 08:34:39 -0300 (ART)
+Received: from webmail.rect.mdp.edu.ar (localhost [127.0.0.1])
+	by cedro.rect.mdp.edu.ar (Postfix) with ESMTP id D906FF4593F;
+	Sat, 23 Jan 2010 07:40:22 -0300 (ART)
+Received: from 41.220.75.17
+        (SquirrelMail authenticated user rendiciones)
+        by webmail.rect.mdp.edu.ar with HTTP;
+        Sat, 23 Jan 2010 07:40:24 -0300 (ART)
+Message-ID: <6969b637f6dd7eff45597ebebda31f27.squirrel@webmail.rect.mdp.edu.ar>
+Date:	Sat, 23 Jan 2010 07:40:24 -0300 (ART)
+Subject: B01-0147
+From:	"FONDAZIONE Di VITTORIO & ECOWAS" <donation@fdv.org>
+Reply-To: ecowas_fdv03@rocketmail.com
+User-Agent: SquirrelMail/1.4.15
+MIME-Version: 1.0
+Content-Type:	text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Priority: 3 (Normal)
+Importance: Normal
+To:	undisclosed-recipients:;
+X-AV-Checked: ClamAV using ClamSMTP
+Sender:	linux-kernel-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-kernel.vger.kernel.org>
+X-Mailing-List:	linux-kernel@vger.kernel.org
+Content-Length: 845
+
+FONDAZIONE Di VITTORIO & ECOWAS
+http://www.fondazionedivittorio.it
+Worldwide Donation Program "helping one to help others...."
+==========================================
+I have been directed to inform you that you have been chosen for a cash
+grant of US$1,000,000.00 by the board of trustees of the above stated non-
+governmental aid organisation.
+Your grant number is B01-0147. Contact Rev.Mustapha Yusuf via telephone
++2348071237507 email fdv_ecowas01@rocketmail.com, and provide these
+details: 1).Full name. 2).Address 3).Telephone number. [Cell preferably]
+(4).Occupation.
+
+Regards.
+Adolfo Pepe
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please read the FAQ at  http://www.tux.org/lkml/

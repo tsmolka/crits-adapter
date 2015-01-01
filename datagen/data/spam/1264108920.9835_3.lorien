@@ -1,0 +1,46 @@
+Delivered-To: bruce@untroubled.org
+Received: (fqmail 25968 invoked from network); 21 Jan 2010 21:20:57 -0000
+Received: (qmail 15391 invoked from network); 21 Jan 2010 21:20:57 -0000
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+  by mx08.futurequest.net ([10.2.1.180])
+  with ESMTP via TCP; 21 Jan 2010 21:20:57 -0000
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+	id S1755270Ab0AUVUr (ORCPT <rfc822;bruce@untroubled.org>);
+	Thu, 21 Jan 2010 16:20:47 -0500
+Received: (majordomo@vger.kernel.org) by vger.kernel.org id S1754960Ab0AUVUl
+	(ORCPT <rfc822;linux-kernel-outgoing>);
+	Thu, 21 Jan 2010 16:20:41 -0500
+Received: from vilab.hit.edu.cn ([202.118.250.15]:40524 "EHLO vilab.hit.edu.cn"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754822Ab0AUVUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+	Thu, 21 Jan 2010 16:20:40 -0500
+Received: from vilab.hit.edu.cn (localhost [127.0.0.1])
+	by vilab.hit.edu.cn (Postfix) with ESMTP id 46A0F1CC297D;
+	Wed, 20 Jan 2010 21:10:29 +0800 (CST)
+From:	"global loan company" <info@loan.com>
+Reply-To: loandept104@gmail.com
+Subject: loan offer
+Date:	Wed, 20 Jan 2010 21:10:29 +0800
+Message-Id: <20100120131031.M8133@loan.com>
+X-Mailer: OpenWebMail 2.53-B2D 
+X-OriginatingIP: 202.108.50.74 (qhliu)
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset=utf-8
+To:	undisclosed-recipients:;
+Sender:	linux-kernel-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-kernel.vger.kernel.org>
+X-Mailing-List:	linux-kernel@vger.kernel.org
+Content-Length: 321
+
+
+
+We offer loan at 2% interest rate, 
+if interested contact for more info.
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please read the FAQ at  http://www.tux.org/lkml/

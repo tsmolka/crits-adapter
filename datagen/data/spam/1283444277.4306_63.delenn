@@ -1,0 +1,78 @@
+Delivered-To: bruce@untroubled.org
+Received: (fqmail 5938 invoked from network); 02 Sep 2010 13:01:20 -0000
+Received: (qmail 22910 invoked from network); 2 Sep 2010 13:01:19 -0000
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+  by mx14.futurequest.net ([10.2.1.187])
+  with ESMTP via TCP; 02 Sep 2010 13:01:19 -0000
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+	id S1754457Ab0IBNAh (ORCPT <rfc822;bruce@untroubled.org>);
+	Thu, 2 Sep 2010 09:00:37 -0400
+Received: from out1.mdmis.com ([210.5.42.208]:47449 "EHLO out1.mdmis.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752810Ab0IBNAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+	Thu, 2 Sep 2010 09:00:34 -0400
+Received: from out1.mdmis.com (localhost.localdomain [127.0.0.1])
+	by out1.mdmis.com (Postfix) with ESMTP id E554E4FE0E
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Sep 2010 19:57:50 +0800 (MYT)
+DKIM-Signature:	v=1; a=rsa-sha1; c=relaxed; d=mdmis.com; h=message-id
+	:date:from:to:subject:mime-version:content-type
+	:content-transfer-encoding; s=mdmis; bh=hRcBImWdsRIJRgUG4675hT/+
+	hqQ=; b=VfNCwlodOyu3pYg9lnrgWRnzGxC8Bt42V+aFATWPLACA3kXH6w/O5TfV
+	Atyju/IpXTb1CABVyxq7tMOB392qQNl+S01ETb2f2nxGBUpsZs0zNRS4FnEBcjoG
+	CpBjspXfu2qrLrStHbLBmT+RFaMrYStQ0KyUyJZ67UB/Wufdpj0=
+Received: from email.mdmis.com (email.mdmis.com [210.5.42.206])
+	by out1.mdmis.com (Postfix) with ESMTP id 2764050076
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Sep 2010 19:57:35 +0800 (MYT)
+Received: (qmail 26038 invoked by uid 48); 2 Sep 2010 11:57:34 -0000
+Received: from 41.217.66.5 ([41.217.66.5]) by mail.asli.com.my (Horde
+ Framework) with HTTP; Thu, 02 Sep 2010 19:57:34 +0800
+Message-ID: <20100902195734.1226255t2f0shrgk@mail.asli.com.my>
+Date:	Thu, 02 Sep 2010 19:57:34 +0800
+From:	Ms Dai Ying <hkdaiming59@yahoo.com.hk>
+To:	undisclosed-recipients:;
+Subject: Hello
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=ISO-8859-1;
+ DelSp="Yes";
+ format="flowed"
+Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
+User-Agent: Internet Messaging Program (IMP) H3 (4.3.7)
+X-Originating-IP: 41.217.66.5
+X-Remote-Browser: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1;
+ Trident/4.0; GTB6.5; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET
+ CLR 3.0.30729; Media Center PC 6.0; VER#X9#80836582516745485070484856)
+X-mdmis_com-MailScanner-Information: Please contact the ISP for more information
+X-mdmis_com-MailScanner-ID: 2764050076.D2764
+X-mdmis_com-MailScanner: Found to be clean
+X-mdmis_com-MailScanner-SpamScore: s
+X-mdmis_com-MailScanner-From: srs0=awrh=qg=yahoo.com.hk=hkdaiming59@srs.mdmis.com
+Sender:	linux-kernel-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-kernel.vger.kernel.org>
+X-Mailing-List:	linux-kernel@vger.kernel.org
+Content-Length: 577
+
+
+
+Ms Dai Ying
+General Manager
+Global Markets Department
+Bank of China (Hong Kong) Limited
+
+I am the general manager, Global markets department of Bank of China. I
+have a business proposition for you concerning one of our clients.
+
+If you are interested get back to me for more details.
+
+I await your response.
+
+Sincerely,
+
+Dai Ying
+--
+To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please read the FAQ at  http://www.tux.org/lkml/

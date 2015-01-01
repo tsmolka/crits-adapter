@@ -1,0 +1,53 @@
+Delivered-To: bruce@untroubled.org
+Received: (fqmail 19719 invoked from network); 08 Jan 2010 15:06:07 -0000
+Received: (qmail 8206 invoked from network); 8 Jan 2010 15:06:07 -0000
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+  by mx15.futurequest.net ([10.2.1.189])
+  with ESMTP via TCP; 08 Jan 2010 15:06:07 -0000
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+	id S1753604Ab0AHPFq (ORCPT <rfc822;bruce@untroubled.org>);
+	Fri, 8 Jan 2010 10:05:46 -0500
+Received: (majordomo@vger.kernel.org) by vger.kernel.org id S1753443Ab0AHPFq
+	(ORCPT <rfc822;linux-kernel-outgoing>);
+	Fri, 8 Jan 2010 10:05:46 -0500
+Received: from toroondcbmts08.bellnexxia.net ([207.236.237.42]:41768 "EHLO
+	toroondcbmts08-srv.bellnexxia.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753250Ab0AHPFp convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+	Fri, 8 Jan 2010 10:05:45 -0500
+X-Greylist: delayed 41616 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Jan 2010 10:05:45 EST
+Received: from toip54-bus.srvr.bell.ca ([67.69.240.140])
+          by toroondcbmts08-srv.bellnexxia.net
+          (InterMail vM.8.00.01.00 201-2244-105-20090324) with ESMTP
+          id <20100108150327.PCGZ1747.toroondcbmts08-srv.bellnexxia.net@toip54-bus.srvr.bell.ca>;
+          Fri, 8 Jan 2010 10:03:27 -0500
+Received: from smtp.bellnet.ca (HELO toip38-bus.srvr.bell.ca) ([67.69.240.39])
+  by toip54-bus.srvr.bell.ca with ESMTP; 08 Jan 2010 09:59:01 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: AjwKAKzKRkvP7O0e/2dsb2JhbACDXotkCYxxqj6NGIErgi5WBA
+Received: from toroondcbfep01.bellnexxia.net (HELO toroondcbfep01) ([207.236.237.30])
+  by toip38-bus.srvr.bell.ca with ESMTP; 08 Jan 2010 10:03:04 -0500
+Message-ID: <20100108100336.9RYS2.8138.root@toroondcbfep01>
+Date:	Fri, 8 Jan 2010 10:03:36 -0500
+From:	Mrs Mary Harmon <rbbell@bellnet.ca>
+Reply-To: mr.andybenson03@8u8.hk
+Subject: You've won
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Priority: 3 (Normal)
+Sensitivity: Normal
+X-Originating-IP: from 41.138.183.231 by webmail.en.bellnet.ca; Fri, 8 Jan 2010 10:03:35 -0500
+To:	unlisted-recipients:; (no To-header on input)
+Sender:	linux-kernel-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-kernel.vger.kernel.org>
+X-Mailing-List:	linux-kernel@vger.kernel.org
+Content-Length: 398
+
+You've won £500,000.00 pounds from the Microsoft End Of Year Lottery.Send your Names/Address/Sex/Tel to alves.preton1@live.com. Regards Mrs Mary Harmon
+--
+To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please read the FAQ at  http://www.tux.org/lkml/

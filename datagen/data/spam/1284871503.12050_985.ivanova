@@ -1,0 +1,34 @@
+Delivered-To: bruce@bruce-guenter.dyndns.org
+Received: (qmail 19782 invoked from network); 18 Sep 2010 07:22:27 -0000
+Received: from localhost (localhost [127.0.0.1])
+  by bruce-guenter.dyndns.org ([192.168.1.2]); 18 Sep 2010 07:22:27 -0000
+Received: from zak.futurequest.net ([127.0.0.1])
+  by localhost ([127.0.0.1])
+  with SMTP via TCP; 18 Sep 2010 07:22:27 -0000
+Received: (qmail 28021 invoked from network); 18 Sep 2010 07:22:25 -0000
+Received: from nat-71-97.kirovnet.ru (unknown [92.39.71.97])
+  by zak.futurequest.net ([69.5.6.152])
+  with ESMTP via TCP; 18 Sep 2010 07:22:24 -0000
+Return-path: <befp@bruce-guenter.dyndns.org>
+Received: from [92.39.71.97] (port=9271 helo=microsoffd6c00)
+	by mail-gw.roth-werke.de with asmtp 
+	id 8C2A43-000929-35
+	for <befp@bruce-guenter.dyndns.org>; Sat, 18 Sep 2010 11:22:19 +0300
+Message-ID: <1CDBD397E3694EF6BACAF4E9EED324DA@microsoffd6c00>
+From: "Doris Chaney" <unhealthytw6@roth-belgium.com>
+To: <befp@bruce-guenter.dyndns.org>
+Subject: hello
+Date: Sat, 18 Sep 2010 11:22:19 +0300
+MIME-Version: 1.0
+Content-Type: text/plain;
+	format=flowed;
+	charset="iso-8859-1";
+	reply-type=original
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049
+X-Mras: Ok
+
+how are you?

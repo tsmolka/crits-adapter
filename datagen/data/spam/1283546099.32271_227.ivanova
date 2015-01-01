@@ -1,0 +1,61 @@
+Delivered-To: cvs@bruce-guenter.dyndns.org
+Received: (qmail 16490 invoked from network); 3 Sep 2010 08:00:22 -0000
+Received: from localhost (localhost [127.0.0.1])
+  by bruce-guenter.dyndns.org ([192.168.1.2]); 03 Sep 2010 08:00:22 -0000
+Received: from zak.futurequest.net ([127.0.0.1])
+  by localhost ([127.0.0.1])
+  with SMTP via TCP; 03 Sep 2010 08:00:22 -0000
+Received: (qmail 24984 invoked from network); 3 Sep 2010 08:00:19 -0000
+Received: from tpnet.pl (unknown [83.12.167.66])
+  by zak.futurequest.net ([69.5.6.152])
+  with ESMTP via TCP; 03 Sep 2010 08:00:18 -0000
+Received: (from plainpup46@localhost)
+	by ekretarskoe-delo.ru (8.13.8/8.13.8/Submit) id v378bjkj006400;
+	Fri, 3 Sep 2010 09:00:18 +0100
+	(envelope-from seringlfwg4@emleshop.ru)
+X-Authentication-Warning: ekretarskoe-delo.ru: plainpup46 set sender to seringlfwg4@emleshop.ru using -f
+To: cvs <<cvs@bruce-guenter.dyndns.org>
+Cc: <cvsdd@bruce-guenter.dyndns.org>,
+	<cvsd@bruce-guenter.dyndns.org>>
+Subject: =?koi8-r?B?9cTB3s7ZyiDX2dPU0sXM?=
+Date: Fri, 3 Sep 2010 09:00:18 +0100
+From: =?koi8-r?B?9+nr9O/yICDm0s/Mz9c=?= 
+	<plainpup46@ekretarskoe-delo.ru>
+Reply-to: seringlfwg4@emleshop.ru
+Message-ID: <vrd19sklb26961bjbm@localhost.localdomain>
+X-Priority: 3Reply-to: =?koi8-r?B?9+nr9O/yICDm0s/Mz9c=?= 
+	<plainpup46@ekretarskoe-delo.ru>
+X-Mailer: IPB PHP
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: multipart/alternative;
+  boundary="2644849281"
+
+--2644849281
+Content-Type: text/plain; charset=koi8-r
+Content-Transfer-Encoding: 8bit
+
+      АРБАЛЕТНО ЛУЧНЫЙ ТИР       в Санкт-Петербурге      &quot;Робин гуд&quot;      Весь сентябрь скидка 50%!      ТК &quot;Континент&quot;, ул. Байконурская, 14-а            Тел.: +7 (812) 955-78-45  
+
+--2644849281
+Content-Type: text/html; charset=koi8-r
+Content-Transfer-Encoding: 8bit
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE></TITLE>
+</HEAD>
+<BODY>
+
+<table width="650" border="1" align="center" bordercolor="#990000" bgcolor="#990000">
+  <tr>
+    <td bgcolor="#FFFF99"><p align="center"><strong><font color="#990000" size="6" face="Verdana, Arial, Helvetica, sans-serif">АРБАЛЕТНО ЛУЧНЫЙ ТИР </font><font size="4" face="Verdana, Arial, Helvetica, sans-serif"><br />
+      в Санкт-Петербурге</font></strong></p>
+      <p align="center"><strong><font color="#0000FF" size="6" face="Verdana, Arial, Helvetica, sans-serif">&quot;Робин гуд&quot;</font></strong></p>
+      <p align="center"><strong><font color="#FF0000" size="5" face="Verdana, Arial, Helvetica, sans-serif">Весь сентябрь скидка 50%!</font></strong></p>
+      <p align="center"><strong><font size="4" face="Verdana, Arial, Helvetica, sans-serif">ТК &quot;Континент&quot;, ул. Байконурская, 14-а<br />
+            <font color="#990000" size="5">Тел.: +7 (812) 955-78-45</font></font></strong></p></td>
+  </tr>
+</table>
+
+</BODY></HTML>
+--2644849281--
