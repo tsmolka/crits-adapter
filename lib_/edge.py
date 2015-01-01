@@ -43,7 +43,8 @@ import yaml
 def stix2json(observable):
     if isinstance(observable.object_.properties, Address):
         crits_types = {'cidr'         : 'Address - cidr', \
-                       'ipv4-addr'    : 'Address - ipv4-net', \
+                       'ipv4-addr'    : 'Address - ipv4-addr', \
+                       'ipv4-net'     : 'Address - ipv4-net', \
                        'ipv4-netmask' : 'Address - ipv4-net-mask', \
                        'ipv6-addr'    : 'Address - ipv6-addr', \
                        'ipv6-net'     : 'Address - ipv6-net', \
@@ -133,12 +134,15 @@ def taxii_poll(config, target, timestamp=None):
                     (json, endpoint) = stix2json(observable)
                     if json:
                         # mark crits releasability...
-                        json['releasability'] = [{'name': config['crits']['sites'][target]['api']['source']},]
+                        # json['releasability'] = [{'name': config['crits']['sites'][target]['api']['source'], 'analyst': 'toor', 'instances': []},]
+                        # json['c-releasability.name'] = config['crits']['sites'][target]['api']['source']
+                        # json['releasability.name'] = config['crits']['sites'][target]['api']['source']
                         json_[endpoint].append(json)
     return(json_, latest)
 
 
 def taxii_inbox(config, target, stix_package=None):
+    # import pudb; pu.db
     if stix_package:
         stixroot = lxml.etree.fromstring(stix_package.to_xml())
         client = tc.HttpClient()
@@ -150,7 +154,8 @@ def taxii_inbox(config, target, stix_package=None):
             content_binding = t.CB_STIX_XML_11, # of _101, _11, _111
             content         = stixroot,
         )
-        message.destination_collection_names = [config['edge']['sites'][target]['taxii']['collection'],]
+        if config['edge']['sites'][target]['taxii']['collection'] != 'system.Default':
+            message.destination_collection_names = [config['edge']['sites'][target]['taxii']['collection'],]
         message.content_blocks.append(content_block)
         taxii_response = client.callTaxiiService2(config['edge']['sites'][target]['host'], config['edge']['sites'][target]['taxii']['path'], t.VID_TAXII_XML_11, message.to_xml(), port=config['edge']['sites'][target]['taxii']['port'])
         if taxii_response.code != 200 or taxii_response.msg != 'OK':
