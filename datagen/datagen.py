@@ -165,7 +165,7 @@ def gen_stix_sample(config, target=None, datatype=None, title='random test data'
     if datatype == 'ip':
         indicator = Indicator(title='IP Address for known C2 Channel')
         indicator.add_indicator_type('IP Watchlist')
-        addr = Address(address_value=generate_random_ip_address(), category=Address.CAT_IPV4)
+        addr = Address(address_value=generate_random_ip_address(), category='ipv4-addr')
         addr.condition = 'Equals'
         indicator.add_observable(addr)
         stix_package.add_indicator(indicator)
