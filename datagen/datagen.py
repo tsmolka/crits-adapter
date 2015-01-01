@@ -223,15 +223,18 @@ def gen_stix_sample(config, target=None, datatype=None, title='random test data'
             random_spam_msg = get_random_spam_msg()
             email = EmailMessage()
             email.header = EmailHeader()
-            header_map = {'Subject': 'subject', 'To': 'to', 'Cc': 'cc',
-                          'Bcc': 'bcc', 'From': 'from_', 'Sender': 'sender', 'Date':
-                          'date', 'Message-ID': 'message_id', 'Reply-To': 'reply_to',
-                          'In-Reply-To': 'in_reply_to', 'Content-Type': 'content_type',
-                          'Errors-To': 'errors_to', 'Boundary': 'boundary',
-                          'Precedence': 'precedence', 'Boundary': 'boundary',
-                          'MIME-Version': 'mime_version', 'X-Mailer': 'x_mailer',
-                          'User-Agent': 'user_agent', 'X-Originating-IP':
-                          'x_originating_ip', 'X-Priority': 'x_priority'}
+            header_map = {'Subject': 'subject', 'To': 'to', 'Cc':
+                          'cc', 'Bcc': 'bcc', 'From': 'from_',
+                          'Sender': 'sender', 'Date': 'date',
+                          'Message-ID': 'message_id', 'Reply-To':
+                          'reply_to', 'In-Reply-To': 'in_reply_to',
+                          'Content-Type': 'content_type', 'Errors-To':
+                          'errors_to', 'Precedence': 'precedence',
+                          'Boundary': 'boundary', 'MIME-Version':
+                          'mime_version', 'X-Mailer': 'x_mailer',
+                          'User-Agent': 'user_agent',
+                          'X-Originating-IP': 'x_originating_ip',
+                          'X-Priority': 'x_priority'}
             # TODO handle received_lines
             for key in header_map.keys():
                 val = random_spam_msg.get(key, None)
@@ -347,9 +350,24 @@ def generate_crits_json(config, datatype=None):
             json[hash] = hashes[hash]
         return(json)
     elif datatype == 'email':
-        return(None)
+        random_spam_msg = get_random_spam_msg()
+        json = {'upload_type': 'fields'}
+        # import pudb; pu.db
+        # TODO crits seems not to support uploading email metadata via
+        #      the api?!
+        header_map = {'Subject': 'subject', 'To': 'to', 'Cc': 'cc',
+                      'From': 'from', 'Sender': 'sender', 'Date':
+                      'date', 'Message-ID': 'message_id', 'Reply-To':
+                      'reply_to', 'Boundary': 'boundary', 'X-Mailer':
+                      'x_mailer', 'X-Originating-IP':
+                      'x_originating_ip'}
+        for key in header_map.keys():
+            val = random_spam_msg.get(key, None)
+            if val:
+                json[header_map[key]] = val
+        return(json)
 
-    
+            
 def inject_crits_sample_data(config, target=None, datatype=None):
     '''inject randomly generated sample data into crits target'''
     endpoint = None
