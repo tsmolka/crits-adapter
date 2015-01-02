@@ -7,17 +7,19 @@ from cybox.objects.address_object import Address
 from cybox.objects.domain_name_object import DomainName
 from cybox.objects.file_object import File
 from cybox.common import Hash
+from cybox.objects.email_message_object import EmailMessage, EmailHeader
 from stix.core import STIXPackage, STIXHeader
 from stix.data_marking import Marking, MarkingSpecification
 from stix.extensions.marking.tlp import TLPMarkingStructure
 from stix.indicator import Indicator
 from stix.utils import set_id_namespace as set_stix_id_namespace
-from util import nowutcmin
+import util
 import edge
 import json
 import pytz
 import requests
 import yaml
+import datetime
 
 
 # TODO how to deal with deleted crits objects?
@@ -150,65 +152,34 @@ def json2stix(config, source, endpoint, json_, title='random test data', descrip
                 i.simple_hash_value.condition = "Equals"
             indicator.add_observable(file_object)
             stix_package.add_indicator(indicator)
-    elif datatype == 'email':
-        exit()
+    elif endpoint == 'emails':
+        crits_types = {'subject': 'subject', 'to': 'to', 'cc': 'cc',
+        'from_address': 'from_', 'sender': 'sender', 'date': 'date',
+        'message_id': 'message_id', 'reply_to': 'reply_to',
+        'boundary': 'boundary', 'x_mailer': 'x_mailer',
+        'x_originating_ip': 'x_originating_ip'}
+        for i in json_.keys():
+            email = EmailMessage()
+            email.header = EmailHeader()
+            for key in crits_types.keys():
+                val = json_[i].get(key, None)
+                if val:
+                    email.header.__setattr__(crits_types[key], val)
+                    email.header.__getattribute__(crits_types[key]).condition = 'Equals'
+            indicator = Indicator(title='spam spam spam')
+            indicator.add_indicator_type('Malicious E-mail')
+            indicator.add_observable(email)
+            stix_package.add_indicator(indicator)
+    else:
+        config['logger'].error('unsupported crits object type %s!' % endpoint)
+        return(None)
     return(stix_package)
 
 
-    #     endpoint = 'ips'
-    #     condition = rgetattr(observable.object_.properties, ['condition'])
-    #     if condition == 'Equals':
-    #         # currently not handling other observable conditions as
-    #         # it's not clear that crits even supports these...
-    #         ip_category = rgetattr(observable.object_.properties, ['category'])
-    #         ip_value = rgetattr(observable.object_.properties, ['address_value', 'value'])
-    #         if ip_value and ip_category:
-    #             json = {'ip': ip_value, 'ip_type': crits_types[ip_category]}
-    #             return(json, endpoint)
-    # elif isinstance(observable.object_.properties, DomainName):
-    #     crits_types = {'FQDN': 'A'}
-    #     # crits doesn't appear to support tlds...
-    #     endpoint = 'domains'
-    #     domain_category = rgetattr(observable.object_.properties, ['type_'])
-    #     domain_value = rgetattr(observable.object_.properties, ['value', 'value'])
-    #     if domain_category and domain_value:
-    #         json = {'domain': domain_value, 'type': crits_types[domain_category]}
-    #         return(json, endpoint)
-    # elif isinstance(observable.object_.properties, File):
-    #     crits_types = {'MD5'    : 'md5', \
-    #                    'SHA1'   : 'sha1', \
-    #                    'SHA224' : 'sha224', \
-    #                    'SHA256' : 'sha256', \
-    #                    'SHA384' : 'sha384', \
-    #                    'SHA512' : 'sha512', \
-    #                    'SSDEEP' : 'ssdeep'}
-    #     endpoint = 'samples'
-    #     json = {'upload_type': 'metadata'}
-    #     hashes = rgetattr(observable.object_.properties, ['hashes'])
-    #     if hashes:
-    #         for hash in hashes:
-    #             hash_type = rgetattr(hash, ['type_', 'value'])
-    #             hash_value = rgetattr(hash, ['simple_hash_value', 'value'])
-    #             if hash_type and hash_value:
-    #                 json[crits_types[hash_type]] = hash_value
-    #     file_name = rgetattr(observable.object_.properties, ['file_name', 'value'])
-    #     if file_name:
-    #         json['filename'] = file_name
-    #     file_format = rgetattr(observable.object_.properties, ['file_format', 'value'])
-    #     if file_format:
-    #         json['filetype'] = file_format
-    #     file_size = rgetattr(observable.object_.properties, ['size_in_bytes', 'value'])
-    #     if file_size:
-    #         json['size'] = file_size
-    #     return(json, endpoint)
-    # else:
-    #     import pudb; pu.db
-
-
-def crits2edge(config, source, destination):
+def crits2edge(config, source, destination, daemon=False):
     # check if (and when) we synced source and destination...
     state_key = source + '_to_' + destination
-    now = nowutcmin()
+    now = util.nowutcmin()
     # make yaml play nice...
     if not isinstance(config['state'], dict):
         config['state'] = dict()
@@ -218,15 +189,26 @@ def crits2edge(config, source, destination):
         config['state'][state_key]['crits_to_edge'] = dict()
     if 'timestamp' in config['state'][state_key]['crits_to_edge'].keys():
         timestamp = config['state'][state_key]['crits_to_edge']['timestamp'].replace(tzinfo=pytz.utc)
+        config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
     else:
         # looks like first sync...
         # ...so we'll want to poll all records...
-        timestamp = None
+        config['logger'].info('initial sync between %s and %s' % (source, destination))
+        timestamp = util.epoch_start()
     endpoints = ['ips', 'domains', 'samples', 'emails']
     ids = dict()
-    # import pudb; pu.db
+    total_input = 0
+    total_output = 0
+    subtotal_input = {}
+    subtotal_output = {}
     for endpoint in endpoints:
         ids[endpoint] = fetch_crits_object_ids(config, source, endpoint, timestamp)
+        subtotal_input[endpoint] = len(ids[endpoint])
+        subtotal_output[endpoint] = 0
+        total_input += len(ids[endpoint])
+    config['logger'].info('%i (total) objects to be synced between %s (crits) and %s (edge)' % (total_input, source, destination))
+    for endpoint in endpoints:
+        config['logger'].info('%i %s objects to be synced between %s (crits) and %s (edge)' % (subtotal_input[endpoint], endpoint, source, destination))
         if not len(ids[endpoint]): continue
         else:
             while len(ids[endpoint]) > 0:
@@ -235,25 +217,47 @@ def crits2edge(config, source, destination):
                     stix_ = json2stix(config, source, endpoint, json_)
                     success = edge.taxii_inbox(config, destination, stix_)
                     if not success:
-                        print 'fail!!!'
-                        exit()
+                        config['logger'].info('%i %s objects could not be synced between %s (crits) and %s (edge)' % (len(ids[endpoint]), endpoint, source, destination))
+                    else:
+                        subtotal_input[endpoint] -= len(ids[endpoint])
+                        total_input -= len(ids[endpoint])
+                        subtotal_output[endpoint] += len(ids[endpoint])
+                        total_output += len(ids[endpoint])
+                        config['logger'].info('%i %s objects successfully synced between %s (crits) and %s (edge)' % (subtotal_output[endpoint], endpoint, source, destination))
+                        if subtotal_output[endpoint] < subtotal_input[endpoint]:
+                            config['logger'].info('%i %s objects could not be synced between %s (crits) and %s (edge)' % (len(ids[endpoint]), endpoint, source, destination))
                     ids[endpoint] = list()
                 else:
                     json_ = crits_poll(config, source, endpoint, ids[endpoint][0:99])
                     stix_ = json2stix(config, source, endpoint, json_)
                     success = edge.taxii_inbox(config, destination, stix_)
                     if not success:
-                        print 'fail!!!'
-                        exit()
+                        config['logger'].info('%i %s objects could not be synced between %s (crits) and %s (edge)' % (len(ids[endpoint][0:99]), endpoint, source, destination))
+                    else:
+                        subtotal_input[endpoint] -= len(ids[endpoint][0:99])
+                        total_input -= len(ids[endpoint][0:99])
+                        subtotal_output[endpoint] += len(ids[endpoint][0:99])
+                        total_output += len(ids[endpoint][0:99])
+                        config['logger'].info('%i %s objects successfully synced between %s (crits) and %s (edge)' % (subtotal_output[endpoint], endpoint, source, destination))
+                        if subtotal_output[endpoint] < (subtotal_input[endpoint] - len(ids[endpoint][100:])):
+                            config['logger'].info('%i %s objects could not be synced between %s (crits) and %s (edge)' % (subtotal_input[endpoint] - (subtotal_output[endpoint] - len(ids[endpoint][100:])), endpoint, source, destination))
                     ids[endpoint] = ids[endpoint][100:]
+    config['logger'].info('%i (total) objects successfully synced between %s (crits) and %s (edge)' % (total_output, source, destination))
+    if total_output < total_input:
+        config['logger'].info('%i (total) objects could not be synced between %s (crits) and %s (edge)' % (total_input - total_output, source, destination))
     # save state to disk for next run...
-    yaml_ = deepcopy(config)
-    yaml_['state'][state_key]['crits_to_edge']['timestamp'] = now
-    del yaml_['config_file']
-    file_ = file(config['config_file'], 'w')
-    yaml.dump(yaml_, file_, default_flow_style=False)
-    file_.close()
-
+    if config['daemon']['debug']:
+        config['logger'].debug('saving state until next run [%s]' % str(now + datetime.timedelta(seconds=config['crits']['sites'][source]['api']['poll_interval'])))
+    if not daemon:
+        yaml_ = deepcopy(config)
+        yaml_['state'][state_key]['crits_to_edge']['timestamp'] = now
+        del yaml_['config_file']
+        del yaml_['logger']
+        file_ = file(config['config_file'], 'w')
+        yaml.dump(yaml_, file_, default_flow_style=False)
+        file_.close()
+    else:
+        config['state'][state_key]['crits_to_edge']['timestamp'] = now
 
 def __fetch_crits_object_ids(config, target, endpoint, params):
     '''fetch all crits object ids from endpoint and return a list'''

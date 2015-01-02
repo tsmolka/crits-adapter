@@ -7,7 +7,7 @@ import os.path
 python_path.append('./lib_')
 from crits import crits2edge
 from edge import edge2crits
-from util import parse_config
+import util
 import log
 
 
@@ -20,7 +20,7 @@ import log
 # DONE add datagen for emails
 # TODO implement crits-to-stix for emails
 # TODO implement stix-to-crits for emails
-# TODO daemonize edgy_crits
+# DONE daemonize edgy_crits
 # TODO run edgy_crits in daemon mode on all 3 sites, setup ben's
 #      inboxing routine on site_a & site_b, pump crits into site_a,
 #      pump stix into site_b, and see where things fall down in terms
@@ -56,13 +56,13 @@ Options:
 Please report bugs to support@soltra.com
 ''' % (default_config)
 
-
 def main():
     args = docopt(__doc__, version=__version__)
-    config = parse_config(args['--config'])
+    config = util.parse_config(args['--config'])
     config['config_file'] = args['--config']
     logger = log.setup_logging(config)
     config['logger'] = logger
+    config['daemon']['app_path'] = app_path
     if args['--sync-crits-to-edge']:
         if args['--source'] in config['crits']['sites'].keys() and args['--destination'] in config['edge']['sites'].keys():
             logger.info('initiating crits=>edge sync between %s and %s' % (args['--source'], args['--destination']))

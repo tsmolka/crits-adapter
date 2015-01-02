@@ -38,6 +38,7 @@ import pytz
 from hashlib import md5, sha1, sha224, sha256, sha384, sha512
 import ssdeep
 from email.parser import Parser as email_parser
+import string
 
 __version__ = '0.1'
 app_path = os.path.split(os.path.abspath(__file__))[0]
@@ -109,6 +110,7 @@ def get_random_spam_msg():
     random_spam_msg = parser.parse(random_spam_file)
     random_spam_file.close()
     return(random_spam_msg)
+
 
 def get_email_payload(msg):
     val = None
@@ -327,7 +329,6 @@ def inject_edge_sample_data(config, target=None, datatype=None):
         types_ = list()
         types_.extend(datatypes)
         types_.remove('mixed')
-        types_.remove('email')
         i = 0
         while i < config['edge']['datagen']['indicator_count']:
             type_ = types_[random.randint(0, len(types_) - 1)]
@@ -338,6 +339,7 @@ def inject_edge_sample_data(config, target=None, datatype=None):
 
 
 def generate_crits_json(config, datatype=None):
+    # import pudb; pu.db
     if datatype == 'ip':
         ip = generate_random_ip_address()
         return({'ip': ip, 'ip_type': 'Address - ipv4-addr'})
@@ -350,13 +352,14 @@ def generate_crits_json(config, datatype=None):
             json[hash] = hashes[hash]
         return(json)
     elif datatype == 'email':
+        # TODO crits seems not to support uploading email metadata via
+        #      the api?! have tried every imaginable permutation of
+        #      metadata and raw uploads :-(
         random_spam_msg = get_random_spam_msg()
         json = {'upload_type': 'fields'}
         # import pudb; pu.db
-        # TODO crits seems not to support uploading email metadata via
-        #      the api?!
         header_map = {'Subject': 'subject', 'To': 'to', 'Cc': 'cc',
-                      'From': 'from', 'Sender': 'sender', 'Date':
+                      'From': 'from_address', 'Sender': 'sender', 'Date':
                       'date', 'Message-ID': 'message_id', 'Reply-To':
                       'reply_to', 'Boundary': 'boundary', 'X-Mailer':
                       'x_mailer', 'X-Originating-IP':
@@ -364,7 +367,17 @@ def generate_crits_json(config, datatype=None):
         for key in header_map.keys():
             val = random_spam_msg.get(key, None)
             if val:
-                json[header_map[key]] = val
+                if key in ['To', 'Cc']:
+                    json[header_map[key]] = [val,]
+                else:
+                    json[header_map[key]] = val
+        # print(json)
+        # exit()
+        # spam_dir = 'data/spam'
+        # random_spam_file = open(os.path.join(spam_dir, random.choice(os.listdir(spam_dir))))
+        # random_spam = random_spam_file.read()
+        # random_spam_file.close()
+        # json = {'upload_type': 'raw', 'file_data': random_spam}
         return(json)
 
             
