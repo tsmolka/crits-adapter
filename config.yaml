@@ -1,6 +1,6 @@
 crits:
   sites:
-    demo_central:
+    localhost:
       api:
         allow_self_signed: true
         key: 0055eaeb01c0f9f38cd65b190daf8f6d8e88c8fc
@@ -12,79 +12,21 @@ crits:
         ssl: true
         user: api
       enabled: true
-      host: 54.154.52.195
-    demo_site_a:
-      api:
-        allow_self_signed: true
-        key: 0055eaeb01c0f9f38cd65b190daf8f6d8e88c8fc
-        max_results: 1000
-        path: /api/v1/
-        poll_interval: 30
-        port: 444
-        source: dsie
-        ssl: true
-        user: api
-      enabled: false
-      host: 54.154.28.239
-    demo_site_b:
-      api:
-        allow_self_signed: true
-        key: 0055eaeb01c0f9f38cd65b190daf8f6d8e88c8fc
-        max_results: 1000
-        path: /api/v1/
-        poll_interval: 30
-        port: 444
-        source: dsie
-        ssl: true
-        user: api
-      enabled: false
-      host: 54.154.64.114
+      host: 127.0.0.1
 daemon:
-  app_path: /home/trey/docs/dtcc/src/repository/adapters/crits
+  app_path: /opt/soltra/edge/var/repository/edgy_crits/adapters/crits
   debug: true
   log:
     file: edgy_crits.log
     rotate_count: 10
     rotate_size: 10240
   pid: edgy_crits.pid
-  working_dir: /home/trey/docs/dtcc/src/repository/adapters/crits
+  working_dir: /opt/soltra/edge/repository/adapters/crits
 edge:
   sites:
-    demo_central:
+    localhost:
       enabled: true
-      host: 54.154.52.195
-      stix:
-        xmlns_name: dsie
-        xmlns_url: http://www.dsie.net/
-      taxii:
-        allow_self_signed: true
-        collection: system.Default
-        pass: Opiningbiddyproxywandzigzagsetchedeightjimmies_2347
-        path: /taxii-data
-        poll_interval: 30
-        port: 443
-        ssl: true
-        user: api
-        version: 1.1
-    demo_site_a:
-      enabled: false
-      host: 54.154.28.239
-      stix:
-        xmlns_name: dsie
-        xmlns_url: http://www.dsie.net/
-      taxii:
-        allow_self_signed: true
-        collection: system.Default
-        pass: Opiningbiddyproxywandzigzagsetchedeightjimmies_2347
-        path: /taxii-data
-        poll_interval: 30
-        port: 443
-        ssl: true
-        user: api
-        version: 1.1
-    demo_site_b:
-      enabled: false
-      host: 54.154.64.114
+      host: 127.0.0.1
       stix:
         xmlns_name: dsie
         xmlns_url: http://www.dsie.net/
@@ -99,8 +41,3 @@ edge:
         user: api
         version: 1.1
 state:
-  demo_central_to_demo_central:
-    crits_to_edge:
-      timestamp: 2015-01-02 16:08:00+00:00
-    edge_to_crits:
-      timestamp: 2015-01-02 16:08:00+00:00
