@@ -1,10 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 from docopt import docopt
 import os.path
 from sys import path as python_path
 python_path.append('./lib_')
-import util
-import log
+import util_
+import log_
 import signal
 
 __version__ = '0.1'
@@ -32,15 +32,15 @@ Please report bugs to support@soltra.com
 
 def main():
     args = docopt(__doc__, version=__version__)
-    config = util.parse_config(args['--config'])
+    config = util_.parse_config(args['--config'])
     config['config_file'] = args['--config']
     config['daemon']['app_path'] = app_path
-    logger = log.setup_logging(config)
+    logger = log_.setup_logging(config)
     config['logger'] = logger
-    daemon = util.Daemon(config)
+    daemon = util_.Daemon(config)
     if args['start']:
         logger.info('edgy_critsd starting...')
-        signal.signal(signal.SIGTERM, util.signal_handler)
+        signal.signal(signal.SIGTERM, util_.signal_handler)
         daemon.start()
     elif args['stop']:
         logger.info('edgy_critsd stopping...')

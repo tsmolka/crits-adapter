@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 from dateutil.tz import tzutc
 import atexit
@@ -12,8 +12,8 @@ import os.path
 import time
 from copy import deepcopy
 from sys import path as python_path
-import crits
-import edge
+import crits_
+import edge_
 
 # shamelessly plundered from repository.edge.tools :-P
 #
@@ -227,7 +227,7 @@ class Daemon:
                     else: last_run = epoch_start()
                     if now >= last_run + datetime.timedelta(seconds=self.config['crits']['sites'][crits_site]['api']['poll_interval']):
                         self.logger.info('initiating crits=>edge sync between %s and %s' % (crits_site, edge_site))
-                        crits.crits2edge(self.config, crits_site, edge_site, daemon=True)
+                        crits_.crits2edge(self.config, crits_site, edge_site, daemon=True)
                     else: continue
             for edge_site in enabled_edge_sites:
                 for crits_site in enabled_crits_sites:
@@ -246,7 +246,7 @@ class Daemon:
                     else: last_run = epoch_start()
                     if now >= last_run + datetime.timedelta(seconds=self.config['edge']['sites'][edge_site]['taxii']['poll_interval']):
                         self.logger.info('initiating edge=>crits sync between %s and %s' % (edge_site, crits_site))
-                        edge.edge2crits(self.config, edge_site, crits_site, daemon=True)
+                        edge_.edge2crits(self.config, edge_site, crits_site, daemon=True)
                     else: continue
             time.sleep(1)
 

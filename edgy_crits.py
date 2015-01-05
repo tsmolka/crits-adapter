@@ -1,14 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 
 from docopt import docopt
 from sys import path as python_path
 import os.path
 python_path.append('./lib_')
-from crits import crits2edge
-from edge import edge2crits
-import util
-import log
+from crits_ import crits2edge
+from edge_ import edge2crits
+import util_
+import log_
 
 
 # DONE break edgy_crits into some libs so it's a more manageable size
@@ -58,9 +58,9 @@ Please report bugs to support@soltra.com
 
 def main():
     args = docopt(__doc__, version=__version__)
-    config = util.parse_config(args['--config'])
+    config = util_.parse_config(args['--config'])
     config['config_file'] = args['--config']
-    logger = log.setup_logging(config)
+    logger = log_.setup_logging(config)
     config['logger'] = logger
     config['daemon']['app_path'] = app_path
     if args['--sync-crits-to-edge']:

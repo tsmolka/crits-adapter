@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 from copy import deepcopy
 from cybox.utils import Namespace
@@ -13,8 +13,8 @@ from stix.data_marking import Marking, MarkingSpecification
 from stix.extensions.marking.tlp import TLPMarkingStructure
 from stix.indicator import Indicator
 from stix.utils import set_id_namespace as set_stix_id_namespace
-import util
-import edge
+import util_
+import edge_
 import json
 import pytz
 import requests
@@ -179,7 +179,7 @@ def json2stix(config, source, endpoint, json_, title='random test data', descrip
 def crits2edge(config, source, destination, daemon=False):
     # check if (and when) we synced source and destination...
     state_key = source + '_to_' + destination
-    now = util.nowutcmin()
+    now = util_.nowutcmin()
     # make yaml play nice...
     if not isinstance(config['state'], dict):
         config['state'] = dict()
@@ -194,7 +194,7 @@ def crits2edge(config, source, destination, daemon=False):
         # looks like first sync...
         # ...so we'll want to poll all records...
         config['logger'].info('initial sync between %s and %s' % (source, destination))
-        timestamp = util.epoch_start()
+        timestamp = util_.epoch_start()
     endpoints = ['ips', 'domains', 'samples', 'emails']
     ids = dict()
     total_input = 0
@@ -215,7 +215,7 @@ def crits2edge(config, source, destination, daemon=False):
                 if len(ids[endpoint]) <= 100:
                     json_ = crits_poll(config, source, endpoint, ids[endpoint])
                     stix_ = json2stix(config, source, endpoint, json_)
-                    success = edge.taxii_inbox(config, destination, stix_)
+                    success = edge_.taxii_inbox(config, destination, stix_)
                     if not success:
                         config['logger'].info('%i %s objects could not be synced between %s (crits) and %s (edge)' % (len(ids[endpoint]), endpoint, source, destination))
                     else:
@@ -230,7 +230,7 @@ def crits2edge(config, source, destination, daemon=False):
                 else:
                     json_ = crits_poll(config, source, endpoint, ids[endpoint][0:99])
                     stix_ = json2stix(config, source, endpoint, json_)
-                    success = edge.taxii_inbox(config, destination, stix_)
+                    success = edge_.taxii_inbox(config, destination, stix_)
                     if not success:
                         config['logger'].info('%i %s objects could not be synced between %s (crits) and %s (edge)' % (len(ids[endpoint][0:99]), endpoint, source, destination))
                     else:

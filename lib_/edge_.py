@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 from copy import deepcopy
 from cybox.objects.address_object import Address
@@ -14,10 +14,10 @@ from stix.data_marking import Marking, MarkingSpecification
 from stix.extensions.marking.tlp import TLPMarkingStructure
 from stix.indicator import Indicator
 from stix.utils import set_id_namespace as set_stix_id_namespace
-import util #import nowutcmin, epoch_start, rgetattr
-import log
+import util_ #import nowutcmin, epoch_start, rgetattr
+import log_
 import StringIO
-import crits
+import crits_
 import libtaxii as t
 import libtaxii.clients as tc
 import libtaxii.messages_10 as tm10
@@ -54,12 +54,12 @@ def stix2json(config, observable):
                        'ipv6-net'     : 'Address - ipv6-net', \
                        'ipv6-netmask' : 'Address - ipv6-net-mask'}
         endpoint = 'ips'
-        condition = util.rgetattr(observable.object_.properties, ['condition'])
+        condition = util_.rgetattr(observable.object_.properties, ['condition'])
         if condition == 'Equals':
             # currently not handling other observable conditions as
             # it's not clear that crits even supports these...
-            ip_category = util.rgetattr(observable.object_.properties, ['category'])
-            ip_value = util.rgetattr(observable.object_.properties, ['address_value', 'value'])
+            ip_category = util_.rgetattr(observable.object_.properties, ['category'])
+            ip_value = util_.rgetattr(observable.object_.properties, ['address_value', 'value'])
             if ip_value and ip_category:
                 json = {'ip': ip_value, 'ip_type': crits_types[ip_category]}
                 return(json, endpoint)
@@ -67,8 +67,8 @@ def stix2json(config, observable):
         crits_types = {'FQDN': 'A'}
         # crits doesn't appear to support tlds...
         endpoint = 'domains'
-        domain_category = util.rgetattr(observable.object_.properties, ['type_'])
-        domain_value = util.rgetattr(observable.object_.properties, ['value', 'value'])
+        domain_category = util_.rgetattr(observable.object_.properties, ['type_'])
+        domain_value = util_.rgetattr(observable.object_.properties, ['value', 'value'])
         if domain_category and domain_value:
             json = {'domain': domain_value, 'type': crits_types[domain_category]}
             return(json, endpoint)
@@ -82,20 +82,20 @@ def stix2json(config, observable):
                        'SSDEEP' : 'ssdeep'}
         endpoint = 'samples'
         json = {'upload_type': 'metadata'}
-        hashes = util.rgetattr(observable.object_.properties, ['hashes'])
+        hashes = util_.rgetattr(observable.object_.properties, ['hashes'])
         if hashes:
             for hash in hashes:
-                hash_type = util.rgetattr(hash, ['type_', 'value'])
-                hash_value = util.rgetattr(hash, ['simple_hash_value', 'value'])
+                hash_type = util_.rgetattr(hash, ['type_', 'value'])
+                hash_value = util_.rgetattr(hash, ['simple_hash_value', 'value'])
                 if hash_type and hash_value:
                     json[crits_types[hash_type]] = hash_value
-        file_name = util.rgetattr(observable.object_.properties, ['file_name', 'value'])
+        file_name = util_.rgetattr(observable.object_.properties, ['file_name', 'value'])
         if file_name:
             json['filename'] = file_name
-        file_format = util.rgetattr(observable.object_.properties, ['file_format', 'value'])
+        file_format = util_.rgetattr(observable.object_.properties, ['file_format', 'value'])
         if file_format:
             json['filetype'] = file_format
-        file_size = util.rgetattr(observable.object_.properties, ['size_in_bytes', 'value'])
+        file_size = util_.rgetattr(observable.object_.properties, ['size_in_bytes', 'value'])
         if file_size:
             json['size'] = file_size
         return(json, endpoint)
@@ -107,45 +107,45 @@ def stix2json(config, observable):
         'x_originating_ip': 'x_originating_ip'}
         json = {'upload_type': 'fields'}
         endpoint = 'emails'
-        subject = util.rgetattr(observable.object_.properties, ['header', 'subject', 'value'])
+        subject = util_.rgetattr(observable.object_.properties, ['header', 'subject', 'value'])
         if subject:
             json['subject'] = subject
-        to = util.rgetattr(observable.object_.properties, ['header', 'to'])
+        to = util_.rgetattr(observable.object_.properties, ['header', 'to'])
         if to:
             json['to'] = []
             for i in to:
-                addr = util.rgetattr(i, ['address_value', 'values'])
+                addr = util_.rgetattr(i, ['address_value', 'values'])
                 if addr:
                     json['to'].append(addr)
-        cc = util.rgetattr(observable.object_.properties, ['header', 'cc'])
+        cc = util_.rgetattr(observable.object_.properties, ['header', 'cc'])
         if cc:
             json['cc'] = []
             for i in cc:
-                addr = util.rgetattr(i, ['address_value', 'values'])
+                addr = util_.rgetattr(i, ['address_value', 'values'])
                 if addr:
                     json['cc'].append(addr)
-        from_ = util.rgetattr(observable.object_.properties, ['header', 'from_', 'address_value', 'value'])
+        from_ = util_.rgetattr(observable.object_.properties, ['header', 'from_', 'address_value', 'value'])
         if from_:
             json['from_'] = from_
-        sender = util.rgetattr(observable.object_.properties, ['header', 'sender', 'address_value', 'value'])
+        sender = util_.rgetattr(observable.object_.properties, ['header', 'sender', 'address_value', 'value'])
         if sender:
             json['sender'] = sender
-        date = util.rgetattr(observable.object_.properties, ['header', 'date', 'value'])
+        date = util_.rgetattr(observable.object_.properties, ['header', 'date', 'value'])
         if date:
             json['date'] = date
-        message_id = util.rgetattr(observable.object_.properties, ['header', 'message_id', 'value'])
+        message_id = util_.rgetattr(observable.object_.properties, ['header', 'message_id', 'value'])
         if message_id:
             json['message_id'] = message_id
-        reply_to = util.rgetattr(observable.object_.properties, ['header', 'reply_to', 'address_value', 'value'])
+        reply_to = util_.rgetattr(observable.object_.properties, ['header', 'reply_to', 'address_value', 'value'])
         if reply_to:
             json['reply_to'] = reply_to
-        boundary = util.rgetattr(observable.object_.properties, ['header', 'boundary', 'value'])
+        boundary = util_.rgetattr(observable.object_.properties, ['header', 'boundary', 'value'])
         if boundary:
             json['boundary'] = boundary
-        x_mailer = util.rgetattr(observable.object_.properties, ['header', 'x_mailer', 'value'])
+        x_mailer = util_.rgetattr(observable.object_.properties, ['header', 'x_mailer', 'value'])
         if x_mailer:
             json['x_mailer'] = x_mailer
-        x_originating_ip = util.rgetattr(observable.object_.properties, ['header', 'x_originating_ip', 'value'])
+        x_originating_ip = util_.rgetattr(observable.object_.properties, ['header', 'x_originating_ip', 'value'])
         if x_originating_ip:
             json['x_originating_ip'] = x_originating_ip
         # import pudb; pu.db
@@ -172,10 +172,10 @@ def taxii_poll(config, target, timestamp=None):
     client.setAuthCredentials({'username': config['edge']['sites'][target]['taxii']['user'], \
                                'password': config['edge']['sites'][target]['taxii']['pass']})
     if not timestamp:
-        earliest = util.epoch_start()
+        earliest = util_.epoch_start()
     else:
         earliest = timestamp
-    latest = util.nowutcmin()
+    latest = util_.nowutcmin()
     poll_request = tm10.PollRequest(
                 message_id=tm10.generate_message_id(),
                 feed_name=config['edge']['sites'][target]['taxii']['collection'],
@@ -242,7 +242,7 @@ def taxii_inbox(config, target, stix_package=None):
 def edge2crits(config, source, destination, daemon=False):
     # check if (and when) we synced source and destination...
     state_key = source + '_to_' + destination
-    now = util.nowutcmin()
+    now = util_.nowutcmin()
     # make yaml play nice...
     if not isinstance(config['state'], dict):
         config['state'] = dict()
@@ -257,7 +257,7 @@ def edge2crits(config, source, destination, daemon=False):
         config['logger'].info('initial sync between %s and %s' % (source, destination))
         # looks like first sync...
         # ...so we'll want to poll all records...
-        timestamp = util.epoch_start()
+        timestamp = util_.epoch_start()
     (json_, latest) = taxii_poll(config, source, timestamp)
     total_input = 0
     total_output = 0
@@ -273,7 +273,7 @@ def edge2crits(config, source, destination, daemon=False):
     for endpoint in json_.keys():
         config['logger'].info('%i %s objects to be synced between %s (edge) and %s (crits)' % (subtotal_input[endpoint], endpoint, source, destination))
         for blob in json_[endpoint]:
-            (id_, success) = crits.crits_inbox(config, destination, endpoint, blob)
+            (id_, success) = crits_.crits_inbox(config, destination, endpoint, blob)
             if not success:
                 config['logger'].error('%s object with id %s could not be synced from %s (edge) to %s (crits)!' % (endpoint, str(id_), source, destination))
             else:
