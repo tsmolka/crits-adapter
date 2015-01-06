@@ -1,0 +1,48 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          edgy_critsd
+# Required-Start:    $network
+# Required-Stop:     $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: start edgy_critsd at boot time
+# Description:       start edgy_critsd at boot time
+### END INIT INFO
+
+EDGY_CRITS_HOME='/opt/soltra/edge/repository/adapters/crits'
+EDGY_CRITSD_BIN='edgy_critsd.py'
+PYTHON='/opt/soltra/edge/bin/python2.7'
+EDGY_CRITS_USER='repo'
+
+edgy_critsd_start () {
+  echo "starting edgy_critsd..."
+  /bin/su ${EDGY_CRITS_USER} -c "cd ${EDGY_CRITS_HOME}/ && ${PYTHON} ${EDGY_CRITS_HOME}/${EDGY_CRITSD_BIN} start"
+  return 0
+}
+
+edgy_critsd_stop () {
+  echo "stopping edgy_critsd..."
+  /bin/su ${EDGY_CRITS_USER} -c "cd ${EDGY_CRITS_HOME}/ && ${PYTHON} ${EDGY_CRITS_HOME}/${EDGY_CRITSD_BIN} stop"
+}
+
+edgy_critsd_restart () {
+  echo "restarting edgy_critsd..."
+  /bin/su ${EDGY_CRITS_USER} -c "cd ${EDGY_CRITS_HOME}/ && ${PYTHON} ${EDGY_CRITS_HOME}/${EDGY_CRITSD_BIN} restart"
+}
+
+case "$1" in
+  start)
+     edgy_critsd_start
+     ;;
+  stop)
+     edgy_critsd_stop
+     ;;
+  force-reload|restart)
+     edgy_critsd_restart
+     ;;
+  *)
+     echo "Usage: /etc/init.d/edgy_critsd {start|stop|restart|force-reload}"
+     exit 1
+esac
+
+exit 0
