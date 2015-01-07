@@ -19,7 +19,7 @@ daemon:
   log:
     file: edgy_crits.log
     rotate_count: 10
-    rotate_size: 10240
+    rotate_size: 1024000
   pid: edgy_crits.pid
   working_dir: /opt/soltra/edge/repository/adapters/crits
   mongo:
