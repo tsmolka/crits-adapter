@@ -213,38 +213,42 @@ class Daemon:
             for crits_site in enabled_crits_sites:
                 for edge_site in enabled_edge_sites:
                     # check if (and when) we synced source and destination...
-                    state_key = crits_site + '_to_' + edge_site
+                    # state_key = crits_site + '_to_' + edge_site
                     now = nowutcmin()
-                    last_run = None
-                    if not isinstance(self.config['state'], dict):
-                        self.config['state'] = dict()
-                    if not state_key in self.config['state'].keys():
-                        self.config['state'][state_key] = dict()
-                    if not 'crits_to_edge' in self.config['state'][state_key].keys():
-                        self.config['state'][state_key]['crits_to_edge'] = dict()
-                    if 'timestamp' in self.config['state'][state_key]['crits_to_edge'].keys():
-                        last_run = self.config['state'][state_key]['crits_to_edge']['timestamp'].replace(tzinfo=pytz.utc)
-                    else: last_run = epoch_start()
-                    if now >= last_run + datetime.timedelta(seconds=self.config['crits']['sites'][crits_site]['api']['poll_interval']):
+                    # last_run = None
+                    # if not isinstance(self.config['state'], dict):
+                    #     self.config['state'] = dict()
+                    # if not state_key in self.config['state'].keys():
+                    #     self.config['state'][state_key] = dict()
+                    # if not 'crits_to_edge' in self.config['state'][state_key].keys():
+                    #     self.config['state'][state_key]['crits_to_edge'] = dict()
+                    # if 'timestamp' in self.config['state'][state_key]['crits_to_edge'].keys():
+                    #     last_run = self.config['state'][state_key]['crits_to_edge']['timestamp'].replace(tzinfo=pytz.utc)
+                    # else: last_run = epoch_start()
+                    timestamp = config['db'].get_last_sync(source=crits_site, destination=edge_site, direction='edge').replace(tzinfo=pytz.utc)
+                    # config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
+                    if now >= timestamp + datetime.timedelta(seconds=self.config['crits']['sites'][crits_site]['api']['poll_interval']):
                         self.logger.info('initiating crits=>edge sync between %s and %s' % (crits_site, edge_site))
                         crits_.crits2edge(self.config, crits_site, edge_site, daemon=True)
                     else: continue
             for edge_site in enabled_edge_sites:
                 for crits_site in enabled_crits_sites:
                     # check if (and when) we synced source and destination...
-                    state_key = edge_site + '_to_' + crits_site
+                    # state_key = edge_site + '_to_' + crits_site
                     now = nowutcmin()
-                    last_run = None
-                    if not isinstance(self.config['state'], dict):
-                        self.config['state'] = dict()
-                    if not state_key in self.config['state'].keys():
-                        self.config['state'][state_key] = dict()
-                    if not 'edge_to_crits' in self.config['state'][state_key].keys():
-                        self.config['state'][state_key]['edge_to_crits'] = dict()
-                    if 'timestamp' in self.config['state'][state_key]['edge_to_crits'].keys():
-                        last_run = self.config['state'][state_key]['edge_to_crits']['timestamp'].replace(tzinfo=pytz.utc)
-                    else: last_run = epoch_start()
-                    if now >= last_run + datetime.timedelta(seconds=self.config['edge']['sites'][edge_site]['taxii']['poll_interval']):
+                    # last_run = None
+                    # if not isinstance(self.config['state'], dict):
+                    #     self.config['state'] = dict()
+                    # if not state_key in self.config['state'].keys():
+                    #     self.config['state'][state_key] = dict()
+                    # if not 'edge_to_crits' in self.config['state'][state_key].keys():
+                    #     self.config['state'][state_key]['edge_to_crits'] = dict()
+                    # if 'timestamp' in self.config['state'][state_key]['edge_to_crits'].keys():
+                    #     last_run = self.config['state'][state_key]['edge_to_crits']['timestamp'].replace(tzinfo=pytz.utc)
+                    # else: last_run = epoch_start()
+                    timestamp = config['db'].get_last_sync(source=edge_site, destination=crits_site, direction='crits').replace(tzinfo=pytz.utc)
+                    # config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
+                    if now >= timestamp + datetime.timedelta(seconds=self.config['edge']['sites'][edge_site]['taxii']['poll_interval']):
                         self.logger.info('initiating edge=>crits sync between %s and %s' % (edge_site, crits_site))
                         edge_.edge2crits(self.config, edge_site, crits_site, daemon=True)
                     else: continue
