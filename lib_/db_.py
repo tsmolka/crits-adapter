@@ -62,8 +62,8 @@ class DB(object):
 
     def get_last_sync(self, source, destination, direction):
         try:
-            if self.collection.find({'source': source, 'destination': destination, 'direction': direction}).count():
-                doc = self.collection.find_one({'source': source, 'destination': destination, 'direction': direction})
+            doc = self.collection.find_one({'source': source, 'destination': destination, 'direction': direction})
+            if doc:
                 return(doc['timestamp'])
             else:
                 return(util_.epoch_start())
@@ -75,8 +75,8 @@ class DB(object):
 
     def set_last_sync(self, source, destination, direction, timestamp):
         try:
-            if self.collection.find({'source': source, 'destination': destination, 'direction': direction}).count():
-                doc = self.collection.find_one({'source': source, 'destination': destination, 'direction': direction})
+            doc = self.collection.find_one({'source': source, 'destination': destination, 'direction': direction})
+            if doc:
                 self.collection.update(doc, {'$set': {'timestamp': timestamp}})
             else:
                 self.collection.insert({'source': source, 'destination': destination, 'direction': direction, 'timestamp': timestamp})
@@ -86,3 +86,43 @@ class DB(object):
             exit()
         
 
+    def get_object_id(self, source, destination, direction, id_):
+        try:
+            query = {'source': source, 'destination': destination, 'direction': direction}
+            if direction == 'edge':
+                query['crits_id'] = id_
+            else:
+                query['edge_id'] = id_
+            doc = self.collection.find_one(query)
+            if doc:
+                return(doc)
+            else:
+                return None
+        except ConnectionFailure as e:
+            self.logger.error('mongodb connection failed - exiting...')
+            self.logger.exception(e)
+            exit()
+
+
+    def set_object_id(self, source, destination, direction, source_id, dest_id, timestamp):
+        try:
+            query = {'source': source, 'destination': destination, 'direction': direction}
+            if direction == 'edge':
+                query['crits_id'] = source_id
+            else:
+                query['edge_id'] = source_id
+            doc = self.get_object_id(query)
+            if doc:
+                self.collection.update(doc, {'$set': {'modified': timestamp}})
+            else:
+                if direction == 'edge':
+                    query['edge_id'] = dest_id
+                else:
+                    query['crits_id'] = dest_id
+                query['created'] = nowutcmin()
+                query['modified'] = query['created']
+                self.collection.insert(query)
+        except ConnectionFailure as e:
+            self.logger.error('mongodb connection failed - exiting...')
+            self.logger.exception(e)
+            exit()

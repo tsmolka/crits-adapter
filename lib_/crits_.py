@@ -178,23 +178,7 @@ def json2stix(config, source, endpoint, json_, title='random test data', descrip
 
 def crits2edge(config, source, destination, daemon=False):
     # check if (and when) we synced source and destination...
-    # state_key = source + '_to_' + destination
     now = util_.nowutcmin()
-    # # make yaml play nice...
-    # if not isinstance(config['state'], dict):
-    #     config['state'] = dict()
-    # if not state_key in config['state'].keys():
-    #     config['state'][state_key] = dict()
-    # if not 'crits_to_edge' in config['state'][state_key].keys():
-    #     config['state'][state_key]['crits_to_edge'] = dict()
-    # if 'timestamp' in config['state'][state_key]['crits_to_edge'].keys():
-    #     timestamp = config['state'][state_key]['crits_to_edge']['timestamp'].replace(tzinfo=pytz.utc)
-    #     config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
-    # else:
-    #     # looks like first sync...
-    #     # ...so we'll want to poll all records...
-    #     config['logger'].info('initial sync between %s and %s' % (source, destination))
-    #     timestamp = util_.epoch_start()
     timestamp = config['db'].get_last_sync(source=source, destination=destination, direction='edge').replace(tzinfo=pytz.utc)
     config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
     endpoints = ['ips', 'domains', 'samples', 'emails']
@@ -205,6 +189,11 @@ def crits2edge(config, source, destination, daemon=False):
     subtotal_output = {}
     for endpoint in endpoints:
         ids[endpoint] = fetch_crits_object_ids(config, source, endpoint, timestamp)
+        for id_ in ids[endpoint]:
+            if config['db'].get_object_id(source, destination, 'edge', id_):
+                if config['daemon']['debug']:
+                    config['logger'].debug('crits object id %s already in system' % id_)
+                ids[endpoint].remove(id_)
         subtotal_input[endpoint] = len(ids[endpoint])
         subtotal_output[endpoint] = 0
         total_input += len(ids[endpoint])
@@ -213,53 +202,27 @@ def crits2edge(config, source, destination, daemon=False):
         config['logger'].info('%i %s objects to be synced between %s (crits) and %s (edge)' % (subtotal_input[endpoint], endpoint, source, destination))
         if not len(ids[endpoint]): continue
         else:
-            while len(ids[endpoint]) > 0:
-                if len(ids[endpoint]) <= 100:
-                    json_ = crits_poll(config, source, endpoint, ids[endpoint])
-                    stix_ = json2stix(config, source, endpoint, json_)
-                    success = edge_.taxii_inbox(config, destination, stix_)
-                    if not success:
-                        config['logger'].info('%i %s objects could not be synced between %s (crits) and %s (edge)' % (len(ids[endpoint]), endpoint, source, destination))
-                    else:
-                        subtotal_input[endpoint] -= len(ids[endpoint])
-                        total_input -= len(ids[endpoint])
-                        subtotal_output[endpoint] += len(ids[endpoint])
-                        total_output += len(ids[endpoint])
-                        config['logger'].info('%i %s objects successfully synced between %s (crits) and %s (edge)' % (subtotal_output[endpoint], endpoint, source, destination))
-                        if subtotal_output[endpoint] < subtotal_input[endpoint]:
-                            config['logger'].info('%i %s objects could not be synced between %s (crits) and %s (edge)' % (len(ids[endpoint]), endpoint, source, destination))
-                    ids[endpoint] = list()
+            for crits_id in ids[endpoint]:
+                json_ = crits_poll(config, source, endpoint, [crits_id,])
+                stix_ = json2stix(config, source, endpoint, json_)
+                success = edge_.taxii_inbox(config, destination, stix_)
+                if not success:
+                    config['logger'].info('crits object %s could not be synced between %s (crits) and %s (edge)' % (crits_id, source, destination))
                 else:
-                    json_ = crits_poll(config, source, endpoint, ids[endpoint][0:99])
-                    stix_ = json2stix(config, source, endpoint, json_)
-                    success = edge_.taxii_inbox(config, destination, stix_)
-                    if not success:
-                        config['logger'].info('%i %s objects could not be synced between %s (crits) and %s (edge)' % (len(ids[endpoint][0:99]), endpoint, source, destination))
-                    else:
-                        subtotal_input[endpoint] -= len(ids[endpoint][0:99])
-                        total_input -= len(ids[endpoint][0:99])
-                        subtotal_output[endpoint] += len(ids[endpoint][0:99])
-                        total_output += len(ids[endpoint][0:99])
-                        config['logger'].info('%i %s objects successfully synced between %s (crits) and %s (edge)' % (subtotal_output[endpoint], endpoint, source, destination))
-                        if subtotal_output[endpoint] < (subtotal_input[endpoint] - len(ids[endpoint][100:])):
-                            config['logger'].info('%i %s objects could not be synced between %s (crits) and %s (edge)' % (subtotal_input[endpoint] - (subtotal_output[endpoint] - len(ids[endpoint][100:])), endpoint, source, destination))
-                    ids[endpoint] = ids[endpoint][100:]
+                    subtotal_input[endpoint] -= 1
+                    total_input -= 1
+                    subtotal_output[endpoint] += 1
+                    total_output += 1
+                    config['db'].set_object_id(source, destination, 'edge', endpoint + ':' + crits_id, stix_.id_, util.nowutcmin())
+        config['logger'].info('%i %s objects successfully synced between %s (crits) and %s (edge)' % (subtotal_output[endpoint], endpoint, source, destination))
+        if subtotal_output[endpoint] < subtotal_input[endpoint]:
+            config['logger'].info('%i %s objects could not be synced between %s (crits) and %s (edge)' % (len(ids[endpoint]), endpoint, source, destination))
     config['logger'].info('%i (total) objects successfully synced between %s (crits) and %s (edge)' % (total_output, source, destination))
     if total_output < total_input:
         config['logger'].info('%i (total) objects could not be synced between %s (crits) and %s (edge)' % (total_input - total_output, source, destination))
     # save state to disk for next run...
     if config['daemon']['debug']:
         config['logger'].debug('saving state until next run [%s]' % str(now + datetime.timedelta(seconds=config['crits']['sites'][source]['api']['poll_interval'])))
-    # if not daemon:
-    #     yaml_ = deepcopy(config)
-    #     yaml_['state'][state_key]['crits_to_edge']['timestamp'] = now
-    #     del yaml_['config_file']
-    #     del yaml_['logger']
-    #     file_ = file(config['config_file'], 'w')
-    #     yaml.dump(yaml_, file_, default_flow_style=False)
-    #     file_.close()
-    # else:
-    #     config['state'][state_key]['crits_to_edge']['timestamp'] = now
     config['db'].set_last_sync(source=source, destination=destination, direction='edge', timestamp=now)
 
     

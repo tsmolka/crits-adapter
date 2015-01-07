@@ -64,6 +64,9 @@ def stix2json(config, observable):
             ip_value = util_.rgetattr(observable.object_.properties, ['address_value', 'value'])
             if ip_value and ip_category:
                 json = {'ip': ip_value, 'ip_type': crits_types[ip_category]}
+                hash_ = util_.dicthash_sha1(json)
+                json['_id'] = hash_
+                json['stix_id'] = observable.id_
                 return(json, endpoint)
     elif isinstance(observable.object_.properties, DomainName):
         crits_types = {'FQDN': 'A'}
@@ -73,6 +76,9 @@ def stix2json(config, observable):
         domain_value = util_.rgetattr(observable.object_.properties, ['value', 'value'])
         if domain_category and domain_value:
             json = {'domain': domain_value, 'type': crits_types[domain_category]}
+            hash_ = util_.dicthash_sha1(json)
+            json['_id'] = hash_
+            json['stix_id'] = observable.id_
             return(json, endpoint)
     elif isinstance(observable.object_.properties, File):
         crits_types = {'MD5'    : 'md5', \
@@ -100,6 +106,9 @@ def stix2json(config, observable):
         file_size = util_.rgetattr(observable.object_.properties, ['size_in_bytes', 'value'])
         if file_size:
             json['size'] = file_size
+        hash_ = util_.dicthash_sha1(json)
+        json['_id'] = hash_
+        json['stix_id'] = observable.id_
         return(json, endpoint)
     elif isinstance(observable.object_.properties, EmailMessage):
         crits_types = {'subject': 'subject', 'to': 'to', 'cc': 'cc',
@@ -159,6 +168,9 @@ def stix2json(config, observable):
         #     if val:
         #         json[crits_types[key]] = val
         # print(json)
+        hash_ = util_.dicthash_sha1(json)
+        json['_id'] = hash_
+        json['stix_id'] = observable.id_
         return(json, endpoint)
     else:
         config['logger'].error('unsupported stix object type %s!' % type(observable.object_.properties))
@@ -243,23 +255,7 @@ def taxii_inbox(config, target, stix_package=None):
 
 def edge2crits(config, source, destination, daemon=False):
     # check if (and when) we synced source and destination...
-    # state_key = source + '_to_' + destination
     now = util_.nowutcmin()
-    # make yaml play nice...
-    # if not isinstance(config['state'], dict):
-    #     config['state'] = dict()
-    # if not state_key in config['state'].keys():
-    #     config['state'][state_key] = dict()
-    # if not 'edge_to_crits' in config['state'][state_key].keys():
-    #     config['state'][state_key]['edge_to_crits'] = dict()
-    # if 'timestamp' in config['state'][state_key]['edge_to_crits'].keys():
-    #     timestamp = config['state'][state_key]['edge_to_crits']['timestamp'].replace(tzinfo=pytz.utc)
-    #     config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
-    # else:
-    #     config['logger'].info('initial sync between %s and %s' % (source, destination))
-    #     # looks like first sync...
-    #     # ...so we'll want to poll all records...
-    #     timestamp = util_.epoch_start()
     timestamp = config['db'].get_last_sync(source=source, destination=destination, direction='crits').replace(tzinfo=pytz.utc)
     config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
     (json_, latest) = taxii_poll(config, source, timestamp)
@@ -271,18 +267,26 @@ def edge2crits(config, source, destination, daemon=False):
         subtotal_input[endpoint] = 0
         subtotal_output[endpoint] = 0
         for blob in json_[endpoint]:
+            if config['db'].get_object_id(source, destination, 'crits', endpoint + ':' + blob['id_']):
+                if config['daemon']['debug']:
+                    config['logger'].debug('edge object id %s already in system' % blob['stix_id'])
+                json_[endpoint].remove(blob)
+            else:
             total_input += 1
             subtotal_input[endpoint] += 1
     config['logger'].info('%i (total) objects to be synced between %s (edge) and %s (crits)' % (total_input, source, destination))
     for endpoint in json_.keys():
         config['logger'].info('%i %s objects to be synced between %s (edge) and %s (crits)' % (subtotal_input[endpoint], endpoint, source, destination))
         for blob in json_[endpoint]:
+            stix_id = blob['stix_id']
+            del blob['stix_id']
             (id_, success) = crits_.crits_inbox(config, destination, endpoint, blob)
             if not success:
-                config['logger'].error('%s object with id %s could not be synced from %s (edge) to %s (crits)!' % (endpoint, str(id_), source, destination))
+                config['logger'].error('%s object with id %s could not be synced from %s (edge) to %s (crits)!' % (endpoint, str(stix_id), source, destination))
             else:
                 if config['daemon']['debug']:
-                    config['logger'].debug('%s object with id %s was synced from %s (edge) to %s (crits)' % (endpoint, str(id_), source, destination))
+                    config['logger'].debug('%s object with id %s was synced from %s (edge) to %s (crits)' % (endpoint, str(stix_id), source, destination))
+                config['db'].set_object_id(source, destination, 'crits', stix_id, endpoint + ':' id_, util.nowutcmin())
                 subtotal_output[endpoint] += 1
                 total_output += 1
         config['logger'].info('%i %s objects successfully synced between %s (edge) and %s (crits)' % (subtotal_output[endpoint], endpoint, source, destination))
@@ -294,14 +298,4 @@ def edge2crits(config, source, destination, daemon=False):
     # save state to disk for next run...
     if config['daemon']['debug']:
         config['logger'].debug('saving state until next run [%s]' % str(now + datetime.timedelta(seconds=config['edge']['sites'][source]['taxii']['poll_interval'])))
-    # if not daemon:
-    #     yaml_ = deepcopy(config)
-    #     yaml_['state'][state_key]['edge_to_crits']['timestamp'] = latest
-    #     del yaml_['config_file']
-    #     del yaml_['logger']
-    #     file_ = file(config['config_file'], 'w')
-    #     yaml.dump(yaml_, file_, default_flow_style=False)
-    #     file_.close()
-    # else:
-    #     config['state'][state_key]['edge_to_crits']['timestamp'] = latest
     config['db'].set_last_sync(source=source, destination=destination, direction='crits', timestamp=now)

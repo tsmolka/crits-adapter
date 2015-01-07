@@ -14,8 +14,10 @@ from copy import deepcopy
 from sys import path as python_path
 import crits_
 import edge_
+import hashlib
 
-# shamelessly plundered from repository.edge.tools :-P
+
+# shamelessly plundered from repository.edge.tools
 #
 # recursive getattr()
 # syntax is the same as getattr, but the requested
@@ -33,6 +35,16 @@ def rgetattr(object_ ,list_ ,default_=None):
     else:
         return rgetattr(getattr(object_, list_[0], None), list_[1:], default_)
 
+    
+# shamelessly plundered from repository.edge.tools
+def dicthash_sha1(d, salt=''):
+    """return a unique fingerprint/hash for a nested dict
+    lots of different methods here:
+    http://stackoverflow.com/questions/5884066/hashing-a-python-dictionary
+    """
+    assert isinstance(d,dict)
+    return hashlib.sha1(salt + json_util.dumps(d,sort_keys=True)).hexdigest()
+    
     
 def nowutcmin():
     """time now, but only minute-precision"""
