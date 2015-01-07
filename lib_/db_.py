@@ -119,7 +119,7 @@ class DB(object):
                     query['edge_id'] = dest_id
                 else:
                     query['crits_id'] = dest_id
-                query['created'] = nowutcmin()
+                query['created'] = util_.nowutcmin()
                 query['modified'] = query['created']
                 self.collection.insert(query)
         except ConnectionFailure as e:
