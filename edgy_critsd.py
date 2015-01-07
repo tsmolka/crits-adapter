@@ -5,6 +5,7 @@ from sys import path as python_path
 python_path.append('./lib_')
 import util_
 import log_
+import db_
 import signal
 
 __version__ = '0.1'
@@ -37,6 +38,8 @@ def main():
     config['daemon']['app_path'] = app_path
     logger = log_.setup_logging(config)
     config['logger'] = logger
+    db = db_.DB(config)
+    config['db'] = db
     daemon = util_.Daemon(config)
     if args['start']:
         logger.info('edgy_critsd starting...')

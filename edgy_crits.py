@@ -9,6 +9,7 @@ from crits_ import crits2edge
 from edge_ import edge2crits
 import util_
 import log_
+import db_
 
 
 # DONE break edgy_crits into some libs so it's a more manageable size
@@ -56,12 +57,15 @@ Options:
 Please report bugs to support@soltra.com
 ''' % (default_config)
 
+
 def main():
     args = docopt(__doc__, version=__version__)
     config = util_.parse_config(args['--config'])
     config['config_file'] = args['--config']
     logger = log_.setup_logging(config)
     config['logger'] = logger
+    db = db_.DB(config)
+    config['db'] = db
     config['daemon']['app_path'] = app_path
     if args['--sync-crits-to-edge']:
         if args['--source'] in config['crits']['sites'].keys() and args['--destination'] in config['edge']['sites'].keys():

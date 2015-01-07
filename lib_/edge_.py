@@ -14,7 +14,7 @@ from stix.data_marking import Marking, MarkingSpecification
 from stix.extensions.marking.tlp import TLPMarkingStructure
 from stix.indicator import Indicator
 from stix.utils import set_id_namespace as set_stix_id_namespace
-import util_ #import nowutcmin, epoch_start, rgetattr
+import util_ 
 import log_
 import StringIO
 import crits_
@@ -42,6 +42,8 @@ import datetime
 # TODO need to set the xmlns to show the origin (aka,
 #      demo_site_a_crits: https://54.154.28.239)
 # TODO how to handle updates???
+# TODO use make_taxii_document() from repository.tools.avalanche.functions
+# TODO use inbox_document() from repository.tools.avalanche.functions
 
 
 def stix2json(config, observable):
@@ -241,23 +243,25 @@ def taxii_inbox(config, target, stix_package=None):
 
 def edge2crits(config, source, destination, daemon=False):
     # check if (and when) we synced source and destination...
-    state_key = source + '_to_' + destination
+    # state_key = source + '_to_' + destination
     now = util_.nowutcmin()
     # make yaml play nice...
-    if not isinstance(config['state'], dict):
-        config['state'] = dict()
-    if not state_key in config['state'].keys():
-        config['state'][state_key] = dict()
-    if not 'edge_to_crits' in config['state'][state_key].keys():
-        config['state'][state_key]['edge_to_crits'] = dict()
-    if 'timestamp' in config['state'][state_key]['edge_to_crits'].keys():
-        timestamp = config['state'][state_key]['edge_to_crits']['timestamp'].replace(tzinfo=pytz.utc)
-        config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
-    else:
-        config['logger'].info('initial sync between %s and %s' % (source, destination))
-        # looks like first sync...
-        # ...so we'll want to poll all records...
-        timestamp = util_.epoch_start()
+    # if not isinstance(config['state'], dict):
+    #     config['state'] = dict()
+    # if not state_key in config['state'].keys():
+    #     config['state'][state_key] = dict()
+    # if not 'edge_to_crits' in config['state'][state_key].keys():
+    #     config['state'][state_key]['edge_to_crits'] = dict()
+    # if 'timestamp' in config['state'][state_key]['edge_to_crits'].keys():
+    #     timestamp = config['state'][state_key]['edge_to_crits']['timestamp'].replace(tzinfo=pytz.utc)
+    #     config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
+    # else:
+    #     config['logger'].info('initial sync between %s and %s' % (source, destination))
+    #     # looks like first sync...
+    #     # ...so we'll want to poll all records...
+    #     timestamp = util_.epoch_start()
+    timestamp = config['db'].get_last_sync(source=source, destination=destination, direction='crits')
+    config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
     (json_, latest) = taxii_poll(config, source, timestamp)
     total_input = 0
     total_output = 0
@@ -289,14 +293,15 @@ def edge2crits(config, source, destination, daemon=False):
         config['logger'].info('%i (total) objects could not be synced between %s (edge) and %s (crits)' % (total_input - total_output, source, destination))
     # save state to disk for next run...
     if config['daemon']['debug']:
-        config['logger'].debug('saving state until next run [%s]' % str(latest + datetime.timedelta(seconds=config['edge']['sites'][source]['taxii']['poll_interval'])))
-    if not daemon:
-        yaml_ = deepcopy(config)
-        yaml_['state'][state_key]['edge_to_crits']['timestamp'] = latest
-        del yaml_['config_file']
-        del yaml_['logger']
-        file_ = file(config['config_file'], 'w')
-        yaml.dump(yaml_, file_, default_flow_style=False)
-        file_.close()
-    else:
-        config['state'][state_key]['edge_to_crits']['timestamp'] = latest
+        config['logger'].debug('saving state until next run [%s]' % str(now + datetime.timedelta(seconds=config['edge']['sites'][source]['taxii']['poll_interval'])))
+    # if not daemon:
+    #     yaml_ = deepcopy(config)
+    #     yaml_['state'][state_key]['edge_to_crits']['timestamp'] = latest
+    #     del yaml_['config_file']
+    #     del yaml_['logger']
+    #     file_ = file(config['config_file'], 'w')
+    #     yaml.dump(yaml_, file_, default_flow_style=False)
+    #     file_.close()
+    # else:
+    #     config['state'][state_key]['edge_to_crits']['timestamp'] = latest
+    config['db'].set_last_sync(source=source, destination=destination, direction='crits', timestamp=now)

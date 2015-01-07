@@ -178,23 +178,25 @@ def json2stix(config, source, endpoint, json_, title='random test data', descrip
 
 def crits2edge(config, source, destination, daemon=False):
     # check if (and when) we synced source and destination...
-    state_key = source + '_to_' + destination
+    # state_key = source + '_to_' + destination
     now = util_.nowutcmin()
-    # make yaml play nice...
-    if not isinstance(config['state'], dict):
-        config['state'] = dict()
-    if not state_key in config['state'].keys():
-        config['state'][state_key] = dict()
-    if not 'crits_to_edge' in config['state'][state_key].keys():
-        config['state'][state_key]['crits_to_edge'] = dict()
-    if 'timestamp' in config['state'][state_key]['crits_to_edge'].keys():
-        timestamp = config['state'][state_key]['crits_to_edge']['timestamp'].replace(tzinfo=pytz.utc)
-        config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
-    else:
-        # looks like first sync...
-        # ...so we'll want to poll all records...
-        config['logger'].info('initial sync between %s and %s' % (source, destination))
-        timestamp = util_.epoch_start()
+    # # make yaml play nice...
+    # if not isinstance(config['state'], dict):
+    #     config['state'] = dict()
+    # if not state_key in config['state'].keys():
+    #     config['state'][state_key] = dict()
+    # if not 'crits_to_edge' in config['state'][state_key].keys():
+    #     config['state'][state_key]['crits_to_edge'] = dict()
+    # if 'timestamp' in config['state'][state_key]['crits_to_edge'].keys():
+    #     timestamp = config['state'][state_key]['crits_to_edge']['timestamp'].replace(tzinfo=pytz.utc)
+    #     config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
+    # else:
+    #     # looks like first sync...
+    #     # ...so we'll want to poll all records...
+    #     config['logger'].info('initial sync between %s and %s' % (source, destination))
+    #     timestamp = util_.epoch_start()
+    timestamp = config['db'].get_last_sync(source=source, destination=destination, direction='edge')
+    config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
     endpoints = ['ips', 'domains', 'samples', 'emails']
     ids = dict()
     total_input = 0
@@ -248,17 +250,19 @@ def crits2edge(config, source, destination, daemon=False):
     # save state to disk for next run...
     if config['daemon']['debug']:
         config['logger'].debug('saving state until next run [%s]' % str(now + datetime.timedelta(seconds=config['crits']['sites'][source]['api']['poll_interval'])))
-    if not daemon:
-        yaml_ = deepcopy(config)
-        yaml_['state'][state_key]['crits_to_edge']['timestamp'] = now
-        del yaml_['config_file']
-        del yaml_['logger']
-        file_ = file(config['config_file'], 'w')
-        yaml.dump(yaml_, file_, default_flow_style=False)
-        file_.close()
-    else:
-        config['state'][state_key]['crits_to_edge']['timestamp'] = now
+    # if not daemon:
+    #     yaml_ = deepcopy(config)
+    #     yaml_['state'][state_key]['crits_to_edge']['timestamp'] = now
+    #     del yaml_['config_file']
+    #     del yaml_['logger']
+    #     file_ = file(config['config_file'], 'w')
+    #     yaml.dump(yaml_, file_, default_flow_style=False)
+    #     file_.close()
+    # else:
+    #     config['state'][state_key]['crits_to_edge']['timestamp'] = now
+    config['db'].set_last_sync(source=source, destination=destination, direction='edge', timestamp=now)
 
+    
 def __fetch_crits_object_ids(config, target, endpoint, params):
     '''fetch all crits object ids from endpoint and return a list'''
     url = crits_url(config, target)
