@@ -128,12 +128,12 @@ class Daemon:
         self.logger.info('SIGINT received! Cleaning up and killing processes...')
         try:
             os.remove(self.pidfile)
-            yaml_ = deepcopy(self.config)
-            del yaml_['config_file']
-            del yaml_['logger']
-            file_ = file(self.config['config_file'], 'w')
-            yaml.dump(yaml_, file_, default_flow_style=False)
-            file_.close()
+            # yaml_ = deepcopy(self.config)
+            # del yaml_['config_file']
+            # del yaml_['logger']
+            # file_ = file(self.config['config_file'], 'w')
+            # yaml.dump(yaml_, file_, default_flow_style=False)
+            # file_.close()
         except Exception as e:
             self.logger.error('could not delete pidfile %s' % self.pidfile)
             self.logger.exception(e)
@@ -225,7 +225,7 @@ class Daemon:
                     # if 'timestamp' in self.config['state'][state_key]['crits_to_edge'].keys():
                     #     last_run = self.config['state'][state_key]['crits_to_edge']['timestamp'].replace(tzinfo=pytz.utc)
                     # else: last_run = epoch_start()
-                    timestamp = config['db'].get_last_sync(source=crits_site, destination=edge_site, direction='edge').replace(tzinfo=pytz.utc)
+                    timestamp = self.config['db'].get_last_sync(source=crits_site, destination=edge_site, direction='edge').replace(tzinfo=pytz.utc)
                     # config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
                     if now >= timestamp + datetime.timedelta(seconds=self.config['crits']['sites'][crits_site]['api']['poll_interval']):
                         self.logger.info('initiating crits=>edge sync between %s and %s' % (crits_site, edge_site))
@@ -246,7 +246,7 @@ class Daemon:
                     # if 'timestamp' in self.config['state'][state_key]['edge_to_crits'].keys():
                     #     last_run = self.config['state'][state_key]['edge_to_crits']['timestamp'].replace(tzinfo=pytz.utc)
                     # else: last_run = epoch_start()
-                    timestamp = config['db'].get_last_sync(source=edge_site, destination=crits_site, direction='crits').replace(tzinfo=pytz.utc)
+                    timestamp = self.config['db'].get_last_sync(source=edge_site, destination=crits_site, direction='crits').replace(tzinfo=pytz.utc)
                     # config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
                     if now >= timestamp + datetime.timedelta(seconds=self.config['edge']['sites'][edge_site]['taxii']['poll_interval']):
                         self.logger.info('initiating edge=>crits sync between %s and %s' % (edge_site, crits_site))
