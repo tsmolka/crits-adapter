@@ -260,7 +260,7 @@ def edge2crits(config, source, destination, daemon=False):
     #     # looks like first sync...
     #     # ...so we'll want to poll all records...
     #     timestamp = util_.epoch_start()
-    timestamp = config['db'].get_last_sync(source=source, destination=destination, direction='crits')
+    timestamp = config['db'].get_last_sync(source=source, destination=destination, direction='crits').replace(tzinfo=pytz.utc)
     config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
     (json_, latest) = taxii_poll(config, source, timestamp)
     total_input = 0

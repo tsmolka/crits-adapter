@@ -195,7 +195,7 @@ def crits2edge(config, source, destination, daemon=False):
     #     # ...so we'll want to poll all records...
     #     config['logger'].info('initial sync between %s and %s' % (source, destination))
     #     timestamp = util_.epoch_start()
-    timestamp = config['db'].get_last_sync(source=source, destination=destination, direction='edge')
+    timestamp = config['db'].get_last_sync(source=source, destination=destination, direction='edge').replace(tzinfo=pytz.utc)
     config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
     endpoints = ['ips', 'domains', 'samples', 'emails']
     ids = dict()
