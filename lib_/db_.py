@@ -109,9 +109,10 @@ class DB(object):
             query = {'source': source, 'destination': destination, 'direction': direction}
             if direction == 'edge':
                 query['crits_id'] = source_id
+                doc = self.get_object_id({'source': source, 'destination': destination, 'direction': direction, 'crits_id': source_id})
             else:
                 query['edge_id'] = source_id
-            doc = self.get_object_id(query)
+                doc = self.get_object_id({'source': source, 'destination': destination, 'direction': direction, 'edge_id': source_id})
             if doc:
                 self.collection.update(doc, {'$set': {'modified': timestamp}})
             else:
