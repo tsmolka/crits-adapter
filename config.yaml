@@ -15,7 +15,7 @@ crits:
       host: 127.0.0.1
 daemon:
   app_path: /opt/soltra/edge/repository/adapters/crits
-  debug: true
+  debug: false
   log:
     file: edgy_crits.log
     rotate_count: 10
