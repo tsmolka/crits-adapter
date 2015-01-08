@@ -189,9 +189,11 @@ def crits2edge(config, source, destination, daemon=False):
         subtotal_input[endpoint] = len(ids[endpoint])
         subtotal_output[endpoint] = 0
         total_input += len(ids[endpoint])
-    config['logger'].info('%i (total) objects to be synced between %s (crits) and %s (edge)' % (total_input, source, destination))
+    if total_input > 0:
+        config['logger'].info('%i (total) objects to be synced between %s (crits) and %s (edge)' % (total_input, source, destination))
     for endpoint in cybox_endpoints:
-        config['logger'].info('%i %s objects to be synced between %s (crits) and %s (edge)' % (subtotal_input[endpoint], endpoint, source, destination))
+        if subtotal_input[endpoint] > 0:
+            config['logger'].info('%i %s objects to be synced between %s (crits) and %s (edge)' % (subtotal_input[endpoint], endpoint, source, destination))
         if not len(ids[endpoint]): continue
         else:
             for crits_id in ids[endpoint]:
@@ -207,10 +209,12 @@ def crits2edge(config, source, destination, daemon=False):
                     subtotal_output[endpoint] += 1
                     total_output += 1
                     config['db'].set_object_id(source, destination, 'edge', endpoint + ':' + crits_id, observable.id_, util_.nowutcmin())
-        config['logger'].info('%i %s objects successfully synced between %s (crits) and %s (edge)' % (subtotal_output[endpoint], endpoint, source, destination))
+        if subtotal_output[endpoint] > 0:
+            config['logger'].info('%i %s objects successfully synced between %s (crits) and %s (edge)' % (subtotal_output[endpoint], endpoint, source, destination))
         if subtotal_output[endpoint] < subtotal_input[endpoint]:
             config['logger'].info('%i %s objects could not be synced between %s (crits) and %s (edge)' % (len(ids[endpoint]), endpoint, source, destination))
-    config['logger'].info('%i (total) objects successfully synced between %s (crits) and %s (edge)' % (total_output, source, destination))
+    if total_output > 0:
+        config['logger'].info('%i (total) objects successfully synced between %s (crits) and %s (edge)' % (total_output, source, destination))
     if total_output < total_input:
         config['logger'].info('%i (total) objects could not be synced between %s (crits) and %s (edge)' % (total_input - total_output, source, destination))
     # save state to disk for next run...
