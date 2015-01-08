@@ -58,6 +58,11 @@ class DB(object):
             exit()
         self.db = self.client[config['daemon']['mongo']['db']]
         self.collection = self.db[config['daemon']['mongo']['collection']]
+        self.logger.info('updating mongodb indices...')
+        self.collection.ensure_index('source')
+        self.collection.ensure_index('destination')
+        self.collection.ensure_index('crits_id')
+        self.collection.ensure_index('edge_id')
 
 
     def get_last_sync(self, source, destination, direction):
