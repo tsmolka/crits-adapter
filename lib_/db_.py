@@ -63,7 +63,7 @@ class DB(object):
     def get_last_sync(self, source, destination, direction):
         try:
             doc = self.collection.find_one({'source': source, 'destination': destination, 'direction': direction})
-            if doc:
+            if doc and 'timestamp' in doc.keys():
                 return(doc['timestamp'])
             else:
                 return(util_.epoch_start())
@@ -88,7 +88,7 @@ class DB(object):
 
     def get_object_id(self, source, destination, direction, id_):
         try:
-            query = {'source': source, 'destination': destination, 'direction': direction}
+            query = {'source': source, 'destination': destination}
             if direction == 'edge':
                 query['crits_id'] = id_
             else:

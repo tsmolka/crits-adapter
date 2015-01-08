@@ -3,15 +3,19 @@
 from copy import deepcopy
 from cybox.utils import Namespace
 from cybox.utils import set_id_namespace as set_cybox_id_namespace
+from cybox.utils import IDGenerator, set_id_method
 from cybox.objects.address_object import Address
 from cybox.objects.domain_name_object import DomainName
 from cybox.objects.file_object import File
+from cybox.core.observable import Observable
+from cybox.core import Observables
 from cybox.common import Hash
 from cybox.objects.email_message_object import EmailMessage, EmailHeader
 from stix.core import STIXPackage, STIXHeader
 from stix.data_marking import Marking, MarkingSpecification
 from stix.extensions.marking.tlp import TLPMarkingStructure
 from stix.indicator import Indicator
+
 from stix.utils import set_id_namespace as set_stix_id_namespace
 import util_
 import edge_
@@ -43,27 +47,24 @@ def crits_url(config, target):
     return(url)
 
 
-def crits_poll(config, target, endpoint, object_ids=None):
+def crits_poll(config, target, endpoint, id_=None):
     '''pull data from crits via api, return json as a dict'''
     url = crits_url(config, target)
-    results = dict()
     if config['crits']['sites'][target]['api']['allow_self_signed']:
         requests.packages.urllib3.disable_warnings()
     data = {'api_key'              : config['crits']['sites'][target]['api']['key'],
             'username'             : config['crits']['sites'][target]['api']['user'],}
             # 'c-releasability.name' : config['crits']['sites'][target]['api']['source']}
-    for id_ in object_ids:
-        if config['crits']['sites'][target]['api']['ssl']:
-            r = requests.get(url + endpoint + '/' + id_ + '/', params=data, verify=not config['crits']['sites'][target]['api']['allow_self_signed'])
-        else:
-            r = requests.get(url + endpoint + '/' + id_ + '/', params=data)
-        json_output = r.json()
-        success = True if r.status_code == (200 or 201) else False
-        if success:
-            id_ = json_output[u'_id']
-            del json_output[u'_id']
-            results[id_] = json_output
-    return(results)
+    if config['crits']['sites'][target]['api']['ssl']:
+        r = requests.get(url + endpoint + '/' + id_ + '/', params=data, verify=not config['crits']['sites'][target]['api']['allow_self_signed'])
+    else:
+        r = requests.get(url + endpoint + '/' + id_ + '/', params=data)
+    json_output = r.json()
+    success = True if r.status_code == (200 or 201) else False
+    if success:
+        id_ = json_output[u'_id']
+        del json_output[u'_id']
+    return(id_, json_output)
 
 
 def crits_inbox(config, target, endpoint, json):
@@ -86,8 +87,8 @@ def crits_inbox(config, target, endpoint, json):
     return(id_, success)
 
 
-def json2stix(config, source, endpoint, json_, title='random test data', description='random test data', package_intents='Indicators - Watchlist', tlp_color='WHITE'):
-    '''generate stix data from crits json'''
+def stix_pkg(config, source, endpoint, payload, title='random test data', description='random test data', package_intents='Indicators - Watchlist', tlp_color='WHITE'):
+    '''package observables'''
     # setup the xmlns...
     set_stix_id_namespace({config['edge']['sites'][source]['stix']['xmlns_url']: config['edge']['sites'][source]['stix']['xmlns_name']})
     set_cybox_id_namespace(Namespace(config['edge']['sites'][source]['stix']['xmlns_url'], config['edge']['sites'][source]['stix']['xmlns_name']))
@@ -105,6 +106,16 @@ def json2stix(config, source, endpoint, json_, title='random test data', descrip
     stix_package.stix_header = stix_header
     stix_package.stix_header.handling = Marking()
     stix_package.stix_header.handling.add_marking(marking)
+    if isinstance(payload, Observable):
+        stix_package.add_observable(payload)
+    elif isinstance(payload, Indicator):
+        stix_package.add_indicator(payload)
+    return(stix_package)
+
+
+def json2cybox(config, source, endpoint, json_):
+    set_id_method(IDGenerator.METHOD_UUID)
+    set_cybox_id_namespace(Namespace(config['edge']['sites'][source]['stix']['xmlns_url'], config['edge']['sites'][source]['stix']['xmlns_name']))
     if endpoint == 'ips':
         crits_types = {'Address - cidr': 'cidr', \
                        'Address - ipv4-addr': 'ipv4-addr', \
@@ -113,24 +124,15 @@ def json2stix(config, source, endpoint, json_, title='random test data', descrip
                        'Address - ipv6-addr': 'ipv6-addr', \
                        'Address - ipv6-net': 'ipv6-net', \
                        'Address - ipv6-net-mask': 'ipv6-netmask'}
-        for i in json_.keys():
-            indicator = Indicator(title='IP Address for known C2 Channel')
-            indicator.add_indicator_type('IP Watchlist')
-            # import pudb; pu.db
-            addr = Address(address_value=json_[i]['ip'], category=crits_types[json_[i]['type']])
-            addr.condition = 'Equals'
-            indicator.add_observable(addr)
-            stix_package.add_indicator(indicator)
+        addr = Address(address_value=json_['ip'], category=crits_types[json_['type']])
+        addr.condition = 'Equals'
+        return(Observable(addr))
     elif endpoint == 'domains':
-        for i in json_.keys():
-            indicator = Indicator(title='A Very Bad [tm] Domain')
-            indicator.add_indicator_type('Domain Watchlist')
-            domain = DomainName()
-            domain.type_ = 'FQDN'
-            domain.value = json_[i]['domain']
-            domain.condition = 'Equals'
-            indicator.add_observable(domain)
-            stix_package.add_indicator(indicator)
+        domain = DomainName()
+        domain.type_ = 'FQDN'
+        domain.value = json_['domain']
+        domain.condition = 'Equals'
+        return(domain)
     elif endpoint == 'samples':
         crits_types = {'md5'    : 'MD5', \
                        'sha1'   : 'SHA1', \
@@ -139,41 +141,31 @@ def json2stix(config, source, endpoint, json_, title='random test data', descrip
                        'sha384' : 'SHA384', \
                        'sha512' : 'SHA512', \
                        'ssdeep' : 'SSDEEP'}
-        for i in json_.keys():
-            indicator = Indicator(title='A Very Bad [tm] Filehash')
-            indicator.add_indicator_type('File Hash Watchlist')
-            file_object = File()
-            file_object.file_name = json_[i]['filename']
-            # import pudb; pu.db
-            for hash in crits_types.keys():
-                if hash in json_[i]:
-                    file_object.add_hash(Hash(json_[i][hash], type_=crits_types[hash]))
-            for i in file_object.hashes:
+        file_object = File()
+        file_object.file_name = json_['filename']
+        for hash in crits_types.keys():
+            if hash in json_:
+                file_object.add_hash(Hash(json_[hash], type_=crits_types[hash]))
+        for i in file_object.hashes:
                 i.simple_hash_value.condition = "Equals"
-            indicator.add_observable(file_object)
-            stix_package.add_indicator(indicator)
+        return(file_object)
     elif endpoint == 'emails':
         crits_types = {'subject': 'subject', 'to': 'to', 'cc': 'cc',
         'from_address': 'from_', 'sender': 'sender', 'date': 'date',
         'message_id': 'message_id', 'reply_to': 'reply_to',
         'boundary': 'boundary', 'x_mailer': 'x_mailer',
         'x_originating_ip': 'x_originating_ip'}
-        for i in json_.keys():
-            email = EmailMessage()
-            email.header = EmailHeader()
-            for key in crits_types.keys():
-                val = json_[i].get(key, None)
-                if val:
-                    email.header.__setattr__(crits_types[key], val)
-                    email.header.__getattribute__(crits_types[key]).condition = 'Equals'
-            indicator = Indicator(title='spam spam spam')
-            indicator.add_indicator_type('Malicious E-mail')
-            indicator.add_observable(email)
-            stix_package.add_indicator(indicator)
+        email = EmailMessage()
+        email.header = EmailHeader()
+        for key in crits_types.keys():
+            val = json_.get(key, None)
+            if val:
+                email.header.__setattr__(crits_types[key], val)
+                email.header.__getattribute__(crits_types[key]).condition = 'Equals'
+        return(email)
     else:
         config['logger'].error('unsupported crits object type %s!' % endpoint)
         return(None)
-    return(stix_package)
 
 
 def crits2edge(config, source, destination, daemon=False):
@@ -181,16 +173,16 @@ def crits2edge(config, source, destination, daemon=False):
     now = util_.nowutcmin()
     timestamp = config['db'].get_last_sync(source=source, destination=destination, direction='edge').replace(tzinfo=pytz.utc)
     config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
-    endpoints = ['ips', 'domains', 'samples', 'emails']
+    cybox_endpoints = ['ips', 'domains', 'samples', 'emails']
     ids = dict()
     total_input = 0
     total_output = 0
     subtotal_input = {}
     subtotal_output = {}
-    for endpoint in endpoints:
+    for endpoint in cybox_endpoints:
         ids[endpoint] = fetch_crits_object_ids(config, source, endpoint, timestamp)
         for id_ in ids[endpoint]:
-            if config['db'].get_object_id(source, destination, 'edge', id_):
+            if config['db'].get_object_id(source, destination, 'edge', endpoint + ':' + str(id_)):
                 if config['daemon']['debug']:
                     config['logger'].debug('crits object id %s already in system' % id_)
                 ids[endpoint].remove(id_)
@@ -198,13 +190,14 @@ def crits2edge(config, source, destination, daemon=False):
         subtotal_output[endpoint] = 0
         total_input += len(ids[endpoint])
     config['logger'].info('%i (total) objects to be synced between %s (crits) and %s (edge)' % (total_input, source, destination))
-    for endpoint in endpoints:
+    for endpoint in cybox_endpoints:
         config['logger'].info('%i %s objects to be synced between %s (crits) and %s (edge)' % (subtotal_input[endpoint], endpoint, source, destination))
         if not len(ids[endpoint]): continue
         else:
             for crits_id in ids[endpoint]:
-                json_ = crits_poll(config, source, endpoint, [crits_id,])
-                stix_ = json2stix(config, source, endpoint, json_)
+                (id_, json_) = crits_poll(config, source, endpoint, crits_id,)
+                observable = json2cybox(config, source, endpoint, json_)
+                stix_ = stix_pkg(config, source, endpoint, observable)
                 success = edge_.taxii_inbox(config, destination, stix_)
                 if not success:
                     config['logger'].info('crits object %s could not be synced between %s (crits) and %s (edge)' % (crits_id, source, destination))
@@ -213,7 +206,7 @@ def crits2edge(config, source, destination, daemon=False):
                     total_input -= 1
                     subtotal_output[endpoint] += 1
                     total_output += 1
-                    config['db'].set_object_id(source, destination, 'edge', endpoint + ':' + crits_id, stix_.id_, util_.nowutcmin())
+                    config['db'].set_object_id(source, destination, 'edge', endpoint + ':' + crits_id, observable.id_, util_.nowutcmin())
         config['logger'].info('%i %s objects successfully synced between %s (crits) and %s (edge)' % (subtotal_output[endpoint], endpoint, source, destination))
         if subtotal_output[endpoint] < subtotal_input[endpoint]:
             config['logger'].info('%i %s objects could not be synced between %s (crits) and %s (edge)' % (len(ids[endpoint]), endpoint, source, destination))
@@ -225,7 +218,7 @@ def crits2edge(config, source, destination, daemon=False):
         config['logger'].debug('saving state until next run [%s]' % str(now + datetime.timedelta(seconds=config['crits']['sites'][source]['api']['poll_interval'])))
     config['db'].set_last_sync(source=source, destination=destination, direction='edge', timestamp=now)
 
-    
+
 def __fetch_crits_object_ids(config, target, endpoint, params):
     '''fetch all crits object ids from endpoint and return a list'''
     url = crits_url(config, target)

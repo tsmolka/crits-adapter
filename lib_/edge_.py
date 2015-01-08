@@ -64,8 +64,8 @@ def stix2json(config, observable):
             ip_value = util_.rgetattr(observable.object_.properties, ['address_value', 'value'])
             if ip_value and ip_category:
                 json = {'ip': ip_value, 'ip_type': crits_types[ip_category]}
-                hash_ = util_.dicthash_sha1(json)
-                json['_id'] = hash_
+                # hash_ = util_.dicthash_sha1(json)
+                # json['_id'] = hash_
                 json['stix_id'] = observable.id_
                 return(json, endpoint)
     elif isinstance(observable.object_.properties, DomainName):
@@ -76,8 +76,8 @@ def stix2json(config, observable):
         domain_value = util_.rgetattr(observable.object_.properties, ['value', 'value'])
         if domain_category and domain_value:
             json = {'domain': domain_value, 'type': crits_types[domain_category]}
-            hash_ = util_.dicthash_sha1(json)
-            json['_id'] = hash_
+            # hash_ = util_.dicthash_sha1(json)
+            # json['_id'] = hash_
             json['stix_id'] = observable.id_
             return(json, endpoint)
     elif isinstance(observable.object_.properties, File):
@@ -106,8 +106,8 @@ def stix2json(config, observable):
         file_size = util_.rgetattr(observable.object_.properties, ['size_in_bytes', 'value'])
         if file_size:
             json['size'] = file_size
-        hash_ = util_.dicthash_sha1(json)
-        json['_id'] = hash_
+        # hash_ = util_.dicthash_sha1(json)
+        # json['_id'] = hash_
         json['stix_id'] = observable.id_
         return(json, endpoint)
     elif isinstance(observable.object_.properties, EmailMessage):
@@ -168,8 +168,10 @@ def stix2json(config, observable):
         #     if val:
         #         json[crits_types[key]] = val
         # print(json)
-        hash_ = util_.dicthash_sha1(json)
-        json['_id'] = hash_
+
+
+        # hash_ = util_.dicthash_sha1(json)
+        # json['_id'] = hash_
         json['stix_id'] = observable.id_
         return(json, endpoint)
     else:
@@ -267,9 +269,10 @@ def edge2crits(config, source, destination, daemon=False):
         subtotal_input[endpoint] = 0
         subtotal_output[endpoint] = 0
         for blob in json_[endpoint]:
-            if config['db'].get_object_id(source, destination, 'crits', endpoint + ':' + blob['id_']):
+            if config['db'].get_object_id(source, destination, 'crits', blob['stix_id']):
                 if config['daemon']['debug']:
                     config['logger'].debug('edge object id %s already in system' % blob['stix_id'])
+                del json_[endpoint][blob]
                 continue
             else:
                 total_input += 1
@@ -286,7 +289,7 @@ def edge2crits(config, source, destination, daemon=False):
             else:
                 if config['daemon']['debug']:
                     config['logger'].debug('%s object with id %s was synced from %s (edge) to %s (crits)' % (endpoint, str(stix_id), source, destination))
-                config['db'].set_object_id(source, destination, 'crits', stix_id, endpoint + ':' + str(id_), util.nowutcmin())
+                config['db'].set_object_id(source, destination, 'crits', stix_id, endpoint + ':' + str(id_), util_.nowutcmin())
                 subtotal_output[endpoint] += 1
                 total_output += 1
         config['logger'].info('%i %s objects successfully synced between %s (edge) and %s (crits)' % (subtotal_output[endpoint], endpoint, source, destination))

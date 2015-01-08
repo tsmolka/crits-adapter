@@ -12,27 +12,6 @@ import log_
 import db_
 
 
-# DONE break edgy_crits into some libs so it's a more manageable size
-# DONE bring crits-to-edge up to the level of functionality present
-#      with edge-to-crits
-# IN PROGRESS add logging!!!
-#     TODO: add logging to lib_/crits.py
-#     TODO: review other stuff in lib_/
-# DONE add datagen for emails
-# TODO implement crits-to-stix for emails
-# TODO implement stix-to-crits for emails
-# DONE daemonize edgy_crits
-# TODO run edgy_crits in daemon mode on all 3 sites, setup ben's
-#      inboxing routine on site_a & site_b, pump crits into site_a,
-#      pump stix into site_b, and see where things fall down in terms
-#      of eventual consistency, performance, etc
-# TODO figure out how to make this thing work like a celery job,
-#      integrated into stix as a "proper" adapter
-# TODO make imports modular based on cli args
-# TODO track uploaded content and retrieve it via taxii poll...
-# TODO use certifi for urllib3 certificate validation :: https://urllib3.readthedocs.org/en/latest/security.html#certifi-with-urllib3
-
-
 __version__ = '0.1'
 app_path = os.path.split(os.path.abspath(__file__))[0]
 default_config = os.path.join(app_path, 'config.yaml')
@@ -67,6 +46,7 @@ def main():
     db = db_.DB(config)
     config['db'] = db
     config['daemon']['app_path'] = app_path
+    # import pudb; pu.db
     if args['--sync-crits-to-edge']:
         if args['--source'] in config['crits']['sites'].keys() and args['--destination'] in config['edge']['sites'].keys():
             logger.info('initiating crits=>edge sync between %s and %s' % (args['--source'], args['--destination']))
