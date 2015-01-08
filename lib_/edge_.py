@@ -272,7 +272,7 @@ def edge2crits(config, source, destination, daemon=False):
             if config['db'].get_object_id(source, destination, 'crits', blob['stix_id']):
                 if config['daemon']['debug']:
                     config['logger'].debug('edge object id %s already in system' % blob['stix_id'])
-                del json_[endpoint][blob]
+                json_[endpoint].remove(blob)
                 continue
             else:
                 total_input += 1
