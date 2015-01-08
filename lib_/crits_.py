@@ -132,7 +132,7 @@ def json2cybox(config, source, endpoint, json_):
         domain.type_ = 'FQDN'
         domain.value = json_['domain']
         domain.condition = 'Equals'
-        return(domain)
+        return(Observable(domain))
     elif endpoint == 'samples':
         crits_types = {'md5'    : 'MD5', \
                        'sha1'   : 'SHA1', \
@@ -148,7 +148,7 @@ def json2cybox(config, source, endpoint, json_):
                 file_object.add_hash(Hash(json_[hash], type_=crits_types[hash]))
         for i in file_object.hashes:
                 i.simple_hash_value.condition = "Equals"
-        return(file_object)
+        return(Observable(file_object))
     elif endpoint == 'emails':
         crits_types = {'subject': 'subject', 'to': 'to', 'cc': 'cc',
         'from_address': 'from_', 'sender': 'sender', 'date': 'date',
@@ -162,7 +162,7 @@ def json2cybox(config, source, endpoint, json_):
             if val:
                 email.header.__setattr__(crits_types[key], val)
                 email.header.__getattribute__(crits_types[key]).condition = 'Equals'
-        return(email)
+        return(Observable(email))
     else:
         config['logger'].error('unsupported crits object type %s!' % endpoint)
         return(None)
