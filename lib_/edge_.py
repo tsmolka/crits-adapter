@@ -294,7 +294,7 @@ def edge2crits(config, source, destination, daemon=False):
                 config['db'].set_object_id(source, destination, 'crits', stix_id, endpoint + ':' + str(id_), util_.nowutcmin())
                 subtotal_output[endpoint] += 1
                 total_output += 1
-        if subtotal_ouput[endpoint] > 0:
+        if subtotal_output[endpoint] > 0:
             config['logger'].info('%i %s objects successfully synced between %s (edge) and %s (crits)' % (subtotal_output[endpoint], endpoint, source, destination))
         if subtotal_output[endpoint] < subtotal_input[endpoint]:
             config['logger'].info('%i %s objects could not be synced between %s (edge) and %s (crits)' % (subtotal_input[endpoint] - subtotal_output[endpoint], endpoint, source, destination))
