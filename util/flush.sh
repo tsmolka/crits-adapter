@@ -9,7 +9,7 @@ mongo inbox --eval "db.adapters.crits.remove({})"
 mongo inbox --eval "db.stats_indicators.remove({})"
 mongo inbox --eval "db.indicators_by_date.remove({})"
 mongo inbox --eval "db.uploads.remove({})"
-mongo inbox --eval "db.peer_push.remove({})"
+mongo inbox --eval "db.peer_log.remove({})"
 mongo inbox --eval "db.peer_sessions.remove({})"
 # flush crits mongodb
 mongo crits --eval "db.ips.remove({})"
