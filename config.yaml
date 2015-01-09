@@ -1,4 +1,6 @@
 crits:
+  datagen:
+      indicator_count: 100
   sites:
     localhost:
       api:
@@ -13,6 +15,32 @@ crits:
         user: api
       enabled: true
       host: 127.0.0.1
+    rackspace_central:
+      api:
+        allow_self_signed: true
+        key: 0055eaeb01c0f9f38cd65b190daf8f6d8e88c8fc
+        max_results: 1000
+        path: /api/v1/
+        poll_interval: 30
+        port: 444
+        source: dsie
+        ssl: true
+        user: api
+      enabled: true
+      host: 204.232.238.141
+    vm_site_a:
+      api:
+        allow_self_signed: true
+        key: 0055eaeb01c0f9f38cd65b190daf8f6d8e88c8fc
+        max_results: 1000
+        path: /api/v1/
+        poll_interval: 30
+        port: 444
+        source: dsie
+        ssl: true
+        user: api
+      enabled: true
+      host: 192.168.128.129
 daemon:
   app_path: /opt/soltra/edge/repository/adapters/crits
   debug: false
@@ -29,7 +57,12 @@ daemon:
     pass:
     db: inbox
     collection: adapters.crits
+datagen:
+  canonical_tlds: datagen_samples/tlds-alpha-by-domain.txt
+  email_header_samples: datagen_samples/mail_headers.yaml
 edge:
+  datagen:
+      indicator_count: 100
   sites:
     localhost:
       enabled: true
@@ -47,4 +80,35 @@ edge:
         ssl: true
         user: api
         version: 1.1
-state:
+    rackspace_central:
+      enabled: true
+      host: 204.232.238.141
+      stix:
+        xmlns_name: dsie
+        xmlns_url: http://www.dsie.net/
+      taxii:
+        allow_self_signed: true
+        collection: system.Default
+        pass: Opiningbiddyproxywandzigzagsetchedeightjimmies_2347
+        path: /taxii-data
+        poll_interval: 30
+        port: 443
+        ssl: true
+        user: api
+        version: 1.1
+    vm_site_a:
+      enabled: true
+      host: 192.168.128.129
+      stix:
+        xmlns_name: dsie
+        xmlns_url: http://www.dsie.net/
+      taxii:
+        allow_self_signed: true
+        collection: system.Default
+        pass: Opiningbiddyproxywandzigzagsetchedeightjimmies_2347
+        path: /taxii-data
+        poll_interval: 30
+        port: 443
+        ssl: true
+        user: api
+        version: 1.1
