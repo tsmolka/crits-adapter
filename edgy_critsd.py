@@ -8,7 +8,7 @@ import log_
 import db_
 import signal
 
-__version__ = '0.1'
+__version__ = '0.2'
 app_path = os.path.split(os.path.abspath(__file__))[0]
 default_config = os.path.join(app_path, 'config.yaml')
 __doc__ = '''edgy_critsd.py: a daemon to drive edgy_crits

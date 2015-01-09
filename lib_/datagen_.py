@@ -28,12 +28,6 @@ def load_mail_header_bits(config):
 
 
 def get_random_spam_msg(config):
-    # parser = email_parser()
-    # spam_dir = 'datagen_samples/spam'
-    # random_spam_file = open(os.path.join(spam_dir, random.choice(os.listdir(spam_dir))))
-    # random_spam_msg = parser.parse(random_spam_file)
-    # random_spam_file.close()
-    # return(random_spam_msg)
     header_map = {'Subject': 'subject', 'To': 'to', 'Cc':
               'cc', 'Bcc': 'bcc', 'From': 'from_',
               'Sender': 'sender', 'Date': 'date',

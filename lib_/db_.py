@@ -14,25 +14,6 @@ def get_db(config):
                              password=config['daemon']['mongo']['pass'])
     return(db)
 
-# rough model
-# =====
-# sync_status:
-#     crits_to_edge:
-#     last_sync_timestamp: 2015-01-06 14:03:00
-#     ids:
-#             crits_id
-#                       corresponding_edge_id
-#                       created:
-#     modified:
-#     edge_to_crits:
-#     last_sync_timestamp: 2015-01-06 14:03:00
-#     ids:
-#             crits_id
-#                       corresponding_edge_id
-#                       created:
-#     modified:
-    
-
 
 class DB(object):
     def __init__(self, config):

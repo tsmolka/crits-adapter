@@ -28,24 +28,6 @@ import yaml
 import datetime
 
 
-# TODO support proxies
-# TODO support certificate auth
-# TODO add more granular error checks
-# TODO take taxii version from config and use the corresponding api
-# TODO for some reason crits isn't accepting anything but md5 via the
-#      api o_O
-# TODO batch this up similarly to how crits-to-stix works (a la, 100x
-#      observables at a time or similar)
-# TODO need to avoid syncing when new data on one side is new
-#      precisely because it was just injected from the other side
-# TODO need to fix timestamps so they match the original data
-# TODO need to set the xmlns to show the origin (aka,
-#      demo_site_a_crits: https://54.154.28.239)
-# TODO how to handle updates???
-# TODO use make_taxii_document() from repository.tools.avalanche.functions
-# TODO use inbox_document() from repository.tools.avalanche.functions
-
-
 def stix2json(config, observable):
     if isinstance(observable.object_.properties, Address):
         crits_types = {'cidr'         : 'Address - cidr', \
@@ -137,7 +119,7 @@ def stix2json(config, observable):
                     json['cc'].append(addr)
         from_ = util_.rgetattr(observable.object_.properties, ['header', 'from_', 'address_value', 'value'])
         if from_:
-            json['from_'] = from_
+            json['from_address'] = [from_,]
         sender = util_.rgetattr(observable.object_.properties, ['header', 'sender', 'address_value', 'value'])
         if sender:
             json['sender'] = sender
@@ -159,7 +141,6 @@ def stix2json(config, observable):
         x_originating_ip = util_.rgetattr(observable.object_.properties, ['header', 'x_originating_ip', 'value'])
         if x_originating_ip:
             json['x_originating_ip'] = x_originating_ip
-        # import pudb; pu.db
         # for key in crits_types.keys():
         #     try:
         #         val = observable.object_.properties.header.__get_attr__(key)
@@ -168,7 +149,6 @@ def stix2json(config, observable):
         #     if val:
         #         json[crits_types[key]] = val
         # print(json)
-
 
         # hash_ = util_.dicthash_sha1(json)
         # json['_id'] = hash_

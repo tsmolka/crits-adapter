@@ -15,7 +15,6 @@ from stix.core import STIXPackage, STIXHeader
 from stix.data_marking import Marking, MarkingSpecification
 from stix.extensions.marking.tlp import TLPMarkingStructure
 from stix.indicator import Indicator
-
 from stix.utils import set_id_namespace as set_stix_id_namespace
 import util_
 import edge_
@@ -24,14 +23,6 @@ import pytz
 import requests
 import yaml
 import datetime
-
-
-# TODO how to deal with deleted crits objects?
-# TODO ensure that both source and destination are actually defined!
-# TODO if we fail midway through an operation, what should we do with
-#      the timestamp?
-# TODO ensure that all timestamps are utc!
-# TODO how to handle updates???
 
 
 def crits_url(config, target):

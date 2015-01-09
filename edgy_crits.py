@@ -12,7 +12,7 @@ import log_
 import db_
 
 
-__version__ = '0.1'
+__version__ = '0.2'
 app_path = os.path.split(os.path.abspath(__file__))[0]
 default_config = os.path.join(app_path, 'config.yaml')
 
@@ -46,7 +46,6 @@ def main():
     db = db_.DB(config)
     config['db'] = db
     config['daemon']['app_path'] = app_path
-    # import pudb; pu.db
     if args['--sync-crits-to-edge']:
         if args['--source'] in config['crits']['sites'].keys() and args['--destination'] in config['edge']['sites'].keys():
             logger.info('initiating crits=>edge sync between %s and %s' % (args['--source'], args['--destination']))
