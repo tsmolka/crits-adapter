@@ -8,7 +8,7 @@ from hashlib import md5, sha1, sha224, sha256, sha384, sha512
 from socket import inet_ntoa
 import yaml
 from struct import pack
-import ssdeep
+# import ssdeep
 
 
 def load_tlds(config):
@@ -75,7 +75,7 @@ def generate_random_hashes():
     hashes['sha256'] = sha256(val).hexdigest()
     hashes['sha384'] = sha384(val).hexdigest()
     hashes['sha512'] = sha512(val).hexdigest()
-    hashes['ssdeep'] = ssdeep.hash(val)
+    # hashes['ssdeep'] = ssdeep.hash(val)
     return(hashes)
     
 
