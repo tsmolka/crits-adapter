@@ -26,7 +26,7 @@ crits:
         source: dsie
         ssl: true
         user: api
-      enabled: true
+      enabled: false
       host: 204.232.238.141
     vm_site_a:
       api:
@@ -39,7 +39,7 @@ crits:
         source: dsie
         ssl: true
         user: api
-      enabled: true
+      enabled: false
       host: 192.168.128.129
 daemon:
   app_path: /opt/soltra/edge/repository/adapters/crits
@@ -81,7 +81,7 @@ edge:
         user: api
         version: 1.1
     rackspace_central:
-      enabled: true
+      enabled: false
       host: 204.232.238.141
       stix:
         xmlns_name: dsie
@@ -97,7 +97,7 @@ edge:
         user: api
         version: 1.1
     vm_site_a:
-      enabled: true
+      enabled: false
       host: 192.168.128.129
       stix:
         xmlns_name: dsie
