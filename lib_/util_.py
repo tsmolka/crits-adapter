@@ -226,7 +226,7 @@ class Daemon:
                         self.logger.info('initiating crits=>edge sync between %s and %s' % (crits_site, edge_site))
                         completed_run = crits_.crits2edge(self.config, crits_site, edge_site, daemon=True, now=now, last_run=last_run)
                         if completed_run:
-                            config['db'].set_last_sync(source=crits_site, destination=edge_site, direction='edge', timestamp=completed_run)
+                            self.config['db'].set_last_sync(source=crits_site, destination=edge_site, direction='edge', timestamp=completed_run)
                     else: continue
             for edge_site in enabled_edge_sites:
                 for crits_site in enabled_crits_sites:
@@ -236,7 +236,7 @@ class Daemon:
                         self.logger.info('initiating edge=>crits sync between %s and %s' % (edge_site, crits_site))
                         completed_run = edge_.edge2crits(self.config, edge_site, crits_site, daemon=True, now=now, last_run=last_run)
                         if completed_run:
-                            config['db'].set_last_sync(source=edge_site, destination=crits_site, direction='crits', timestamp=completed_run)
+                            self.config['db'].set_last_sync(source=edge_site, destination=crits_site, direction='crits', timestamp=completed_run)
                     else: continue
             time.sleep(1)
 
