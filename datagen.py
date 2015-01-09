@@ -26,24 +26,6 @@ import crits_
 import edge_
 
 
-# import datetime
-# from dateutil.tz import tzutc
-# import StringIO
-# import sys
-# import lxml.etree
-# from struct import pack
-# import yaml
-# import requests
-# import json
-# import time
-# import os
-# import pytz
-# import ssdeep
-# import string
-
-
-
-
 __version__ = '0.2'
 app_path = os.path.split(os.path.abspath(__file__))[0]
 default_config = os.path.join(app_path, 'config.yaml')
@@ -117,7 +99,7 @@ def gen_stix_sample(config, target=None, datatype=None, title='random test data'
         stix_package.add_observable(Observable(file_object))
     elif datatype == 'email':
         try:
-            random_spam_msg = get_random_spam_msg(config)
+            msg = datagen_.get_random_spam_msg(config)
             email = EmailMessage()
             email.header = EmailHeader()
             header_map = {'Subject': 'subject', 'To': 'to', 'Cc':
@@ -134,7 +116,7 @@ def gen_stix_sample(config, target=None, datatype=None, title='random test data'
                           'X-Priority': 'x_priority'}
             # TODO handle received_lines
             for key in header_map.keys():
-                val = random_spam_msg.get(key, None)
+                val = msg.get(key, None)
                 if val:
                     email.header.__setattr__(header_map[key], val)
                     email.header.__getattribute__(header_map[key]).condition = 'Equals'
@@ -160,7 +142,7 @@ def inject_edge_sample_data(config, target=None, datatype=None):
             success = edge_.taxii_inbox(config, target, stix_)
             if success:
                 i += 1
-            else: continue
+            else: print('error inboxing edge sample data to %s - exiting!' % target); exit()
     elif datatype == 'mixed':
         types_ = list()
         types_.extend(datatypes)
@@ -188,12 +170,8 @@ def generate_crits_json(config, datatype=None):
             json[hash] = hashes[hash]
         return(json)
     elif datatype == 'email':
-        # TODO crits seems not to support uploading email metadata via
-        #      the api?! have tried every imaginable permutation of
-        #      metadata and raw uploads :-(
-        random_spam_msg = datagen_.get_random_spam_msg(config)
+        msg = datagen_.get_random_spam_msg(config)
         json = {'upload_type': 'fields'}
-        # import pudb; pu.db
         header_map = {'Subject': 'subject', 'To': 'to', 'Cc': 'cc',
                       'From': 'from_address', 'Sender': 'sender', 'Date':
                       'date', 'Message-ID': 'message_id', 'Reply-To':
@@ -201,24 +179,18 @@ def generate_crits_json(config, datatype=None):
                       'x_mailer', 'X-Originating-IP':
                       'x_originating_ip'}
         for key in header_map.keys():
-            val = random_spam_msg.get(key, None)
+            val = msg.get(key, None)
             if val:
                 if key in ['To', 'Cc']:
                     json[header_map[key]] = [val,]
                 else:
                     json[header_map[key]] = val
-        # print(json)
-        # exit()
-        # spam_dir = 'data/spam'
-        # random_spam_file = open(os.path.join(spam_dir, random.choice(os.listdir(spam_dir))))
-        # random_spam = random_spam_file.read()
-        # random_spam_file.close()
-        # json = {'upload_type': 'raw', 'file_data': random_spam}
         return(json)
 
             
 def inject_crits_sample_data(config, target=None, datatype=None):
     '''inject randomly generated sample data into crits target'''
+    global datatypes
     endpoint = None
     if datatype == 'ip': endpoint = 'ips'
     elif datatype == 'domain': endpoint = 'domains'
@@ -231,21 +203,22 @@ def inject_crits_sample_data(config, target=None, datatype=None):
             (id_, success) = crits_.crits_inbox(config, target, endpoint, generate_crits_json(config, datatype))
             if success:
                 i += 1
-            else: continue
+            else: print('error inboxing crits sample data to %s - exiting!' % target); exit()
     elif datatype == 'mixed':
-        # TODO implement mixed crits input...
-        pass
-        # types_ = list()
-        # types_.extend(datatypes)
-        # types_.remove('mixed')
-        # types_.remove('email')
-        # i = 0
-        # while i < config['edge']['datagen']['indicator_count']:
-        #     type_ = types_[random.randint(0, len(types_) - 1)]
-        #     stix_package = gen_stix_sample(config, datatype=type_)
-        #     upload_stix_via_taxii(config, target, stix_package)
-        #     i += 1
-        #     print(i)
+        types_ = list()
+        types_.extend(datatypes)
+        types_.remove('mixed')
+        i = 0
+        while i < config['crits']['datagen']['indicator_count']:
+            type_ = types_[random.randint(0, len(types_) - 1)]
+            if type_ == 'ip': endpoint = 'ips'
+            elif type_ == 'domain': endpoint = 'domains'
+            elif type_ == 'email': endpoint = 'emails'
+            elif type_ == 'filehash': endpoint = 'samples'
+            (id_, success) = crits_.crits_inbox(config, target, endpoint, generate_crits_json(config, type_))
+            if success:
+                i += 1
+            else: continue
 
 
 def main():
@@ -253,7 +226,6 @@ def main():
     global config_file
     config_file = args['--config']
     config = util_.parse_config(config_file)
-    # import pudb; pu.db
     if args['--list-targets']:
         for i in config['crits']['sites']:
             print("{crits:<7} {target:<15} {address:<10}".format (crits='[crits]', target=i, address='(' + config['crits']['sites'][i]['host'] + ')'))
@@ -280,9 +252,6 @@ def main():
                 config['datagen']['tlds'] = datagen_.load_tlds(config)
                 # read in email header samples for datagen use
                 config['datagen']['email_headers'] = datagen_.load_mail_header_bits(config)
-                # TODO modify the inject_*_sample_data functions to
-                #      generate a mix of ip addresses, file hashes, urls,
-                #      and domain names
                 inject_crits_sample_data(config, target=args['--target'], datatype=args['--datatype'])
             elif args['--type'] == 'edge' and args['--target'] in config['edge']['sites'].keys():
                 # override indicator_count from config file if it's
