@@ -235,12 +235,14 @@ def taxii_inbox(config, target, stix_package=None):
         return(success)
 
 
-def edge2crits(config, source, destination, daemon=False):
+def edge2crits(config, source, destination, daemon=False, now=None, last_run=None):
     # check if (and when) we synced source and destination...
-    now = util_.nowutcmin()
-    timestamp = config['db'].get_last_sync(source=source, destination=destination, direction='crits').replace(tzinfo=pytz.utc)
-    config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
-    (json_, latest) = taxii_poll(config, source, timestamp)
+    if not now:
+        now = util_.nowutcmin()
+    if not last_run:
+        last_run = config['db'].get_last_sync(source=source, destination=destination, direction='crits').replace(tzinfo=pytz.utc)
+    config['logger'].info('syncing new crits data since %s between %s and %s' % (str(last_run), source, destination))
+    (json_, latest) = taxii_poll(config, source, last_run)
     total_input = 0
     total_output = 0
     subtotal_input = {}
@@ -285,4 +287,8 @@ def edge2crits(config, source, destination, daemon=False):
     # save state to disk for next run...
     if config['daemon']['debug']:
         config['logger'].debug('saving state until next run [%s]' % str(now + datetime.timedelta(seconds=config['edge']['sites'][source]['taxii']['poll_interval'])))
-    config['db'].set_last_sync(source=source, destination=destination, direction='crits', timestamp=now)
+    if not daemon:
+        config['db'].set_last_sync(source=source, destination=destination, direction='crits', timestamp=now)
+        return(None)
+    else:
+        return(util_.nowutcmin())

@@ -159,11 +159,13 @@ def json2cybox(config, source, endpoint, json_):
         return(None)
 
 
-def crits2edge(config, source, destination, daemon=False):
+def crits2edge(config, source, destination, daemon=False, now=None, last_run=None):
     # check if (and when) we synced source and destination...
-    now = util_.nowutcmin()
-    timestamp = config['db'].get_last_sync(source=source, destination=destination, direction='edge').replace(tzinfo=pytz.utc)
-    config['logger'].info('syncing new crits data since %s between %s and %s' % (str(timestamp), source, destination))
+    if not now:
+        now = util_.nowutcmin()
+    if not last_run:
+        last_run = config['db'].get_last_sync(source=source, destination=destination, direction='edge').replace(tzinfo=pytz.utc)
+    config['logger'].info('syncing new crits data since %s between %s and %s' % (str(last_run), source, destination))
     cybox_endpoints = ['ips', 'domains', 'samples', 'emails']
     ids = dict()
     total_input = 0
@@ -171,7 +173,7 @@ def crits2edge(config, source, destination, daemon=False):
     subtotal_input = {}
     subtotal_output = {}
     for endpoint in cybox_endpoints:
-        ids[endpoint] = fetch_crits_object_ids(config, source, endpoint, timestamp)
+        ids[endpoint] = fetch_crits_object_ids(config, source, endpoint, last_run)
         for id_ in ids[endpoint]:
             if config['db'].get_object_id(source, destination, 'edge', endpoint + ':' + str(id_)):
                 if config['daemon']['debug']:
@@ -211,7 +213,11 @@ def crits2edge(config, source, destination, daemon=False):
     # save state to disk for next run...
     if config['daemon']['debug']:
         config['logger'].debug('saving state until next run [%s]' % str(now + datetime.timedelta(seconds=config['crits']['sites'][source]['api']['poll_interval'])))
-    config['db'].set_last_sync(source=source, destination=destination, direction='edge', timestamp=now)
+    if not daemon:
+        config['db'].set_last_sync(source=source, destination=destination, direction='edge', timestamp=now)
+        return(None)
+    else:
+        return(util_.nowutcmin())
 
 
 def __fetch_crits_object_ids(config, target, endpoint, params):
