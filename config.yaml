@@ -1,114 +1,57 @@
 crits:
-  datagen:
-      indicator_count: 100
   sites:
-    localhost:
+    localhost:                                             # site name
+      host: 127.0.0.1                                      # site ip / fqdn
+      enabled: true                                        # off switch
       api:
-        allow_self_signed: true
-        key: 0055eaeb01c0f9f38cd65b190daf8f6d8e88c8fc
-        max_results: 1000
-        path: /api/v1/
-        poll_interval: 30
-        port: 444
-        source: dsie
-        ssl: true
-        user: api
-      enabled: true
-      host: 127.0.0.1
-    rackspace_central:
-      api:
-        allow_self_signed: true
-        key: 0055eaeb01c0f9f38cd65b190daf8f6d8e88c8fc
-        max_results: 1000
-        path: /api/v1/
-        poll_interval: 30
-        port: 444
-        source: dsie
-        ssl: true
-        user: api
-      enabled: false
-      host: 204.232.238.141
-    vm_site_a:
-      api:
-        allow_self_signed: true
-        key: 0055eaeb01c0f9f38cd65b190daf8f6d8e88c8fc
-        max_results: 1000
-        path: /api/v1/
-        poll_interval: 30
-        port: 444
-        source: dsie
-        ssl: true
-        user: api
-      enabled: false
-      host: 192.168.128.129
-daemon:
-  app_path: /opt/soltra/edge/repository/adapters/crits
-  debug: false
-  log:
-    file: edgy_crits.log
-    rotate_count: 10
-    rotate_size: 1024000
-  pid: edgy_crits.pid
-  working_dir: /opt/soltra/edge/repository/adapters/crits
-  mongo:
-    host: localhost
-    port: 27017
-    user:
-    pass:
-    db: inbox
-    collection: adapters.crits
-datagen:
-  canonical_tlds: datagen_samples/tlds-alpha-by-domain.txt
-  email_header_samples: datagen_samples/mail_headers.yaml
+        user: api                                          # crits api user
+        key: changeme                                      # crits api key
+        port: 443                                          # tcp port
+        poll_interval: 30                                  # poll interval (in seconds)
+        max_results: 1000                                  # 1000 is currently a hard-wired limit in crits but this can be reduced
+        path: /api/v1/                                     # crits api path
+        source: dsie                                       # crits releasability flag
+        ssl: true                                          # use ssl?
+        allow_self_signed: true                            # self-signed certs probably won't validate
+  datagen:
+      indicator_count: 100                                 # default number of indicators for datagen
 edge:
-  datagen:
-      indicator_count: 100
   sites:
-    localhost:
-      enabled: true
-      host: 127.0.0.1
+    localhost:                                             # site name
+      host: 127.0.0.1                                      # site ip / fqdn
+      enabled: true                                        # off switch
       stix:
-        xmlns_name: dsie
-        xmlns_url: http://www.dsie.net/
+        xmlns_name: dsie                                   # xml namespace alias
+        xmlns_url: http://www.dsie.net/                    # xml namespace url
       taxii:
-        allow_self_signed: true
-        collection: system.Default
-        pass: Opiningbiddyproxywandzigzagsetchedeightjimmies_2347
-        path: /taxii-data
-        poll_interval: 30
-        port: 443
-        ssl: true
-        user: api
-        version: 1.1
-    rackspace_central:
-      enabled: false
-      host: 204.232.238.141
-      stix:
-        xmlns_name: dsie
-        xmlns_url: http://www.dsie.net/
-      taxii:
-        allow_self_signed: true
-        collection: system.Default
-        pass: Opiningbiddyproxywandzigzagsetchedeightjimmies_2347
-        path: /taxii-data
-        poll_interval: 30
-        port: 443
-        ssl: true
-        user: api
-        version: 1.1
-    vm_site_a:
-      enabled: false
-      host: 192.168.128.129
-      stix:
-        xmlns_name: dsie
-        xmlns_url: http://www.dsie.net/
-      taxii:
-        allow_self_signed: true
-        collection: system.Default
-        pass: Opiningbiddyproxywandzigzagsetchedeightjimmies_2347
-        path: /taxii-data
-        poll_interval: 30
-        port: 443
-        ssl: true
-        user: api
-        version: 1.1
+        user: admin                                        # edge user
+        pass: avalanche                                    # edge pass
+        port: 443                                          # tcp port
+        poll_interval: 30                                  # poll interval (in seconds)
+        path: /taxii-data                                  # edge taxii endpoint
+        collection: system.Default                         # taxii collection
+        version: 1.1                                       # taxii version
+        ssl: true                                          # use ssl?
+        allow_self_signed: false                           # self-signed certs probably won't validate
+  datagen:
+      indicator_count: 100                                 # default number of indicators for datagen
+daemon:
+  app_path: /opt/soltra/edge/repository/adapters/crits     # full path to adapter
+  debug: false                                             # run in debug mode?
+  log:
+    file: edgy_crits.log                                   # log name
+    rotate_count: 10                                       # max logs to retain
+    rotate_size: 1024000                                   # max logfile size (in bytes)
+  pid: edgy_crits.pid                                      # daemon pid file
+  working_dir: /opt/soltra/edge/repository/adapters/crits  # full path to daemon working directory
+  mongo:
+    host: localhost                                        # mongo ip or fqdn
+    port: 27017                                            # mongo port
+    user:                                                  # mongo user
+    pass:                                                  # mongo pass
+    db: inbox                                              # mongo database
+    collection: adapters.crits                             # mongo collection
+datagen:
+  canonical_tlds: datagen_samples/tlds-alpha-by-domain.txt # canonical tlds for datagen
+  email_header_samples: datagen_samples/mail_headers.yaml  # spammy headers for datagen
+  
