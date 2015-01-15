@@ -12,7 +12,7 @@ from cybox.objects.domain_name_object import DomainName
 from cybox.objects.email_message_object import EmailMessage, EmailHeader
 from cybox.objects.file_object import File
 from cybox.common import Hash
-from cybox.core.observable import Observable
+from cybox.core.observable import Observable, ObservableComposition
 from cybox.core import Observables
 import os.path
 from docopt import docopt
@@ -29,7 +29,7 @@ import edge_
 __version__ = '0.2'
 app_path = os.path.split(os.path.abspath(__file__))[0]
 default_config = os.path.join(app_path, 'config.yaml')
-datatypes = ['ip', 'domain', 'filehash', 'email', 'mixed']
+datatypes = ['ip', 'domain', 'filehash', 'email', 'mixed', 'indicator']
 datagen_targets = ['edge', 'crits']
 
 
@@ -58,7 +58,7 @@ Please report bugs to support@soltra.com
 ''' % (default_config, ', '.join(datatypes), ', '.join(datagen_targets))
 
 
-def gen_stix_sample(config, target=None, datatype=None, title='random test data', description='random test data', package_intents='Indicators - Watchlist', tlp_color='WHITE'):
+def gen_stix_observable_sample(config, target=None, datatype=None, title='random test data', description='random test data', package_intents='Indicators - Watchlist', tlp_color='WHITE'):
     '''generate sample stix data comprised of indicator_count indicators of type datatype'''
     # setup the xmlns...
     set_stix_id_namespace({config['edge']['sites'][target]['stix']['xmlns_url']: config['edge']['sites'][target]['stix']['xmlns_name']})
@@ -129,33 +129,116 @@ def gen_stix_sample(config, target=None, datatype=None, title='random test data'
             stix_package.add_observable(Observable(email))
         except:
             return(None)
+    observable_id = stix_package.observables.observables[0].id_
+    return(observable_id, stix_package)
+
+
+def gen_stix_indicator_sample(config, target=None, datatype=None, title='random test data', description='random test data', package_intents='Indicators - Watchlist', tlp_color='WHITE', observables_list=None):
+    '''generate sample stix data comprised of indicator_count indicators of type datatype'''
+    # setup the xmlns...
+    set_stix_id_namespace({config['edge']['sites'][target]['stix']['xmlns_url']: config['edge']['sites'][target]['stix']['xmlns_name']})
+    set_cybox_id_namespace(Namespace(config['edge']['sites'][target]['stix']['xmlns_url'], config['edge']['sites'][target]['stix']['xmlns_name']))
+    # construct a stix package...
+    stix_package = STIXPackage()
+    stix_header = STIXHeader()
+    stix_header.title = title
+    stix_header.description = description
+    stix_header.package_intents = package_intents
+    marking = MarkingSpecification()
+    marking.controlled_structure = '../../../../descendant-or-self::node()'
+    tlp_marking = TLPMarkingStructure()
+    tlp_marking.color = tlp_color
+    marking.marking_structures.append(tlp_marking)
+    stix_package.stix_header = stix_header
+    stix_package.stix_header.handling = Marking()
+    stix_package.stix_header.handling.add_marking(marking)
+    indicator_ = Indicator()
+    # indicator_.handling = Marking()
+    # indicator_.handling.add_marking(marking)
+    indicator_.title = str(uuid.uuid4()) + '_sample_indicator'
+    indicator_.confidence = 'Unknown'
+    indicator_.add_indicator_type('Malware Artifacts')
+    observable_composition_ = ObservableComposition()
+    observable_composition_.operator = indicator_.observable_composition_operator
+    for observable_id in observables_list:
+        observable_ = Observable()
+        observable_.idref = observable_id
+        observable_composition_.add(observable_)
+    indicator_.observable = Observable()
+    indicator_.observable.observable_composition = observable_composition_
+    stix_package.add_indicator(indicator_)
     return(stix_package)
 
 
 def inject_edge_sample_data(config, target=None, datatype=None):
     '''inject randomly generated sample data into edge target'''
     global datatypes
-    if datatype != 'mixed':
+    observable_types = list()
+    observable_types.extend(datatypes)
+    observable_types.remove('mixed')
+    observable_types.remove('indicator')
+    # edge's stix builder currently stacktraces when presented with an EmailMessageObjectType
+    # observable_types.remove('email')
+    if datatype in observable_types:
         i = 0
         while i < config['edge']['datagen']['indicator_count']:
-            stix_ = gen_stix_sample(config, target=target, datatype=datatype)
-            success = edge_.taxii_inbox(config, target, stix_)
-            if success:
-                i += 1
-            else: print('error inboxing edge sample data to %s - exiting!' % target); exit()
+            try:
+                (observable_id, stix_) = gen_stix_observable_sample(config, target=target, datatype=datatype)
+                success = edge_.taxii_inbox(config, target, stix_)
+                if success:
+                    i += 1
+                else: print('error inboxing edge sample data to %s - exiting!' % target); exit()
+            except:
+                continue
+    elif datatype == 'indicator':
+        # indicator linked to 5-25 mixed observables
+        i = 0
+        while i < config['edge']['datagen']['indicator_count']:
+            observable_count = random.randint(5, 25)
+            observables_list = list()
+            j = 0
+            while j < observable_count:
+                try:
+                    type_ = observable_types[random.randint(0, len(observable_types) - 1)]
+                    (observable_id, stix_) = gen_stix_observable_sample(config, target=target, datatype=type_)
+                    success = edge_.taxii_inbox(config, target, stix_)
+                    if success:
+                        j += 1
+                        observables_list.append(observable_id)
+                    else: continue
+                except:
+                    continue
+            try:
+                stix_ = gen_stix_indicator_sample(config, target=target, datatype=type_, observables_list=observables_list)
+                success = edge_.taxii_inbox(config, target, stix_)
+                if success:
+                    i += 1
+                else: continue
+            except:
+                continue
     elif datatype == 'mixed':
-        types_ = list()
-        types_.extend(datatypes)
-        types_.remove('mixed')
         i = 0
         while i < config['edge']['datagen']['indicator_count']:
-            type_ = types_[random.randint(0, len(types_) - 1)]
-            stix_ = gen_stix_sample(config, target=target, datatype=type_)
-            success = edge_.taxii_inbox(config, target, stix_)
-            if success:
-                i += 1
-            else: continue
+            try:
+                type_ = observable_types[random.randint(0, len(observable_types) - 1)]
+                (observable_id, stix_) = gen_stix_observable_sample(config, target=target, datatype=type_)
+                success = edge_.taxii_inbox(config, target, stix_)
+                if success:
+                    i += 1
+                else: continue
+            except:
+                continue
 
+
+def generate_crits_indicator_json(config, observables_dict=None):
+    endpoint_trans = {'emails': 'Email', 'ips': 'IP', 'samples': 'Sample' , 'domains': 'Domain'}
+    json = dict()
+    json['type'] = 'Reference'
+    json['value'] = str(uuid.uuid4()) + '_sample_indicator'
+    json['indicator_confidence'] = 'unknown'
+    json['indicator_impact'] = {'rating': 'unknown',}
+    return(json)
+        
 
 def generate_crits_json(config, datatype=None):
     if datatype == 'ip':
@@ -191,26 +274,61 @@ def generate_crits_json(config, datatype=None):
 def inject_crits_sample_data(config, target=None, datatype=None):
     '''inject randomly generated sample data into crits target'''
     global datatypes
+    observable_types = list()
+    observable_types.extend(datatypes)
+    observable_types.remove('mixed')
+    observable_types.remove('indicator')
     endpoint = None
     if datatype == 'ip': endpoint = 'ips'
     elif datatype == 'domain': endpoint = 'domains'
     elif datatype == 'email': endpoint = 'emails'
     elif datatype == 'filehash': endpoint = 'samples'
-
-    if datatype != 'mixed':
+    elif datatype == 'indicator': endpoint = 'indicators'
+    if datatype in observable_types:
+        # single observable types
         i = 0
         while i < config['crits']['datagen']['indicator_count']:
             (id_, success) = crits_.crits_inbox(config, target, endpoint, generate_crits_json(config, datatype))
             if success:
                 i += 1
             else: print('error inboxing crits sample data to %s - exiting!' % target); exit()
+    elif datatype == 'indicator':
+        # indicator linked to 5-25 mixed observables
+        endpoint_trans = {'emails': 'Email', 'ips': 'IP', 'samples': 'Sample' , 'domains': 'Domain'}
+        i = 0
+        observables_dict = dict()
+        while i < config['crits']['datagen']['indicator_count']:
+            observable_count = random.randint(5, 25)
+            j = 0
+            while j < observable_count:
+                type_ = observable_types[random.randint(0, len(observable_types) - 1)]
+                if type_ == 'ip': endpoint = 'ips'
+                elif type_ == 'domain': endpoint = 'domains'
+                elif type_ == 'email': endpoint = 'emails'
+                elif type_ == 'filehash': endpoint = 'samples'
+                (id_, success) = crits_.crits_inbox(config, target, endpoint, generate_crits_json(config, type_))
+                if success:
+                    j += 1
+                    observables_dict[id_] = endpoint
+                else: continue
+            (id_, success) = crits_.crits_inbox(config, target, 'indicators', generate_crits_indicator_json(config, observables_dict))
+            if success:
+                i += 1
+                for k in observables_dict.keys():
+                    json = dict()
+                    json['left_type'] = 'Indicator'
+                    json['left_id'] = id_
+                    json['right_type'] = endpoint_trans[observables_dict[k]]
+                    json['right_id'] = k
+                    json['rel_type'] = 'Contains'
+                    json['rel_confidence'] = 'unknown'
+                    (id_, success) = crits_.crits_inbox(config, target, 'relationships', json)
+            else: continue
     elif datatype == 'mixed':
-        types_ = list()
-        types_.extend(datatypes)
-        types_.remove('mixed')
+        # mixed observables
         i = 0
         while i < config['crits']['datagen']['indicator_count']:
-            type_ = types_[random.randint(0, len(types_) - 1)]
+            type_ = observable_types[random.randint(0, len(observable_types) - 1)]
             if type_ == 'ip': endpoint = 'ips'
             elif type_ == 'domain': endpoint = 'domains'
             elif type_ == 'email': endpoint = 'emails'
@@ -240,8 +358,6 @@ def main():
     elif args['--inject']:
         if not args['--datatype']:
             args['--datatype'] = 'mixed'
-        if args['--count']:
-            config['crits']['datagen']['indicator_count'] = args['--count']
         if args['--type'] in datagen_targets:
             if args['--type'] == 'crits' and args['--target'] in config['crits']['sites'].keys():
                 # override indicator_count from config file if it's
