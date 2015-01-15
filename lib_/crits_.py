@@ -162,7 +162,7 @@ def json2cybox(config, source, endpoint, json_):
 def crits2edge(config, source, destination, daemon=False, now=None, last_run=None):
     # check if (and when) we synced source and destination...
     if not now:
-        now = util_.nowutcmin()
+        now = util_.nowutc()
     if not last_run:
         last_run = config['db'].get_last_sync(source=source, destination=destination, direction='crits2edge').replace(tzinfo=pytz.utc)
     config['logger'].info('syncing new crits data since %s between %s and %s' % (str(last_run), source, destination))
@@ -201,7 +201,7 @@ def crits2edge(config, source, destination, daemon=False, now=None, last_run=Non
                     total_input -= 1
                     subtotal_output[endpoint] += 1
                     total_output += 1
-                    config['db'].set_object_id(source, destination, edge_id=observable.id_, crits_id=endpoint + ':' + crits_id, , timestamp=util_.nowutcmin())
+                    config['db'].set_object_id(source, destination, edge_id=observable.id_, crits_id=endpoint + ':' + crits_id, timestamp=util_.nowutc())
         if subtotal_output[endpoint] > 0:
             config['logger'].info('%i %s objects successfully synced between %s (crits) and %s (edge)' % (subtotal_output[endpoint], endpoint, source, destination))
         if subtotal_output[endpoint] < subtotal_input[endpoint]:
@@ -217,7 +217,7 @@ def crits2edge(config, source, destination, daemon=False, now=None, last_run=Non
         config['db'].set_last_sync(source=source, destination=destination, direction='crits2edge', timestamp=now)
         return(None)
     else:
-        return(util_.nowutcmin())
+        return(util_.nowutc())
 
 
 def __fetch_crits_object_ids(config, target, endpoint, params):

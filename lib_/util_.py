@@ -47,9 +47,9 @@ def dicthash_sha1(d, salt=''):
     return hashlib.sha1(salt + json_util.dumps(d,sort_keys=True)).hexdigest()
     
     
-def nowutcmin():
-    """time now, but only minute-precision"""
-    return datetime.datetime.utcnow().replace(second=0,microsecond=0).replace(tzinfo=pytz.utc)
+def nowutc():
+    """utc now"""
+    return datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
 
 
 def epoch_start():
@@ -217,27 +217,27 @@ class Daemon:
                 if self.config['crits']['sites'][crits_site]['enabled']: enabled_crits_sites.append(crits_site)
             for edge_site in self.config['edge']['sites'].keys():
                 if self.config['edge']['sites'][edge_site]['enabled']: enabled_edge_sites.append(edge_site)
+            # sync crits to edge
             for crits_site in enabled_crits_sites:
                 for edge_site in enabled_edge_sites:
                     # check if (and when) we synced source and destination...
-                    now = nowutcmin()
+                    now = nowutc()
                     last_run = self.config['db'].get_last_sync(source=crits_site, destination=edge_site, direction='crits2edge').replace(tzinfo=pytz.utc)
                     if now >= last_run + datetime.timedelta(seconds=self.config['crits']['sites'][crits_site]['api']['poll_interval']):
                         self.logger.info('initiating crits=>edge sync between %s and %s' % (crits_site, edge_site))
                         completed_run = crits_.crits2edge(self.config, crits_site, edge_site, daemon=True, now=now, last_run=last_run)
                         if completed_run:
                             self.config['db'].set_last_sync(source=crits_site, destination=edge_site, direction='crits2edge', timestamp=completed_run)
-                    else: continue
+            # sync crits to edge
             for edge_site in enabled_edge_sites:
                 for crits_site in enabled_crits_sites:
-                    now = nowutcmin()
+                    now = nowutc()
                     last_run = self.config['db'].get_last_sync(source=edge_site, destination=crits_site, direction='edge2crits').replace(tzinfo=pytz.utc)
                     if now >= last_run + datetime.timedelta(seconds=self.config['edge']['sites'][edge_site]['taxii']['poll_interval']):
                         self.logger.info('initiating edge=>crits sync between %s and %s' % (edge_site, crits_site))
                         completed_run = edge_.edge2crits(self.config, edge_site, crits_site, daemon=True, now=now, last_run=last_run)
                         if completed_run:
-                            self.config['db'].set_last_sync(source=edge_site, destination=crits_site, direction='crits2edge', timestamp=completed_run)
-                    else: continue
+                            self.config['db'].set_last_sync(source=edge_site, destination=crits_site, direction='edge2crits', timestamp=completed_run)
             time.sleep(1)
 
     

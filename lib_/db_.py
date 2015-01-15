@@ -59,7 +59,7 @@ class DB(object):
             exit()
 
 
-    def set_last_sync(self, source, destination, direction=None, timestamp):
+    def set_last_sync(self, source, destination, direction=None, timestamp=None):
         try:
             doc = self.collection.find_one({'source': source, 'destination': destination, 'direction': direction})
             if doc:
@@ -91,7 +91,7 @@ class DB(object):
             exit()
 
 
-    def set_object_id(self, source, destination, crit_id=None, edge_id=None, timestamp):
+    def set_object_id(self, source, destination, crit_id=None, edge_id=None, timestamp=None):
         try:
             query = {'source': source, 'destination': destination}
             if crits_id:
@@ -106,7 +106,7 @@ class DB(object):
                 # insert a new mapping
                 query['edge_id'] = edge_id
                 query['crits_id'] = crits_id
-                query['created'] = util_.nowutcmin()
+                query['created'] = util_.nowutc()
                 query['modified'] = query['created']
                 self.collection.insert(query)
         except ConnectionFailure as e:
