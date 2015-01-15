@@ -1,0 +1,4 @@
+{ "name":"edgy_crits",
+  "description":"bidirectional sync between Soltra Edge and MITRE CRITs",
+  "publisher":"Soltra",
+  "version":"0.1" }
