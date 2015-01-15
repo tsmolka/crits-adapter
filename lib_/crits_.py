@@ -175,10 +175,12 @@ def crits2edge(config, source, destination, daemon=False, now=None, last_run=Non
     for endpoint in cybox_endpoints:
         ids[endpoint] = fetch_crits_object_ids(config, source, endpoint, last_run)
         for id_ in ids[endpoint]:
-            if config['db'].get_object_id(source, destination, 'edge', endpoint + ':' + str(id_)):
-                if config['daemon']['debug']:
-                    config['logger'].debug('crits object id %s already in system' % id_)
-                ids[endpoint].remove(id_)
+            sync_state = config['db'].get_object_id(source, destination, crits_id=endpoint + ':' + str(id_))
+            if sync_state:
+                if sync_state.get('edge_id', None):
+                    if config['daemon']['debug']:
+                        config['logger'].debug('crits object id %s already in system' % id_)
+                    ids[endpoint].remove(id_)
         subtotal_input[endpoint] = len(ids[endpoint])
         subtotal_output[endpoint] = 0
         total_input += len(ids[endpoint])

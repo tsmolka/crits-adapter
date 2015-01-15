@@ -252,14 +252,14 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
         subtotal_output[endpoint] = 0
         for blob in json_[endpoint]:
             sync_state = config['db'].get_object_id(source, destination, edge_id=blob['stix_id'])
-            if sync_state['crits_id']:
-                if config['daemon']['debug']:
-                    config['logger'].debug('edge object id %s already in system' % blob['stix_id'])
-                json_[endpoint].remove(blob)
-                continue
-            else:
-                total_input += 1
-                subtotal_input[endpoint] += 1
+            if sync_state:
+                if sync_state.get('crits_id', None):
+                    if config['daemon']['debug']:
+                        config['logger'].debug('edge object id %s already in system' % blob['stix_id'])
+                        json_[endpoint].remove(blob)
+                else:
+                    total_input += 1
+                    subtotal_input[endpoint] += 1
     if total_input > 0:
         config['logger'].info('%i (total) objects to be synced between %s (edge) and %s (crits)' % (total_input, source, destination))
     for endpoint in json_.keys():

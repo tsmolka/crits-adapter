@@ -91,7 +91,7 @@ class DB(object):
             exit()
 
 
-    def set_object_id(self, source, destination, crit_id=None, edge_id=None, timestamp=None):
+    def set_object_id(self, source, destination, crits_id=None, edge_id=None, timestamp=None):
         try:
             query = {'source': source, 'destination': destination}
             if crits_id:

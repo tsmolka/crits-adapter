@@ -24,6 +24,7 @@ import util_
 import datagen_
 import crits_
 import edge_
+import log_
 
 
 __version__ = '0.2'
@@ -341,9 +342,10 @@ def inject_crits_sample_data(config, target=None, datatype=None):
 
 def main():
     args = docopt(__doc__, version=__version__)
-    global config_file
-    config_file = args['--config']
-    config = util_.parse_config(config_file)
+    config = util_.parse_config(args['--config'])
+    config['config_file'] = args['--config']
+    logger = log_.setup_logging(config)
+    config['logger'] = logger
     if args['--list-targets']:
         for i in config['crits']['sites']:
             print("{crits:<7} {target:<15} {address:<10}".format (crits='[crits]', target=i, address='(' + config['crits']['sites'][i]['host'] + ')'))
