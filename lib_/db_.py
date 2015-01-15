@@ -46,7 +46,7 @@ class DB(object):
         self.collection.ensure_index('edge_id')
 
 
-    def get_last_sync(self, source, destination, direction):
+    def get_last_sync(self, source, destination, direction=None,):
         try:
             doc = self.collection.find_one({'source': source, 'destination': destination, 'direction': direction})
             if doc and 'timestamp' in doc.keys():
@@ -59,7 +59,7 @@ class DB(object):
             exit()
 
 
-    def set_last_sync(self, source, destination, direction, timestamp):
+    def set_last_sync(self, source, destination, direction=None, timestamp):
         try:
             doc = self.collection.find_one({'source': source, 'destination': destination, 'direction': direction})
             if doc:
@@ -72,13 +72,14 @@ class DB(object):
             exit()
         
 
-    def get_object_id(self, source, destination, direction, id_):
+    def get_object_id(self, source, destination, crits_id=None, edge_id=None):
+        if crits_id and edge_id: return None
         try:
             query = {'source': source, 'destination': destination}
-            if direction == 'edge':
-                query['crits_id'] = id_
-            else:
-                query['edge_id'] = id_
+            if crits_id:
+                query['crits_id'] = crits_id
+            elif edge_id:
+                query['edge_id'] = edge_id
             doc = self.collection.find_one(query)
             if doc:
                 return(doc)
@@ -90,21 +91,21 @@ class DB(object):
             exit()
 
 
-    def set_object_id(self, source, destination, direction, source_id, dest_id, timestamp):
+    def set_object_id(self, source, destination, crit_id=None, edge_id=None, timestamp):
         try:
-            query = {'source': source, 'destination': destination, 'direction': direction}
-            if direction == 'edge':
-                query['crits_id'] = source_id
-            else:
-                query['edge_id'] = source_id
-            doc = self.get_object_id(source, destination, direction, source_id)
+            query = {'source': source, 'destination': destination}
+            if crits_id:
+                query['crits_id'] = crits_id
+            elif edge_id:
+                query['edge_id'] = edge_id
+            doc = self.get_object_id(source, destination, crits_id=crits_id, edge_id=edge_id)
             if doc:
+                # there's already a crits-edge mapping so just update the timestamp
                 self.collection.update(doc, {'$set': {'modified': timestamp}})
             else:
-                if direction == 'edge':
-                    query['edge_id'] = dest_id
-                else:
-                    query['crits_id'] = dest_id
+                # insert a new mapping
+                query['edge_id'] = edge_id
+                query['crits_id'] = crits_id
                 query['created'] = util_.nowutcmin()
                 query['modified'] = query['created']
                 self.collection.insert(query)

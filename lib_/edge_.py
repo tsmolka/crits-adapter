@@ -240,8 +240,8 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
     if not now:
         now = util_.nowutcmin()
     if not last_run:
-        last_run = config['db'].get_last_sync(source=source, destination=destination, direction='crits').replace(tzinfo=pytz.utc)
-    config['logger'].info('syncing new crits data since %s between %s and %s' % (str(last_run), source, destination))
+        last_run = config['db'].get_last_sync(source=source, destination=destination, direction='edge2crits').replace(tzinfo=pytz.utc)
+    config['logger'].info('syncing new edge data since %s between %s and %s' % (str(last_run), source, destination))
     (json_, latest) = taxii_poll(config, source, last_run)
     total_input = 0
     total_output = 0
@@ -251,7 +251,8 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
         subtotal_input[endpoint] = 0
         subtotal_output[endpoint] = 0
         for blob in json_[endpoint]:
-            if config['db'].get_object_id(source, destination, 'crits', blob['stix_id']):
+            sync_state = config['db'].get_object_id(source, destination, edge_id=blob['stix_id']):
+            if sync_state['crits_id']:
                 if config['daemon']['debug']:
                     config['logger'].debug('edge object id %s already in system' % blob['stix_id'])
                 json_[endpoint].remove(blob)
@@ -273,7 +274,7 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
             else:
                 if config['daemon']['debug']:
                     config['logger'].debug('%s object with id %s was synced from %s (edge) to %s (crits)' % (endpoint, str(stix_id), source, destination))
-                config['db'].set_object_id(source, destination, 'crits', stix_id, endpoint + ':' + str(id_), util_.nowutcmin())
+                config['db'].set_object_id(source, destination, edge_id=stix_id, crits_id=endpoint + ':' + str(id_), timestamp=util_.nowutcmin())
                 subtotal_output[endpoint] += 1
                 total_output += 1
         if subtotal_output[endpoint] > 0:
@@ -288,7 +289,7 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
     if config['daemon']['debug']:
         config['logger'].debug('saving state until next run [%s]' % str(now + datetime.timedelta(seconds=config['edge']['sites'][source]['taxii']['poll_interval'])))
     if not daemon:
-        config['db'].set_last_sync(source=source, destination=destination, direction='crits', timestamp=now)
+        config['db'].set_last_sync(source=source, destination=destination, direction='edge2crits', timestamp=now)
         return(None)
     else:
         return(util_.nowutcmin())
