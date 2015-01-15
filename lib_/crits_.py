@@ -51,7 +51,7 @@ def crits_poll(config, target, endpoint, id_=None):
     else:
         r = requests.get(url + endpoint + '/' + id_ + '/', params=data)
     json_output = r.json()
-    success = True if r.status_code == (200 or 201) else False
+    success = r.status_code in (200, 201)
     if success:
         id_ = json_output[u'_id']
         del json_output[u'_id']
@@ -73,8 +73,8 @@ def crits_inbox(config, target, endpoint, json):
         r = requests.post(url + endpoint + '/', data=data)
     json_output = r.json()
     result_code = json_output[u'return_code']
-    success = True if r.status_code == (200 or 201) and result_code == 0 else False
-    id_ = json_output[u'id'] if u'id' in json_output.keys() else None
+    success = r.status_code in (200, 201) and result_code == 0
+    id_ = json_output.get(u'id')
     return(id_, success)
 
 
