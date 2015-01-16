@@ -114,8 +114,8 @@ def json2stix_ind(config, source, destination, endpoint, json_):
             config['logger'].error('unsupported crits indicator type %s!' % json_['type'])
             return(None)
         indicator_ = Indicator()
-        indicator_.title = json_.get('value', None)
-        indicator_.confidence = json_.get(['confidence']['rating'].capitalize(), None)
+        indicator_.title = json_['value']
+        indicator_.confidence = json_['confidence']['rating'].capitalize()
         indicator_.add_indicator_type('Malware Artifacts')
         observable_composition_ = ObservableComposition()
         observable_composition_.operator = indicator_.observable_composition_operator
@@ -125,12 +125,13 @@ def json2stix_ind(config, source, destination, endpoint, json_):
                 return(None)
             doc = config['db'].get_object_id(source, destination, crits_id='%s:%s' % (endpoint_trans[relationship['type']], relationship['value']))
             # TODO if missing, try to inject the corresponding observable?
-            if not doc.get('edge_id', None):
-                config['logger'].error('cybox observable corresponding to crits indicator relationship %s could not be found!' % relationship['id'])
+            if not doc or not doc.get('edge_id', None):
+                config['logger'].error('cybox observable corresponding to crits indicator relationship %s could not be found!' % relationship['value'])
                 return(None)
             observable_ = Observable()
-            observable_.idref = doc['stix_id']
+            observable_.idref = doc['edge_id']
             observable_composition_.add(observable_)
+        indicator_.observable = Observable()
         indicator_.observable.observable_composition = observable_composition_
         return(indicator_)
     else:
