@@ -176,32 +176,31 @@ def stix_ind2json(config, source, destination, indicator, observable_composition
         composite_observable_id = util_.rgetattr(container_observable, ['idref'])
         if not composite_observable_id:
             config['logger'].error('unable to deference observable composition for stix indicator %s!' % indicator.id_)
-            return(None, None)
-        composite_observable = observable_compositions.get(composite_observable_id, None)
-        if not composite_observable:
-            config['logger'].error('unable to deference observable composition for stix indicator %s!' % indicator.id_)
-            return(None, None)
-        observables_list = util_.rgetattr(composite_observable, ['observable_composition', 'observables'])
-        if not observables_list:
-            config['logger'].error('unable to deference observable composition for stix indicator %s!' % indicator.id_)
-            return(None, None)
-        # import pudb; pu.db
-        for i in observables_list:
-            blob = dict()
-            blob['left_type'] = 'Indicator'
-            blob['left_id'] = None
-            rhs = config['db'].get_object_id(source, destination, edge_id=i.idref)
-            if not rhs:
+        else:
+            composite_observable = observable_compositions.get(composite_observable_id, None)
+            if not composite_observable:
                 config['logger'].error('unable to deference observable composition for stix indicator %s!' % indicator.id_)
-                return(None, None)
-            if not rhs.get('crits_id', None):
-                config['logger'].error('unable to deference observable composition for stix indicator %s!' % indicator.id_)
-                return(None, None)
-            blob['right_type'] = endpoint_trans[rhs['crits_id'].split(':')[0]]
-            blob['right_id'] = rhs['crits_id'].split(':')[1]
-            blob['rel_type'] = 'Contains'
-            blob['rel_confidence'] = 'unknown'
-            relationship_json.append(blob)
+            else:
+                observables_list = util_.rgetattr(composite_observable, ['observable_composition', 'observables'])
+                if not observables_list:
+                    config['logger'].error('unable to deference observable composition for stix indicator %s!' % indicator.id_)
+                else:
+                    for i in observables_list:
+                        blob = dict()
+                        blob['left_type'] = 'Indicator'
+                        blob['left_id'] = None
+                        rhs = config['db'].get_object_id(source, destination, edge_id=i.idref)
+                        if not rhs:
+                            config['logger'].error('unable to deference observable composition for stix indicator %s!' % indicator.id_)
+                        else:
+                            if not rhs.get('crits_id', None):
+                                config['logger'].error('unable to deference observable composition for stix indicator %s!' % indicator.id_)
+                            else:
+                                blob['right_type'] = endpoint_trans[rhs['crits_id'].split(':')[0]]
+                                blob['right_id'] = rhs['crits_id'].split(':')[1]
+                                blob['rel_type'] = 'Contains'
+                                blob['rel_confidence'] = 'unknown'
+                                relationship_json.append(blob)
     return(indicator_json, relationship_json)
 
     
@@ -380,7 +379,6 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
             else:
                 if config['daemon']['debug']:
                     config['logger'].debug('%s object with id %s was synced from %s (edge) to %s (crits)' % ('indicators', str(stix_id), source, destination))
-            # import pudb; pu.db
             for blob in json_['relationships'][i]:
                 blob['left_id'] = id_
                 (relationship_id_, success) = crits_.crits_inbox(config, destination, 'relationships', blob)
