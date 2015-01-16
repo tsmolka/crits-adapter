@@ -1,9 +1,9 @@
 #!/usr/bin/env python2.7
 
-import log_
-import util_
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
+import log_
+import util_
 
 
 def get_db(config):
