@@ -2,14 +2,14 @@
 
 
 from docopt import docopt
-from sys import path as python_path
 import os.path
+from sys import path as python_path
 python_path.append('./lib_')
 from crits_ import crits2edge
 from edge_ import edge2crits
-import util_
-import log_
 import db_
+import log_
+import util_
 
 
 __version__ = '0.2'
