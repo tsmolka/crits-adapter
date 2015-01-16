@@ -1,28 +1,28 @@
 #!/usr/bin/env python2.7
 
 from copy import deepcopy
-from cybox.utils import Namespace
-from cybox.utils import set_id_namespace as set_cybox_id_namespace
-from cybox.utils import IDGenerator, set_id_method
+from cybox.common import Hash
+from cybox.core import Observables
+from cybox.core.observable import Observable, ObservableComposition
 from cybox.objects.address_object import Address
 from cybox.objects.domain_name_object import DomainName
-from cybox.objects.file_object import File
-from cybox.core.observable import Observable
-from cybox.core import Observables
-from cybox.common import Hash
 from cybox.objects.email_message_object import EmailMessage, EmailHeader
+from cybox.objects.file_object import File
+from cybox.utils import IDGenerator, set_id_method
+from cybox.utils import Namespace
+from cybox.utils import set_id_namespace as set_cybox_id_namespace
 from stix.core import STIXPackage, STIXHeader
 from stix.data_marking import Marking, MarkingSpecification
 from stix.extensions.marking.tlp import TLPMarkingStructure
 from stix.indicator import Indicator
 from stix.utils import set_id_namespace as set_stix_id_namespace
-import util_
+import datetime
 import edge_
 import json
 import pytz
 import requests
+import util_
 import yaml
-import datetime
 
 
 def crits_url(config, target):
@@ -104,6 +104,40 @@ def stix_pkg(config, source, endpoint, payload, title='random test data', descri
     return(stix_package)
 
 
+def json2stix_ind(config, source, destination, endpoint, json_):
+    '''transform crits indicators into stix indicators with embedded cybox observable composition'''
+    set_id_method(IDGenerator.METHOD_UUID)
+    set_cybox_id_namespace(Namespace(config['edge']['sites'][source]['stix']['xmlns_url'], config['edge']['sites'][source]['stix']['xmlns_name']))
+    if endpoint == 'indicators':
+        endpoint_trans = {'Email': 'emails', 'IP': 'ips', 'Sample': 'samples' , 'Domain': 'domains'}
+        if json_['type'] != 'Reference':
+            config['logger'].error('unsupported crits indicator type %s!' % json_['type'])
+            return(None)
+        indicator_ = Indicator()
+        indicator_.title = json_.get('value', None)
+        indicator_.confidence = json_.get(['confidence']['rating'].capitalize(), None)
+        indicator_.add_indicator_type('Malware Artifacts')
+        observable_composition_ = ObservableComposition()
+        observable_composition_.operator = indicator_.observable_composition_operator
+        for relationship in json_['relationships']:
+            if relationship['relationship'] != 'Contains':
+                config['logger'].error('unsupported crits indicator relationship type %s!' % relationship['relationship'])
+                return(None)
+            doc = config['db'].get_object_id(source, destination, crits_id='%s:%s' % (endpoint_trans[relationship['type']], relationship['value']))
+            # TODO if missing, try to inject the corresponding observable?
+            if not doc.get('edge_id', None):
+                config['logger'].error('cybox observable corresponding to crits indicator relationship %s could not be found!' % relationship['id'])
+                return(None)
+            observable_ = Observable()
+            observable_.idref = doc['stix_id']
+            observable_composition_.add(observable_)
+        indicator_.observable.observable_composition = observable_composition_
+        return(indicator_)
+    else:
+        config['logger'].error('unsupported crits object type %s!' % endpoint)
+        return(None)
+
+
 def json2cybox(config, source, endpoint, json_):
     set_id_method(IDGenerator.METHOD_UUID)
     set_cybox_id_namespace(Namespace(config['edge']['sites'][source]['stix']['xmlns_url'], config['edge']['sites'][source]['stix']['xmlns_name']))
@@ -166,7 +200,7 @@ def crits2edge(config, source, destination, daemon=False, now=None, last_run=Non
     if not last_run:
         last_run = config['db'].get_last_sync(source=source, destination=destination, direction='crits2edge').replace(tzinfo=pytz.utc)
     config['logger'].info('syncing new crits data since %s between %s and %s' % (str(last_run), source, destination))
-    cybox_endpoints = ['ips', 'domains', 'samples', 'emails']
+    cybox_endpoints = ['ips', 'domains', 'samples', 'emails', 'indicators']
     ids = dict()
     total_input = 0
     total_output = 0
@@ -193,17 +227,30 @@ def crits2edge(config, source, destination, daemon=False, now=None, last_run=Non
         else:
             for crits_id in ids[endpoint]:
                 (id_, json_) = crits_poll(config, source, endpoint, crits_id,)
-                observable = json2cybox(config, source, endpoint, json_)
-                stix_ = stix_pkg(config, source, endpoint, observable)
-                success = edge_.taxii_inbox(config, destination, stix_)
-                if not success:
-                    config['logger'].info('crits object %s could not be synced between %s (crits) and %s (edge)' % (crits_id, source, destination))
+                if endpoint == 'indicators':
+                    indicator = json2stix_ind(config, source, destination, endpoint, json_)
+                    stix_ = stix_pkg(config, source, endpoint, indicator)
+                    success = edge_.taxii_inbox(config, destination, stix_)
+                    if not success:
+                        config['logger'].info('crits object %s could not be synced between %s (crits) and %s (edge)' % (crits_id, source, destination))
+                    else:
+                        subtotal_input[endpoint] -= 1
+                        total_input -= 1
+                        subtotal_output[endpoint] += 1
+                        total_output += 1
+                        config['db'].set_object_id(source, destination, edge_id=indicator.id_, crits_id=endpoint + ':' + crits_id, timestamp=util_.nowutc())
                 else:
-                    subtotal_input[endpoint] -= 1
-                    total_input -= 1
-                    subtotal_output[endpoint] += 1
-                    total_output += 1
-                    config['db'].set_object_id(source, destination, edge_id=observable.id_, crits_id=endpoint + ':' + crits_id, timestamp=util_.nowutc())
+                    observable = json2cybox(config, source, endpoint, json_)
+                    stix_ = stix_pkg(config, source, endpoint, observable)
+                    success = edge_.taxii_inbox(config, destination, stix_)
+                    if not success:
+                        config['logger'].info('crits object %s could not be synced between %s (crits) and %s (edge)' % (crits_id, source, destination))
+                    else:
+                        subtotal_input[endpoint] -= 1
+                        total_input -= 1
+                        subtotal_output[endpoint] += 1
+                        total_output += 1
+                        config['db'].set_object_id(source, destination, edge_id=observable.id_, crits_id=endpoint + ':' + crits_id, timestamp=util_.nowutc())
         if subtotal_output[endpoint] > 0:
             config['logger'].info('%i %s objects successfully synced between %s (crits) and %s (edge)' % (subtotal_output[endpoint], endpoint, source, destination))
         if subtotal_output[endpoint] < subtotal_input[endpoint]:
@@ -287,67 +334,3 @@ def fetch_crits_object_ids(config, target, endpoint, timestamp=None):
     return(object_ids)
 
 
-#
-# crits api
-# =========
-#
-# {"actoridentifiers":
-#     {"list_endpoint": "/api/v1/actoridentifiers/",
-#      "schema": "/api/v1/actoridentifiers/schema/"},
-#  "actors":
-#   {"list_endpoint": "/api/v1/actors/",
-#    "schema": "/api/v1/actors/schema/"},
-# "campaigns":
-#   {"list_endpoint": "/api/v1/campaigns/",
-#    "schema": "/api/v1/campaigns/schema/"},
-# "certificates":
-#   {"list_endpoint": "/api/v1/certificates/",
-#    "schema": "/api/v1/certificates/schema/"},
-# "domains":
-#   {"list_endpoint": "/api/v1/domains/",
-#    "schema": "/api/v1/domains/schema/"},
-# "emails":
-#   {"list_endpoint": "/api/v1/emails/",
-#    "schema": "/api/v1/emails/schema/"},
-# "events":
-#   {"list_endpoint": "/api/v1/events/",
-#    "schema": "/api/v1/events/schema/"},
-# "indicator_activity":
-#   {"list_endpoint": "/api/v1/indicator_activity/",
-#    "schema": "/api/v1/indicator_activity/schema/"},
-# "indicators":
-#   {"list_endpoint": "/api/v1/indicators/",
-#    "schema": "/api/v1/indicators/schema/"},
-# "ips":
-#   {"list_endpoint": "/api/v1/ips/",
-#    "schema": "/api/v1/ips/schema/"},
-# "objects":
-#   {"list_endpoint": "/api/v1/objects/",
-#    "schema": "/api/v1/objects/schema/"},
-# "pcaps":
-#   {"list_endpoint": "/api/v1/pcaps/",
-#    "schema": "/api/v1/pcaps/schema/"},
-# "raw_data":
-#   {"list_endpoint": "/api/v1/raw_data/",
-#    "schema": "/api/v1/raw_data/schema/"},
-# "relationships":
-#   {"list_endpoint": "/api/v1/relationships/",
-#    "schema": "/api/v1/relationships/schema/"},
-# "samples":
-#   {"list_endpoint": "/api/v1/samples/",
-#    "schema": "/api/v1/samples/schema/"},
-# "screenshots":
-#   {"list_endpoint": "/api/v1/screenshots/",
-#    "schema": "/api/v1/screenshots/schema/"},
-# "services":
-#   {"list_endpoint": "/api/v1/services/",
-#    "schema": "/api/v1/services/schema/"},
-# "standards":
-#   {"list_endpoint": "/api/v1/standards/",
-#    "schema": "/api/v1/standards/schema/"},
-# "targets":
-#   {"list_endpoint": "/api/v1/targets/",
-#    "schema": "/api/v1/targets/schema/"},
-# "whois":
-# {"list_endpoint": "/api/v1/whois/",
-#  "schema": "/api/v1/whois/schema/"}}
