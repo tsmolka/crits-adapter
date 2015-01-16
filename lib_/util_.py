@@ -1,21 +1,20 @@
 #!/usr/bin/env python2.7
 
+from bson import json_util
+from copy import deepcopy
 from dateutil.tz import tzutc
 import atexit
+import crits_
 import datetime
+import edge_
+import hashlib
 import os
+import os.path
 import pytz
 import signal
 import sys
-import yaml
-import os.path
 import time
-from copy import deepcopy
-from sys import path as python_path
-import crits_
-import edge_
-import hashlib
-from bson import json_util
+import yaml
 
 
 # shamelessly plundered from repository.edge.tools
