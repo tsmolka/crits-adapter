@@ -1,30 +1,30 @@
 #!/usr/bin/env python2.7
 
-from stix.core import STIXPackage, STIXHeader
-from stix.indicator import Indicator
-from stix.data_marking import Marking, MarkingSpecification
-from stix.extensions.marking.tlp import TLPMarkingStructure
-from stix.utils import set_id_namespace as set_stix_id_namespace
-from cybox.utils import Namespace
-from cybox.utils import set_id_namespace as set_cybox_id_namespace
+from cybox.common import Hash
+from cybox.core import Observables
+from cybox.core.observable import Observable, ObservableComposition
 from cybox.objects.address_object import Address
 from cybox.objects.domain_name_object import DomainName
 from cybox.objects.email_message_object import EmailMessage, EmailHeader
 from cybox.objects.file_object import File
-from cybox.common import Hash
-from cybox.core.observable import Observable, ObservableComposition
-from cybox.core import Observables
-import os.path
+from cybox.utils import Namespace
+from cybox.utils import set_id_namespace as set_cybox_id_namespace
 from docopt import docopt
+from stix.core import STIXPackage, STIXHeader
+from stix.data_marking import Marking, MarkingSpecification
+from stix.extensions.marking.tlp import TLPMarkingStructure
+from stix.indicator import Indicator
+from stix.utils import set_id_namespace as set_stix_id_namespace
+import os.path
 import random
 import uuid
 from sys import path as python_path
 python_path.append('./lib_')
-import util_
-import datagen_
 import crits_
+import datagen_
 import edge_
 import log_
+import util_
 
 
 __version__ = '0.2'
@@ -154,8 +154,6 @@ def gen_stix_indicator_sample(config, target=None, datatype=None, title='random 
     stix_package.stix_header.handling = Marking()
     stix_package.stix_header.handling.add_marking(marking)
     indicator_ = Indicator()
-    # indicator_.handling = Marking()
-    # indicator_.handling.add_marking(marking)
     indicator_.title = str(uuid.uuid4()) + '_sample_indicator'
     indicator_.confidence = 'Unknown'
     indicator_.add_indicator_type('Malware Artifacts')
