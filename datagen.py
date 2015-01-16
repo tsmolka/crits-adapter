@@ -177,7 +177,7 @@ def inject_edge_sample_data(config, target=None, datatype=None):
     observable_types.remove('mixed')
     observable_types.remove('indicator')
     # edge's stix builder currently stacktraces when presented with an EmailMessageObjectType
-    # observable_types.remove('email')
+    observable_types.remove('email')
     if datatype in observable_types:
         i = 0
         while i < config['edge']['datagen']['indicator_count']:
@@ -277,6 +277,7 @@ def inject_crits_sample_data(config, target=None, datatype=None):
     observable_types.extend(datatypes)
     observable_types.remove('mixed')
     observable_types.remove('indicator')
+    observable_types.remove('email')
     endpoint = None
     if datatype == 'ip': endpoint = 'ips'
     elif datatype == 'domain': endpoint = 'domains'
