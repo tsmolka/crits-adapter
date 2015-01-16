@@ -1,13 +1,13 @@
 #!/usr/bin/env python2.7
 
 from email.parser import Parser as email_parser
+from hashlib import md5, sha1, sha224, sha256, sha384, sha512
+from socket import inet_ntoa
+from struct import pack
 import os.path
 import random
 import uuid
-from hashlib import md5, sha1, sha224, sha256, sha384, sha512
-from socket import inet_ntoa
 import yaml
-from struct import pack
 # import ssdeep
 
 
