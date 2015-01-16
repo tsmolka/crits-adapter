@@ -228,15 +228,15 @@ class Daemon:
                         if completed_run:
                             self.config['db'].set_last_sync(source=crits_site, destination=edge_site, direction='crits2edge', timestamp=completed_run)
             # sync edge to crits
-            # for edge_site in enabled_edge_sites:
-            #     for crits_site in enabled_crits_sites:
-            #         now = nowutc()
-            #         last_run = self.config['db'].get_last_sync(source=edge_site, destination=crits_site, direction='edge2crits').replace(tzinfo=pytz.utc)
-            #         if now >= last_run + datetime.timedelta(seconds=self.config['edge']['sites'][edge_site]['taxii']['poll_interval']):
-            #             self.logger.info('initiating edge=>crits sync between %s and %s' % (edge_site, crits_site))
-            #             completed_run = edge_.edge2crits(self.config, edge_site, crits_site, daemon=True, now=now, last_run=last_run)
-            #             if completed_run:
-            #                 self.config['db'].set_last_sync(source=edge_site, destination=crits_site, direction='edge2crits', timestamp=completed_run)
+            for edge_site in enabled_edge_sites:
+                for crits_site in enabled_crits_sites:
+                    now = nowutc()
+                    last_run = self.config['db'].get_last_sync(source=edge_site, destination=crits_site, direction='edge2crits').replace(tzinfo=pytz.utc)
+                    if now >= last_run + datetime.timedelta(seconds=self.config['edge']['sites'][edge_site]['taxii']['poll_interval']):
+                        self.logger.info('initiating edge=>crits sync between %s and %s' % (edge_site, crits_site))
+                        completed_run = edge_.edge2crits(self.config, edge_site, crits_site, daemon=True, now=now, last_run=last_run)
+                        if completed_run:
+                            self.config['db'].set_last_sync(source=edge_site, destination=crits_site, direction='edge2crits', timestamp=completed_run)
             time.sleep(1)
 
     
