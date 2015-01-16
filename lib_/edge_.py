@@ -28,8 +28,9 @@ import util_
 import yaml
 
 
-def cybox2json(config, observable):
-    if isinstance(observable.object_.properties, Address):
+def cybox2json(config, observable):    
+    props = util_.rgetattr(observable.object_, ['properties'])
+    if props and isinstance(props, Address):
         crits_types = {'cidr'         : 'Address - cidr', \
                        'ipv4-addr'    : 'Address - ipv4-addr', \
                        'ipv4-net'     : 'Address - ipv4-net', \
@@ -50,7 +51,7 @@ def cybox2json(config, observable):
                 # json['_id'] = hash_
                 json['stix_id'] = observable.id_
                 return(json, endpoint)
-    elif isinstance(observable.object_.properties, DomainName):
+    elif props and isinstance(props, DomainName):
         crits_types = {'FQDN': 'A'}
         # crits doesn't appear to support tlds...
         endpoint = 'domains'
@@ -62,7 +63,7 @@ def cybox2json(config, observable):
             # json['_id'] = hash_
             json['stix_id'] = observable.id_
             return(json, endpoint)
-    elif isinstance(observable.object_.properties, File):
+    elif props and isinstance(props, File):
         crits_types = {'MD5'    : 'md5', \
                        'SHA1'   : 'sha1', \
                        'SHA224' : 'sha224', \
@@ -92,7 +93,7 @@ def cybox2json(config, observable):
         # json['_id'] = hash_
         json['stix_id'] = observable.id_
         return(json, endpoint)
-    elif isinstance(observable.object_.properties, EmailMessage):
+    elif props and isinstance(props, EmailMessage):
         crits_types = {'subject': 'subject', 'to': 'to', 'cc': 'cc',
         'from_': 'from_address', 'sender': 'sender', 'date': 'date',
         'message_id': 'message_id', 'reply_to': 'reply_to',
@@ -155,15 +156,53 @@ def cybox2json(config, observable):
         json['stix_id'] = observable.id_
         return(json, endpoint)
     else:
-        config['logger'].error('unsupported stix object type %s!' % type(observable.object_.properties))
+        config['logger'].error('unsupported stix object type %s!' % type(props))
         endpoint = None
         return(None, endpoint)
 
 
-def stix_ind2json(config, source, destination, indicator):
-    import pudb; pu.db
-    return(None)
-    # return(indicator_json, relationship_json)
+def stix_ind2json(config, source, destination, indicator, observable_compositions):
+    endpoint_trans = {'emails': 'Email', 'ips': 'IP', 'samples': 'Sample' , 'domains': 'Domain'}
+    indicator_json = dict()
+    relationship_json = list()
+    indicator_json['stix_id'] = indicator.id_
+    indicator_json['type'] = 'Reference'
+    indicator_json['value'] = util_.rgetattr(indicator, ['title'])
+    indicator_json['indicator_confidence'] = util_.rgetattr(indicator, ['confidence', 'value', 'value'])
+    # TODO lookup the corresponding stix prop for indicator_impact
+    indicator_json['indicator_impact'] = {'rating': 'unknown',}
+    if util_.rgetattr(indicator, ['observables']):
+        container_observable = indicator.observables[0]
+        composite_observable_id = util_.rgetattr(container_observable, ['idref'])
+        if not composite_observable_id:
+            config['logger'].error('unable to deference observable composition for stix indicator %s!' % indicator.id_)
+            return(None, None)
+        composite_observable = observable_compositions.get(composite_observable_id, None)
+        if not composite_observable:
+            config['logger'].error('unable to deference observable composition for stix indicator %s!' % indicator.id_)
+            return(None, None)
+        observables_list = util_.rgetattr(composite_observable, ['observable_composition', 'observables'])
+        if not observables_list:
+            config['logger'].error('unable to deference observable composition for stix indicator %s!' % indicator.id_)
+            return(None, None)
+        # import pudb; pu.db
+        for i in observables_list:
+            blob = dict()
+            blob['left_type'] = 'Indicator'
+            blob['left_id'] = None
+            rhs = config['db'].get_object_id(source, destination, edge_id=i.idref)
+            if not rhs:
+                config['logger'].error('unable to deference observable composition for stix indicator %s!' % indicator.id_)
+                return(None, None)
+            if not rhs.get('crits_id', None):
+                config['logger'].error('unable to deference observable composition for stix indicator %s!' % indicator.id_)
+                return(None, None)
+            blob['right_type'] = endpoint_trans[rhs['crits_id'].split(':')[0]]
+            blob['right_id'] = rhs['crits_id'].split(':')[1]
+            blob['rel_type'] = 'Contains'
+            blob['rel_confidence'] = 'unknown'
+            relationship_json.append(blob)
+    return(indicator_json, relationship_json)
 
     
 def taxii_poll(config, source, destination, timestamp=None):
@@ -194,42 +233,35 @@ def taxii_poll(config, source, destination, timestamp=None):
         json_ = dict()
         for endpoint in endpoints:
             json_[endpoint] = list()
+            json_['indicators'] = dict()
+            json_['relationships'] = dict()
         # TODO use a generator here...
+        observable_compositions = dict()
+        indicators = dict()
         for content_block in taxii_message.content_blocks:
             xml = StringIO.StringIO(content_block.content)
             stix_package = STIXPackage.from_xml(xml)
             xml.close()
             if stix_package.observables:
                 for observable in stix_package.observables.observables:
-                    (json, endpoint) = cybox2json(config, observable)
-                    if json:
-                        # mark crits releasability...
-                        # json['releasability'] = [{'name': config['crits']['sites'][source]['api']['source'], 'analyst': 'toor', 'instances': []},]
-                        # json['c-releasability.name'] = config['crits']['sites'][source]['api']['source']
-                        # json['releasability.name'] = config['crits']['sites'][source]['api']['source']
-                        json_[endpoint].append(json)
+                    if util_.rgetattr(observable, ['object_']):
+                        (json, endpoint) = cybox2json(config, observable)
+                        if json:
+                            # mark crits releasability...
+                            # json['releasability'] = [{'name': config['crits']['sites'][source]['api']['source'], 'analyst': 'toor', 'instances': []},]
+                            # json['c-releasability.name'] = config['crits']['sites'][source]['api']['source']
+                            # json['releasability.name'] = config['crits']['sites'][source]['api']['source']
+                            json_[endpoint].append(json)
+                        else:
+                            config['logger'].error('observable %s stix could not be converted to crits json!' % str(observable.id_))
+                    elif util_.rgetattr(observable, ['observable_composition', 'observables']):
+                        observable_compositions[observable.id_] = observable
                     else:
                         config['logger'].error('observable %s stix could not be converted to crits json!' % str(observable.id_))
             if stix_package.indicators:
-                for indicator in stix_package.indicators.indicators:
-                    (indicator_json, relationship_json) = stix_ind2json(config, source, destination, indicator)
-                    if indicator_json:
-                        # mark crits releasability...
-                        # indicator_json['releasability'] = [{'name': config['crits']['sites'][source]['api']['source'], 'analyst': 'toor', 'instances': []},]
-                        # indicator_json['c-releasability.name'] = config['crits']['sites'][source]['api']['source']
-                        # indicator_json['releasability.name'] = config['crits']['sites'][source]['api']['source']
-                        json_['indicators'].append(json)
-                    else:
-                        config['logger'].error('indicator %s stix could not be converted to crits json!' % str(indicator.id_))
-                    if relationship_json:
-                        # mark crits releasability...
-                        # relationship_json['releasability'] = [{'name': config['crits']['sites'][source]['api']['source'], 'analyst': 'toor', 'instances': []},]
-                        # relationship_json['c-releasability.name'] = config['crits']['sites'][source]['api']['source']
-                        # relationship_json['releasability.name'] = config['crits']['sites'][source]['api']['source']
-                        json_['relationships'].append(json)
-                    else:
-                        config['logger'].error('indicator %s stix could not be converted to crits json!' % str(indicator.id_))
-        return(json_, latest)
+                for i in stix_package.indicators:
+                    indicators[i.id_] = i
+        return(json_, latest, indicators, observable_compositions)
 
 
 def taxii_inbox(config, target, stix_package=None):
@@ -261,18 +293,22 @@ def taxii_inbox(config, target, stix_package=None):
 
 
 def edge2crits(config, source, destination, daemon=False, now=None, last_run=None):
+    # import pudb; pu.db
+    observable_endpoints = ['ips', 'domains', 'samples', 'emails']
     # check if (and when) we synced source and destination...
     if not now:
         now = util_.nowutc()
     if not last_run:
         last_run = config['db'].get_last_sync(source=source, destination=destination, direction='edge2crits').replace(tzinfo=pytz.utc)
     config['logger'].info('syncing new edge data since %s between %s and %s' % (str(last_run), source, destination))
-    (json_, latest) = taxii_poll(config, source, destination, last_run)
+    (json_, latest, indicators, observable_compositions) = taxii_poll(config, source, destination, last_run)
     total_input = 0
     total_output = 0
     subtotal_input = {}
     subtotal_output = {}
-    for endpoint in json_.keys():
+    subtotal_input['indicators'] = 0
+    subtotal_output['indicators'] = 0
+    for endpoint in observable_endpoints:
         subtotal_input[endpoint] = 0
         subtotal_output[endpoint] = 0
         for blob in json_[endpoint]:
@@ -285,9 +321,19 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
                 else:
                     total_input += 1
                     subtotal_input[endpoint] += 1
+    for i in json_['indicators'].keys():
+        sync_state = config['db'].get_object_id(source, destination, edge_id=json_['indicators'][i]['stix_id'])
+        if sync_state:
+            if sync_state.get('crits_id', None):
+                if config['daemon']['debug']:
+                    config['logger'].debug('edge object id %s already in system' % blob['stix_id'])
+                    del json_['indicators'][i]
+            else:
+                total_input += 1
+                subtotal_input['indicators'] += 1
     if total_input > 0:
         config['logger'].info('%i (total) objects to be synced between %s (edge) and %s (crits)' % (total_input, source, destination))
-    for endpoint in json_.keys():
+    for endpoint in observable_endpoints:
         if subtotal_input[endpoint] > 0:
             config['logger'].info('%i %s objects to be synced between %s (edge) and %s (crits)' % (subtotal_input[endpoint], endpoint, source, destination))
         for blob in json_[endpoint]:
@@ -306,6 +352,47 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
             config['logger'].info('%i %s objects successfully synced between %s (edge) and %s (crits)' % (subtotal_output[endpoint], endpoint, source, destination))
         if subtotal_output[endpoint] < subtotal_input[endpoint]:
             config['logger'].info('%i %s objects could not be synced between %s (edge) and %s (crits)' % (subtotal_input[endpoint] - subtotal_output[endpoint], endpoint, source, destination))
+        # indicators
+        for i in indicators.keys():
+            (indicator_json, relationships_json) = stix_ind2json(config, source, destination, indicators[i], observable_compositions)
+            if indicator_json:
+                # mark crits releasability...
+                # indicator_json['releasability'] = [{'name': config['crits']['sites'][source]['api']['source'], 'analyst': 'toor', 'instances': []},]
+                # indicator_json['c-releasability.name'] = config['crits']['sites'][source]['api']['source']
+                # indicator_json['releasability.name'] = config['crits']['sites'][source]['api']['source']
+                json_['indicators'][i] = indicator_json
+            else:
+                config['logger'].error('indicator %s stix could not be converted to crits json!' % str(i))
+            if relationships_json:
+                # mark crits releasability...
+                # relationship_json['releasability'] = [{'name': config['crits']['sites'][source]['api']['source'], 'analyst': 'toor', 'instances': []},]
+                # relationship_json['c-releasability.name'] = config['crits']['sites'][source]['api']['source']
+                # relationship_json['releasability.name'] = config['crits']['sites'][source]['api']['source']
+                json_['relationships'][i] = relationships_json
+            else:
+                config['logger'].error('indicator %s stix could not be converted to crits json!' % str(i))
+        for i in json_['indicators'].keys():
+            stix_id = json_['indicators'][i]['stix_id']
+            del json_['indicators'][i]['stix_id']
+            (id_, success) = crits_.crits_inbox(config, destination, 'indicators', json_['indicators'][i])
+            if not success:
+                config['logger'].error('%s object with id %s could not be synced from %s (edge) to %s (crits)!' % ('indicators', str(stix_id), source, destination))
+            else:
+                if config['daemon']['debug']:
+                    config['logger'].debug('%s object with id %s was synced from %s (edge) to %s (crits)' % ('indicators', str(stix_id), source, destination))
+            # import pudb; pu.db
+            for blob in json_['relationships'][i]:
+                blob['left_id'] = id_
+                (relationship_id_, success) = crits_.crits_inbox(config, destination, 'relationships', blob)
+                if not success:
+                    config['logger'].error('unable to create crits indicator relationship %s (id %s) for crits indicator id %s!' % (blob['right_type'], blob['right_id'], id_))
+            config['db'].set_object_id(source, destination, edge_id=stix_id, crits_id='indicators:%s' % str(id_), timestamp=util_.nowutc())
+            subtotal_output['indicators'] += 1
+            total_output += 1
+        if subtotal_output['indicators'] > 0:
+            config['logger'].info('%i %s objects successfully synced between %s (edge) and %s (crits)' % (subtotal_output['indicators'], 'indicators', source, destination))
+        if subtotal_output['indicators'] < subtotal_input['indicators']:
+            config['logger'].info('%i %s objects could not be synced between %s (edge) and %s (crits)' % (subtotal_input['indicators'] - subtotal_output['indicators'], 'indicators', source, destination))
     if total_output > 0:
         config['logger'].info('%i (total) objects successfully synced between %s (edge) and %s (crits)' % (total_output, source, destination))
     if total_output < total_input:
