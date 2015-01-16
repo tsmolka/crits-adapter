@@ -1,12 +1,12 @@
 #!/usr/bin/env python2.7
 
 from copy import deepcopy
+from cybox.common import Hash
 from cybox.objects.address_object import Address
 from cybox.objects.domain_name_object import DomainName
-from cybox.objects.file_object import File
 from cybox.objects.email_message_object import EmailMessage, EmailHeader
+from cybox.objects.file_object import File
 from cybox.utils import Namespace
-from cybox.common import Hash
 from cybox.utils import set_id_namespace as set_cybox_id_namespace
 from libtaxii.constants import *
 from stix.core import STIXPackage, STIXHeader
@@ -14,21 +14,21 @@ from stix.data_marking import Marking, MarkingSpecification
 from stix.extensions.marking.tlp import TLPMarkingStructure
 from stix.indicator import Indicator
 from stix.utils import set_id_namespace as set_stix_id_namespace
-import util_ 
-import log_
 import StringIO
 import crits_
+import datetime
 import libtaxii as t
 import libtaxii.clients as tc
 import libtaxii.messages_10 as tm10
 import libtaxii.messages_11 as tm11
+import log_
 import lxml.etree
 import pytz
+import util_ 
 import yaml
-import datetime
 
 
-def stix2json(config, observable):
+def cybox2json(config, observable):
     if isinstance(observable.object_.properties, Address):
         crits_types = {'cidr'         : 'Address - cidr', \
                        'ipv4-addr'    : 'Address - ipv4-addr', \
@@ -159,14 +159,20 @@ def stix2json(config, observable):
         endpoint = None
         return(None, endpoint)
 
-        
-def taxii_poll(config, target, timestamp=None):
+
+def stix_ind2json(config, source, destination, indicator):
+    import pudb; pu.db
+    return(None)
+    # return(indicator_json, relationship_json)
+
+    
+def taxii_poll(config, source, destination, timestamp=None):
     '''pull stix from edge via taxii'''
     client = tc.HttpClient()
-    client.setUseHttps(config['edge']['sites'][target]['taxii']['ssl'])
+    client.setUseHttps(config['edge']['sites'][source]['taxii']['ssl'])
     client.setAuthType(client.AUTH_BASIC)
-    client.setAuthCredentials({'username': config['edge']['sites'][target]['taxii']['user'], \
-                               'password': config['edge']['sites'][target]['taxii']['pass']})
+    client.setAuthCredentials({'username': config['edge']['sites'][source]['taxii']['user'], \
+                               'password': config['edge']['sites'][source]['taxii']['pass']})
     if not timestamp:
         earliest = util_.epoch_start()
     else:
@@ -174,17 +180,17 @@ def taxii_poll(config, target, timestamp=None):
     latest = util_.nowutc()
     poll_request = tm10.PollRequest(
                 message_id=tm10.generate_message_id(),
-                feed_name=config['edge']['sites'][target]['taxii']['collection'],
+                feed_name=config['edge']['sites'][source]['taxii']['collection'],
                 exclusive_begin_timestamp_label=earliest,
                 inclusive_end_timestamp_label=latest,
                 content_bindings=[t.CB_STIX_XML_11])
-    http_response = client.callTaxiiService2(config['edge']['sites'][target]['host'], config['edge']['sites'][target]['taxii']['path'], t.VID_TAXII_XML_10, poll_request.to_xml(), port=config['edge']['sites'][target]['taxii']['port'])
+    http_response = client.callTaxiiService2(config['edge']['sites'][source]['host'], config['edge']['sites'][source]['taxii']['path'], t.VID_TAXII_XML_10, poll_request.to_xml(), port=config['edge']['sites'][source]['taxii']['port'])
     taxii_message = t.get_message_from_http_response(http_response, poll_request.message_id)
     json_list = None
     if isinstance(taxii_message, tm10.StatusMessage):
         config['logger'].error('unhandled taxii polling error! (%s)' % taxii_message.message)
     elif isinstance(taxii_message, tm10.PollResponse):
-        endpoints = ['ips', 'domains', 'samples', 'emails']
+        endpoints = ['ips', 'domains', 'samples', 'emails', 'indicators', 'relationships']
         json_ = dict()
         for endpoint in endpoints:
             json_[endpoint] = list()
@@ -195,15 +201,34 @@ def taxii_poll(config, target, timestamp=None):
             xml.close()
             if stix_package.observables:
                 for observable in stix_package.observables.observables:
-                    (json, endpoint) = stix2json(config, observable)
+                    (json, endpoint) = cybox2json(config, observable)
                     if json:
                         # mark crits releasability...
-                        # json['releasability'] = [{'name': config['crits']['sites'][target]['api']['source'], 'analyst': 'toor', 'instances': []},]
-                        # json['c-releasability.name'] = config['crits']['sites'][target]['api']['source']
-                        # json['releasability.name'] = config['crits']['sites'][target]['api']['source']
+                        # json['releasability'] = [{'name': config['crits']['sites'][source]['api']['source'], 'analyst': 'toor', 'instances': []},]
+                        # json['c-releasability.name'] = config['crits']['sites'][source]['api']['source']
+                        # json['releasability.name'] = config['crits']['sites'][source]['api']['source']
                         json_[endpoint].append(json)
                     else:
                         config['logger'].error('observable %s stix could not be converted to crits json!' % str(observable.id_))
+            if stix_package.indicators:
+                for indicator in stix_package.indicators.indicators:
+                    (indicator_json, relationship_json) = stix_ind2json(config, source, destination, indicator)
+                    if indicator_json:
+                        # mark crits releasability...
+                        # indicator_json['releasability'] = [{'name': config['crits']['sites'][source]['api']['source'], 'analyst': 'toor', 'instances': []},]
+                        # indicator_json['c-releasability.name'] = config['crits']['sites'][source]['api']['source']
+                        # indicator_json['releasability.name'] = config['crits']['sites'][source]['api']['source']
+                        json_['indicators'].append(json)
+                    else:
+                        config['logger'].error('indicator %s stix could not be converted to crits json!' % str(indicator.id_))
+                    if relationship_json:
+                        # mark crits releasability...
+                        # relationship_json['releasability'] = [{'name': config['crits']['sites'][source]['api']['source'], 'analyst': 'toor', 'instances': []},]
+                        # relationship_json['c-releasability.name'] = config['crits']['sites'][source]['api']['source']
+                        # relationship_json['releasability.name'] = config['crits']['sites'][source]['api']['source']
+                        json_['relationships'].append(json)
+                    else:
+                        config['logger'].error('indicator %s stix could not be converted to crits json!' % str(indicator.id_))
         return(json_, latest)
 
 
@@ -242,7 +267,7 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
     if not last_run:
         last_run = config['db'].get_last_sync(source=source, destination=destination, direction='edge2crits').replace(tzinfo=pytz.utc)
     config['logger'].info('syncing new edge data since %s between %s and %s' % (str(last_run), source, destination))
-    (json_, latest) = taxii_poll(config, source, last_run)
+    (json_, latest) = taxii_poll(config, source, destination, last_run)
     total_input = 0
     total_output = 0
     subtotal_input = {}
