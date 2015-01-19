@@ -23,6 +23,7 @@ import pytz
 import requests
 import util_
 import yaml
+import sys
 
 
 def crits_url(config, target):
@@ -106,91 +107,104 @@ def stix_pkg(config, source, endpoint, payload, title='random test data', descri
 
 def json2stix_ind(config, source, destination, endpoint, json_):
     '''transform crits indicators into stix indicators with embedded cybox observable composition'''
-    set_id_method(IDGenerator.METHOD_UUID)
-    set_cybox_id_namespace(Namespace(config['edge']['sites'][source]['stix']['xmlns_url'], config['edge']['sites'][source]['stix']['xmlns_name']))
-    if endpoint == 'indicators':
-        endpoint_trans = {'Email': 'emails', 'IP': 'ips', 'Sample': 'samples' , 'Domain': 'domains'}
-        if json_['type'] != 'Reference':
-            config['logger'].error('unsupported crits indicator type %s!' % json_['type'])
+    try:
+        set_id_method(IDGenerator.METHOD_UUID)
+        set_cybox_id_namespace(Namespace(config['edge']['sites'][source]['stix']['xmlns_url'], config['edge']['sites'][source]['stix']['xmlns_name']))
+        if endpoint == 'indicators':
+            endpoint_trans = {'Email': 'emails', 'IP': 'ips', 'Sample': 'samples' , 'Domain': 'domains'}
+            if json_['type'] != 'Reference':
+                config['logger'].error('unsupported crits indicator type %s!' % json_['type'])
+                return(None)
+            indicator_ = Indicator()
+            indicator_.title = json_['value']
+            indicator_.confidence = json_['confidence']['rating'].capitalize()
+            indicator_.add_indicator_type('Malware Artifacts')
+            observable_composition_ = ObservableComposition()
+            observable_composition_.operator = indicator_.observable_composition_operator
+            for relationship in json_['relationships']:
+                if relationship['relationship'] != 'Contains':
+                    config['logger'].error('unsupported crits indicator relationship type %s!' % relationship['relationship'])
+                    return(None)
+                doc = config['db'].get_object_id(source, destination, crits_id='%s:%s' % (endpoint_trans[relationship['type']], relationship['value']))
+                # TODO if missing, try to inject the corresponding observable?
+                if not doc or not doc.get('edge_id', None):
+                    config['logger'].error('cybox observable corresponding to crits indicator relationship %s could not be found!' % relationship['value'])
+                    return(None)
+                observable_ = Observable()
+                observable_.idref = doc['edge_id']
+                observable_composition_.add(observable_)
+                indicator_.observable = Observable()
+                indicator_.observable.observable_composition = observable_composition_
+                return(indicator_)
+        else:
+            config['logger'].error('unsupported crits object type %s!' % endpoint)
             return(None)
-        indicator_ = Indicator()
-        indicator_.title = json_['value']
-        indicator_.confidence = json_['confidence']['rating'].capitalize()
-        indicator_.add_indicator_type('Malware Artifacts')
-        observable_composition_ = ObservableComposition()
-        observable_composition_.operator = indicator_.observable_composition_operator
-        for relationship in json_['relationships']:
-            if relationship['relationship'] != 'Contains':
-                config['logger'].error('unsupported crits indicator relationship type %s!' % relationship['relationship'])
-                return(None)
-            doc = config['db'].get_object_id(source, destination, crits_id='%s:%s' % (endpoint_trans[relationship['type']], relationship['value']))
-            # TODO if missing, try to inject the corresponding observable?
-            if not doc or not doc.get('edge_id', None):
-                config['logger'].error('cybox observable corresponding to crits indicator relationship %s could not be found!' % relationship['value'])
-                return(None)
-            observable_ = Observable()
-            observable_.idref = doc['edge_id']
-            observable_composition_.add(observable_)
-        indicator_.observable = Observable()
-        indicator_.observable.observable_composition = observable_composition_
-        return(indicator_)
-    else:
-        config['logger'].error('unsupported crits object type %s!' % endpoint)
+    except:
+        e = sys.exc_info()[0]
+        config['logger'].error('unhandled error converting crits indicator json to stix!')
+        config['logger'].exception(e)
         return(None)
 
 
 def json2cybox(config, source, endpoint, json_):
-    set_id_method(IDGenerator.METHOD_UUID)
-    set_cybox_id_namespace(Namespace(config['edge']['sites'][source]['stix']['xmlns_url'], config['edge']['sites'][source]['stix']['xmlns_name']))
-    if endpoint == 'ips':
-        crits_types = {'Address - cidr': 'cidr', \
-                       'Address - ipv4-addr': 'ipv4-addr', \
-                       'Address - ipv4-net': 'ipv4-net', \
-                       'Address - ipv4-net-mask': 'ipv4-netmask', \
-                       'Address - ipv6-addr': 'ipv6-addr', \
-                       'Address - ipv6-net': 'ipv6-net', \
-                       'Address - ipv6-net-mask': 'ipv6-netmask'}
-        addr = Address(address_value=json_['ip'], category=crits_types[json_['type']])
-        addr.condition = 'Equals'
-        return(Observable(addr))
-    elif endpoint == 'domains':
-        domain = DomainName()
-        domain.type_ = 'FQDN'
-        domain.value = json_['domain']
-        domain.condition = 'Equals'
-        return(Observable(domain))
-    elif endpoint == 'samples':
-        crits_types = {'md5'    : 'MD5', \
-                       'sha1'   : 'SHA1', \
-                       'sha224' : 'SHA224', \
-                       'sha256' : 'SHA256', \
-                       'sha384' : 'SHA384', \
-                       'sha512' : 'SHA512', \
-                       'ssdeep' : 'SSDEEP'}
-        file_object = File()
-        file_object.file_name = json_['filename']
-        for hash in crits_types.keys():
-            if hash in json_:
-                file_object.add_hash(Hash(json_[hash], type_=crits_types[hash]))
-        for i in file_object.hashes:
+    '''transform crits observables into cybox'''
+    try:
+        set_id_method(IDGenerator.METHOD_UUID)
+        set_cybox_id_namespace(Namespace(config['edge']['sites'][source]['stix']['xmlns_url'], config['edge']['sites'][source]['stix']['xmlns_name']))
+        if endpoint == 'ips':
+            crits_types = {'Address - cidr': 'cidr', \
+                               'Address - ipv4-addr': 'ipv4-addr', \
+                               'Address - ipv4-net': 'ipv4-net', \
+                               'Address - ipv4-net-mask': 'ipv4-netmask', \
+                               'Address - ipv6-addr': 'ipv6-addr', \
+                               'Address - ipv6-net': 'ipv6-net', \
+                               'Address - ipv6-net-mask': 'ipv6-netmask'}
+            addr = Address(address_value=json_['ip'], category=crits_types[json_['type']])
+            addr.condition = 'Equals'
+            return(Observable(addr))
+        elif endpoint == 'domains':
+            domain = DomainName()
+            domain.type_ = 'FQDN'
+            domain.value = json_['domain']
+            domain.condition = 'Equals'
+            return(Observable(domain))
+        elif endpoint == 'samples':
+            crits_types = {'md5'    : 'MD5', \
+                               'sha1'   : 'SHA1', \
+                               'sha224' : 'SHA224', \
+                               'sha256' : 'SHA256', \
+                               'sha384' : 'SHA384', \
+                               'sha512' : 'SHA512', \
+                               'ssdeep' : 'SSDEEP'}
+            file_object = File()
+            file_object.file_name = json_['filename']
+            for hash in crits_types.keys():
+                if hash in json_:
+                    file_object.add_hash(Hash(json_[hash], type_=crits_types[hash]))
+            for i in file_object.hashes:
                 i.simple_hash_value.condition = "Equals"
-        return(Observable(file_object))
-    elif endpoint == 'emails':
-        crits_types = {'subject': 'subject', 'to': 'to', 'cc': 'cc',
-        'from_address': 'from_', 'sender': 'sender', 'date': 'date',
-        'message_id': 'message_id', 'reply_to': 'reply_to',
-        'boundary': 'boundary', 'x_mailer': 'x_mailer',
-        'x_originating_ip': 'x_originating_ip'}
-        email = EmailMessage()
-        email.header = EmailHeader()
-        for key in crits_types.keys():
-            val = json_.get(key, None)
-            if val:
-                email.header.__setattr__(crits_types[key], val)
-                email.header.__getattribute__(crits_types[key]).condition = 'Equals'
-        return(Observable(email))
-    else:
-        config['logger'].error('unsupported crits object type %s!' % endpoint)
+            return(Observable(file_object))
+        elif endpoint == 'emails':
+            crits_types = {'subject': 'subject', 'to': 'to', 'cc': 'cc',
+                           'from_address': 'from_', 'sender': 'sender', 'date': 'date',
+                           'message_id': 'message_id', 'reply_to': 'reply_to',
+                           'boundary': 'boundary', 'x_mailer': 'x_mailer',
+                           'x_originating_ip': 'x_originating_ip'}
+            email = EmailMessage()
+            email.header = EmailHeader()
+            for key in crits_types.keys():
+                val = json_.get(key, None)
+                if val:
+                    email.header.__setattr__(crits_types[key], val)
+                    email.header.__getattribute__(crits_types[key]).condition = 'Equals'
+            return(Observable(email))
+        else:
+            config['logger'].error('unsupported crits object type %s!' % endpoint)
+            return(None)
+    except:
+        e = sys.exc_info()[0]
+        config['logger'].error('unhandled error converting crits observable json to cybox!')
+        config['logger'].exception(e)
         return(None)
 
 
@@ -230,10 +244,17 @@ def crits2edge(config, source, destination, daemon=False, now=None, last_run=Non
                 (id_, json_) = crits_poll(config, source, endpoint, crits_id,)
                 if endpoint == 'indicators':
                     indicator = json2stix_ind(config, source, destination, endpoint, json_)
+                    if not indicator:
+                        config['logger'].info('crits object %s could not be synced between %s (crits) and %s (edge)' % (crits_id, source, destination))
+                        continue
                     stix_ = stix_pkg(config, source, endpoint, indicator)
+                    if not stix_:
+                        config['logger'].info('crits object %s could not be synced between %s (crits) and %s (edge)' % (crits_id, source, destination))
+                        continue
                     success = edge_.taxii_inbox(config, destination, stix_)
                     if not success:
                         config['logger'].info('crits object %s could not be synced between %s (crits) and %s (edge)' % (crits_id, source, destination))
+                        continue
                     else:
                         subtotal_input[endpoint] -= 1
                         total_input -= 1
@@ -242,10 +263,17 @@ def crits2edge(config, source, destination, daemon=False, now=None, last_run=Non
                         config['db'].set_object_id(source, destination, edge_id=indicator.id_, crits_id=endpoint + ':' + crits_id, timestamp=util_.nowutc())
                 else:
                     observable = json2cybox(config, source, endpoint, json_)
+                    if not observable:
+                        config['logger'].info('crits object %s could not be synced between %s (crits) and %s (edge)' % (crits_id, source, destination))
+                        continue
                     stix_ = stix_pkg(config, source, endpoint, observable)
+                    if not stix_:
+                        config['logger'].info('crits object %s could not be synced between %s (crits) and %s (edge)' % (crits_id, source, destination))
+                        continue
                     success = edge_.taxii_inbox(config, destination, stix_)
                     if not success:
                         config['logger'].info('crits object %s could not be synced between %s (crits) and %s (edge)' % (crits_id, source, destination))
+                        continue
                     else:
                         subtotal_input[endpoint] -= 1
                         total_input -= 1

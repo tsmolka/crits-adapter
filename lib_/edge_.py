@@ -188,6 +188,7 @@ def stix_ind2json(config, source, destination, indicator, observable_composition
                     for i in observables_list:
                         if i.idref in problem_children:
                             config['logger'].error('observable %s (part of observable composition for stix indicator %s) could not be inboxed to crits; ignoring...' % (i.idref, indicator.id_))
+                            observables_list.remove(i)
                             continue
                         blob = dict()
                         blob['left_type'] = 'Indicator'
