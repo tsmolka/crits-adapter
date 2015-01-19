@@ -176,8 +176,6 @@ def inject_edge_sample_data(config, target=None, datatype=None):
     observable_types.extend(datatypes)
     observable_types.remove('mixed')
     observable_types.remove('indicator')
-    # edge's stix builder currently stacktraces when presented with an EmailMessageObjectType
-    observable_types.remove('email')
     if datatype in observable_types:
         i = 0
         while i < config['edge']['datagen']['indicator_count']:
@@ -277,7 +275,6 @@ def inject_crits_sample_data(config, target=None, datatype=None):
     observable_types.extend(datatypes)
     observable_types.remove('mixed')
     observable_types.remove('indicator')
-    observable_types.remove('email')
     endpoint = None
     if datatype == 'ip': endpoint = 'ips'
     elif datatype == 'domain': endpoint = 'domains'
@@ -291,13 +288,14 @@ def inject_crits_sample_data(config, target=None, datatype=None):
             (id_, success) = crits_.crits_inbox(config, target, endpoint, generate_crits_json(config, datatype))
             if success:
                 i += 1
-            else: print('error inboxing crits sample data to %s - exiting!' % target); exit()
+            else: print('error inboxing crits sample data to %s - exiting!' % target)
     elif datatype == 'indicator':
         # indicator linked to 5-25 mixed observables
         endpoint_trans = {'emails': 'Email', 'ips': 'IP', 'samples': 'Sample' , 'domains': 'Domain'}
         i = 0
-        observables_dict = dict()
-        while i < config['crits']['datagen']['indicator_count']:
+	while i < config['crits']['datagen']['indicator_count']:
+            # generate between 5-25 observables to be linked to a crits indicator
+            observables_dict = dict()
             observable_count = random.randint(5, 25)
             j = 0
             while j < observable_count:
@@ -310,7 +308,8 @@ def inject_crits_sample_data(config, target=None, datatype=None):
                 if success:
                     j += 1
                     observables_dict[id_] = endpoint
-                else: continue
+                else: print('error inboxing crits sample %s indicator observable to %s - exiting!' % (type_, target))
+            # now that we've got random observables in crits, inbox an indicator...
             (id_, success) = crits_.crits_inbox(config, target, 'indicators', generate_crits_indicator_json(config, observables_dict))
             if success:
                 i += 1
@@ -323,7 +322,7 @@ def inject_crits_sample_data(config, target=None, datatype=None):
                     json['rel_type'] = 'Contains'
                     json['rel_confidence'] = 'unknown'
                     (id_, success) = crits_.crits_inbox(config, target, 'relationships', json)
-            else: continue
+            else: print('error inboxing relationship for crits sample indicator to %s - exiting!' % target)
     elif datatype == 'mixed':
         # mixed observables
         i = 0
@@ -336,7 +335,7 @@ def inject_crits_sample_data(config, target=None, datatype=None):
             (id_, success) = crits_.crits_inbox(config, target, endpoint, generate_crits_json(config, type_))
             if success:
                 i += 1
-            else: continue
+            else: print('error inboxing crits sample data to %s - exiting!' % target)
 
 
 def main():
