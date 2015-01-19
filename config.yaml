@@ -52,6 +52,6 @@ daemon:
     db: inbox                                              # mongo database
     collection: adapters.crits                             # mongo collection
 datagen:
-  canonical_tlds: datagen_samples/tlds-alpha-by-domain.txt # canonical tlds for datagen
+  canonical_tlds: datagen_samples/crits-tlds.txt           # canonical tlds for datagen
   email_header_samples: datagen_samples/mail_headers.yaml  # spammy headers for datagen
   
