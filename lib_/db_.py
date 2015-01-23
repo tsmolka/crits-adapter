@@ -91,25 +91,36 @@ class DB(object):
             exit()
 
 
-    def set_object_id(self, source, destination, crits_id=None, edge_id=None, timestamp=None):
+    def get_unresolved_crits_relationship(self, source, destination, edge_observable_id=None):
         try:
-            query = {'source': source, 'destination': destination}
-            if crits_id:
-                query['crits_id'] = crits_id
-            elif edge_id:
-                query['edge_id'] = edge_id
-            doc = self.get_object_id(source, destination, crits_id=crits_id, edge_id=edge_id)
+            query = {'unresolved_crits_relationship': {'source': source, 'destination': destination, 'edge_observable_id': edge_observable_id}}
+            doc = self.collection.find_one(query)
             if doc:
-                # there's already a crits-edge mapping so just update the timestamp
-                self.collection.update(doc, {'$set': {'modified': timestamp}})
+                return(doc)
             else:
-                # insert a new mapping
-                query['edge_id'] = edge_id
-                query['crits_id'] = crits_id
-                query['created'] = util_.nowutc()
-                query['modified'] = query['created']
-                self.collection.insert(query)
+                return None
         except ConnectionFailure as e:
             self.logger.error('mongodb connection failed - exiting...')
             self.logger.exception(e)
             exit()
+
+            
+    def set_unresolved_crits_relationship(self, source, destination, crits_indicator_id=None, edge_observable_id=None):
+        try:
+            query = {'unresolved_crits_relationship': {'source': source, 'destination': destination, 'crits_indicator_id': crits_indicator_id, 'edge_observable_id': edge_observable_id}}
+            self.collection.insert(query)
+        except ConnectionFailure as e:
+            self.logger.error('mongodb connection failed - exiting...')
+            self.logger.exception(e)
+            exit()
+
+
+    def resolve_crits_relationship(self, source, destination, crits_indicator_id=None, edge_observable_id=None):
+        try:
+            query = {'unresolved_crits_relationship': {'source': source, 'destination': destination, 'crits_indicator_id': crits_indicator_id, 'edge_observable_id': edge_observable_id}}
+            self.collection.remove(query)
+        except ConnectionFailure as e:
+            self.logger.error('mongodb connection failed - exiting...')
+            self.logger.exception(e)
+            exit()
+            
