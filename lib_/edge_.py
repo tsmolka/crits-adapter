@@ -53,7 +53,7 @@ def cybox2json(config, observable):
                 json['stix_id'] = observable.id_
                 return(json, endpoint)
     elif props and isinstance(props, DomainName):
-        crits_types = {'Domain Name': 'A'}
+        crits_types = {'FQDN': 'A'}
         # crits doesn't appear to support tlds...
         endpoint = 'domains'
         domain_category = util_.rgetattr(observable.object_.properties, ['type_'])
@@ -65,10 +65,10 @@ def cybox2json(config, observable):
             json['stix_id'] = observable.id_
             return(json, endpoint)
     elif props and isinstance(props, URI):
-        crits_types = {'FQDN': 'A'}
+        crits_types = {'Domain Name': 'A'}
         # crits doesn't appear to support tlds...
         endpoint = 'domains'
-        # domain_category = util_.rgetattr(observable.object_.properties, ['type_'])
+        domain_category = util_.rgetattr(observable.object_.properties, ['type_'])
         domain_value = util_.rgetattr(observable.object_.properties, ['value', 'value'])
         if domain_category and domain_value:
             json = {'domain': domain_value, 'type': crits_types[domain_category]}
