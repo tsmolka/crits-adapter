@@ -35,12 +35,12 @@ Constraints
   [12 different ways][2] to express context between 2 IP addresses.
   This adapter currently only supports STIX indicators containing one
   inline CybOX Observable Composition externally referencing (idref)
-  the related CybOX Observable objects (#2 in [the IP address example][2].
+  the related CybOX Observable objects (#2 in [the IP address example][2].)
 
 
 Commands
 --------
-* *NOTE*: all commands provide detailed usage info when passed the
+* **Note**: all commands provide detailed usage info when passed the
   `--help` flag
 * datagen.py
     * Description: Inject randomly generated observable / indicator
@@ -71,18 +71,18 @@ Commands
 
 12 ways to express context between 2 IP addresses
 -------------------------------------------------
-1) Indicator, with two inline IPv4 AddressObjects
-2) Indicator, with two referenced IPv4 AddressObjects
-3) Indicator, with one inline IPv4 AddressObject using comma notation (127.0.0.1##comma##127.0.0.2)
-4) Indicator, with one referenced IPv4 AddressObject using comma notation (127.0.0.1##comma##127.0.0.2)
-5) A composite indicator including a single indicator, with two inline IPv4 AddressObjects
-6) A composite indicator including a single indicator, with two referenced IPv4 AddressObjects
-7) A composite indicator including a single indicator, with one referenced IPv4 AddressObject using comma notation (127.0.0.1##comma##127.0.0.2)
-8) A composite indicator including a single indicator, with one inline IPv4 AddressObject using comma notation (127.0.0.1##comma##127.0.0.2)
-9) A composite indicator with two indicators. Each indicator has a single inline IPv4 AddressObjects
-10) A composite indicator with two indicators. Each indicator has a single referenced IPv4 AddressObjects
-11) Two AddressObjects, no indicators, and "These IP addresses are malicious" placed in the Title field of the STIX_Header
-12) One AddressObject using comma notation (127.0.0.1##comma##127.0.0.2), no indicators, and "These IP addresses are malicious" placed in the Title field of the STIX_Header
+1. Indicator, with two inline IPv4 AddressObjects
+2. Indicator, with two referenced IPv4 AddressObjects
+3. Indicator, with one inline IPv4 AddressObject using comma notation (127.0.0.1##comma##127.0.0.2)
+4. Indicator, with one referenced IPv4 AddressObject using comma notation (127.0.0.1##comma##127.0.0.2)
+5. A composite indicator including a single indicator, with two inline IPv4 AddressObjects
+6. A composite indicator including a single indicator, with two referenced IPv4 AddressObjects
+7. A composite indicator including a single indicator, with one referenced IPv4 AddressObject using comma notation (127.0.0.1##comma##127.0.0.2)
+8. A composite indicator including a single indicator, with one inline IPv4 AddressObject using comma notation (127.0.0.1##comma##127.0.0.2)
+9. A composite indicator with two indicators. Each indicator has a single inline IPv4 AddressObjects
+10. A composite indicator with two indicators. Each indicator has a single referenced IPv4 AddressObjects
+11. Two AddressObjects, no indicators, and "These IP addresses are malicious" placed in the Title field of the STIX_Header
+12. One AddressObject using comma notation (127.0.0.1##comma##127.0.0.2), no indicators, and "These IP addresses are malicious" placed in the Title field of the STIX_Header
 
 
 [0]: https://github.com/crits/crits/issues/362
