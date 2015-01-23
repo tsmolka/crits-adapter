@@ -41,7 +41,7 @@ def cybox2json(config, observable):
                        'ipv6-netmask' : 'Address - ipv6-net-mask'}
         endpoint = 'ips'
         condition = util_.rgetattr(observable.object_.properties, ['condition'])
-        if condition == 'Equals':
+        if condition == 'Equals' or condition == None:
             # currently not handling other observable conditions as
             # it's not clear that crits even supports these...
             ip_category = util_.rgetattr(observable.object_.properties, ['category'])
@@ -182,10 +182,32 @@ def stix_ind2json(config, source, destination, indicator, observable_composition
     indicator_json['stix_id'] = indicator.id_
     indicator_json['type'] = 'Reference'
     indicator_json['value'] = util_.rgetattr(indicator, ['title'])
-    indicator_json['indicator_confidence'] = util_.rgetattr(indicator, ['confidence', 'value', 'value'])
+    indicator_json['indicator_confidence'] = util_.rgetattr(indicator, ['confidence', 'value', 'value'], 'unknown')
     # TODO lookup the corresponding stix prop for indicator_impact
     indicator_json['indicator_impact'] = {'rating': 'unknown',}
-    if util_.rgetattr(indicator, ['observables']):
+    if indicator.id_ in observable_compositions.keys():
+        # looks like it's an inline indicator
+        observables = observable_compositions[indicator.id_]
+        del observable_compositions[indicator.id_]
+        for observable_id in observables:
+            blob = dict()
+            blob['left_type'] = 'Indicator'
+            blob['left_id'] = None
+            rhs = config['db'].get_object_id(source, destination, edge_id=observable_id)
+            if not rhs:
+                config['logger'].error('unable to dereference observable composition for stix indicator %s!' % indicator.id_)
+                unresolvables.append(observable_id)
+            else:
+                if not rhs.get('crits_id', None):
+                    config['logger'].error('unable to dereference observable composition for stix indicator %s!' % indicator.id_)
+                else:
+                    blob['right_type'] = endpoint_trans[rhs['crits_id'].split(':')[0]]
+                    blob['right_id'] = rhs['crits_id'].split(':')[1]
+                    blob['rel_type'] = 'Contains'
+                    blob['rel_confidence'] = 'unknown'
+                    relationship_json.append(blob)
+    elif util_.rgetattr(indicator, ['observables']):
+        # it's (presumably) a normal observable composition indicator
         container_observable = indicator.observables[0]
         composite_observable_id = util_.rgetattr(container_observable, ['idref'])
         if not composite_observable_id:
@@ -279,6 +301,14 @@ def taxii_poll(config, source, destination, timestamp=None):
             if stix_package.indicators:
                 for i in stix_package.indicators:
                     indicators[i.id_] = i
+                    if util_.rgetattr(i, ['observables']):
+                        observable_compositions[i.id_] = list()
+                        for observable in i.observables:
+                            if util_.rgetattr(observable, ['_idref']):
+                                # this is an inline observable and
+                                # hence has already been processed
+                                # above
+                                observable_compositions[i.id_].append(observable._idref)
         return(json_, latest, indicators, observable_compositions)
 
 
