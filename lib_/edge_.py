@@ -71,6 +71,10 @@ def cybox2json(config, observable):
         domain_category = util_.rgetattr(observable.object_.properties, ['type_'])
         domain_value = util_.rgetattr(observable.object_.properties, ['value', 'value'])
         if domain_category and domain_value:
+            if domain_category not in crits_types.keys():
+                config['logger'].error('unsupported stix object type %s!' % type(props))
+                endpoint = None
+                return(None, endpoint)
             json = {'domain': domain_value, 'type': crits_types[domain_category]}
             # hash_ = util_.dicthash_sha1(json)
             # json['_id'] = hash_
