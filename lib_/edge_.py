@@ -181,8 +181,8 @@ def stix_ind2json(config, source, destination, indicator, observable_composition
     unresolvables = list()
     indicator_json['stix_id'] = indicator.id_
     indicator_json['type'] = 'Reference'
-    indicator_json['value'] = util_.rgetattr(indicator, ['title'])
-    indicator_json['indicator_confidence'] = util_.rgetattr(indicator, ['confidence', 'value', 'value'], 'unknown')
+    indicator_json['value'] = util_.rgetattr(indicator, ['title'], default_='unknown')
+    indicator_json['indicator_confidence'] = util_.rgetattr(indicator, ['confidence', 'value', 'value'], default_='unknown')
     # TODO lookup the corresponding stix prop for indicator_impact
     indicator_json['indicator_impact'] = {'rating': 'unknown',}
     if indicator.id_ in observable_compositions.keys():
