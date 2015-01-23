@@ -4,6 +4,7 @@ from copy import deepcopy
 from cybox.common import Hash
 from cybox.objects.address_object import Address
 from cybox.objects.domain_name_object import DomainName
+from cybox.objects.uri_object import URI
 from cybox.objects.email_message_object import EmailMessage, EmailHeader
 from cybox.objects.file_object import File
 from cybox.utils import Namespace
@@ -52,10 +53,22 @@ def cybox2json(config, observable):
                 json['stix_id'] = observable.id_
                 return(json, endpoint)
     elif props and isinstance(props, DomainName):
-        crits_types = {'FQDN': 'A'}
+        crits_types = {'Domain Name': 'A'}
         # crits doesn't appear to support tlds...
         endpoint = 'domains'
         domain_category = util_.rgetattr(observable.object_.properties, ['type_'])
+        domain_value = util_.rgetattr(observable.object_.properties, ['value', 'value'])
+        if domain_category and domain_value:
+            json = {'domain': domain_value, 'type': crits_types[domain_category]}
+            # hash_ = util_.dicthash_sha1(json)
+            # json['_id'] = hash_
+            json['stix_id'] = observable.id_
+            return(json, endpoint)
+    elif props and isinstance(props, URI):
+        crits_types = {'FQDN': 'A'}
+        # crits doesn't appear to support tlds...
+        endpoint = 'domains'
+        # domain_category = util_.rgetattr(observable.object_.properties, ['type_'])
         domain_value = util_.rgetattr(observable.object_.properties, ['value', 'value'])
         if domain_category and domain_value:
             json = {'domain': domain_value, 'type': crits_types[domain_category]}
