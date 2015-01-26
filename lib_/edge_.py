@@ -277,8 +277,8 @@ def taxii_poll(config, source, destination, timestamp=None):
         json_ = dict()
         for endpoint in endpoints:
             json_[endpoint] = list()
-            json_['indicators'] = dict()
-            json_['relationships'] = dict()
+        json_['indicators'] = dict()
+        json_['relationships'] = dict()
         # TODO use a generator here...
         observable_compositions = dict()
         indicators = dict()
