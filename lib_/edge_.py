@@ -269,13 +269,12 @@ def taxii_poll(config, source, destination, timestamp=None):
                 content_bindings=[t.CB_STIX_XML_11])
     http_response = client.callTaxiiService2(config['edge']['sites'][source]['host'], config['edge']['sites'][source]['taxii']['path'], t.VID_TAXII_XML_10, poll_request.to_xml(), port=config['edge']['sites'][source]['taxii']['port'])
     taxii_message = t.get_message_from_http_response(http_response, poll_request.message_id)
-    json_list = None
     if isinstance(taxii_message, tm10.StatusMessage):
         config['logger'].error('unhandled taxii polling error! (%s)' % taxii_message.message)
     elif isinstance(taxii_message, tm10.PollResponse):
-        endpoints = ['ips', 'domains', 'samples', 'emails', 'indicators', 'relationships']
+        observable_endpoints = ['ips', 'domains', 'samples', 'emails']
         json_ = dict()
-        for endpoint in endpoints:
+        for endpoint in observable_endpoints:
             json_[endpoint] = list()
         json_['indicators'] = dict()
         json_['relationships'] = dict()
@@ -379,9 +378,9 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
                         #...and don't process it if we already have it
                         # in the system
                         json_[endpoint].remove(blob)
-                else:
-                    total_input += 1
-                    subtotal_input[endpoint] += 1
+            else:
+                total_input += 1
+                subtotal_input[endpoint] += 1
     # get counts by for indicators to be processed...
     for i in indicators.keys():
         # check whether the indicator has already been ingested...
@@ -393,9 +392,9 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
                     #...and don't process it if we already have it
                     # in the system
                     del indicators[i]
-            else:
-                total_input += 1
-                subtotal_input['indicators'] += 1
+        else:
+            total_input += 1
+            subtotal_input['indicators'] += 1
     if total_input > 0:
         config['logger'].info('%i (total) objects to be synced between %s (edge) and %s (crits)' % (total_input, source, destination))
     problem_children = list()
