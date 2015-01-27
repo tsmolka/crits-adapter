@@ -347,13 +347,16 @@ def taxii_inbox(config, target, stix_package=None):
 def edge2crits(config, source, destination, daemon=False, now=None, last_run=None):
     # import pudb; pu.db
     observable_endpoints = ['ips', 'domains', 'samples', 'emails']
-    endpoint_trans = {'emails': 'Email', 'ips': 'IP', 'samples': 'Sample' , 'domains': 'Domain'}    # check if (and when) we synced source and destination...
+    endpoint_trans = {'emails': 'Email', 'ips': 'IP', 'samples': 'Sample' , 'domains': 'Domain'}     # check if (and when) we synced source and destination...
     if not now:
         now = util_.nowutc()
     if not last_run:
+        # didn't get last_run as an arg so check the db...
         last_run = config['db'].get_last_sync(source=source, destination=destination, direction='edge2crits').replace(tzinfo=pytz.utc)
     config['logger'].info('syncing new edge data since %s between %s and %s' % (str(last_run), source, destination))
+    # poll for new edge data...
     (json_, latest, indicators, observable_compositions) = taxii_poll(config, source, destination, last_run)
+    # setup counters for logging...
     total_input = 0
     total_output = 0
     subtotal_input = {}
@@ -362,27 +365,33 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
     subtotal_output['indicators'] = 0
     unresolvables_dict = dict()
     resolved_crits_relationships = list()
-    # get counts by for observables to be processed...
+    # get counts by endpoint for observables to be processed...
     for endpoint in observable_endpoints:
         subtotal_input[endpoint] = 0
         subtotal_output[endpoint] = 0
         for blob in json_[endpoint]:
+            # check whether the observable has already been ingested...
             sync_state = config['db'].get_object_id(source, destination, edge_id=blob['stix_id'])
             if sync_state:
                 if sync_state.get('crits_id', None):
                     if config['daemon']['debug']:
                         config['logger'].debug('edge object id %s already in system' % blob['stix_id'])
+                        #...and don't process it if we already have it
+                        # in the system
                         json_[endpoint].remove(blob)
                 else:
                     total_input += 1
                     subtotal_input[endpoint] += 1
     # get counts by for indicators to be processed...
     for i in indicators.keys():
+        # check whether the indicator has already been ingested...
         sync_state = config['db'].get_object_id(source, destination, edge_id=i)
         if sync_state:
             if sync_state.get('crits_id', None):
                 if config['daemon']['debug']:
                     config['logger'].debug('edge object id %s already in system' % i)
+                    #...and don't process it if we already have it
+                    # in the system
                     del indicators[i]
             else:
                 total_input += 1
@@ -397,11 +406,13 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
         for blob in json_[endpoint]:
             stix_id = blob['stix_id']
             del blob['stix_id']
+            # inbox the observable to crits...
             (id_, success) = crits_.crits_inbox(config, destination, endpoint, blob)
             if not success:
                 config['logger'].error('%s object with id %s could not be synced from %s (edge) to %s (crits)!' % (endpoint, str(stix_id), source, destination))
                 problem_children.append(stix_id)
             else:
+                # successfully inboxed observable...
                 if config['daemon']['debug']:
                     config['logger'].debug('%s object with id %s was synced from %s (edge) to %s (crits)' % (endpoint, str(stix_id), source, destination))
                 # check whether this observable resolves a crits indicator relationship...
@@ -417,6 +428,8 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
                         resolved_relationship_blob['rel_type'] = 'Contains'
                         resolved_relationship_blob['rel_confidence'] = 'unknown'
                         resolved_crits_relationships.append(resolved_relationship_blob)
+                # as we've now successfully processed the observable,
+                # track the related crits/json ids (by source/dest)
                 config['db'].set_object_id(source, destination, edge_id=stix_id, crits_id=endpoint + ':' + str(id_), timestamp=util_.nowutc())
                 subtotal_output[endpoint] += 1
                 total_output += 1
@@ -445,13 +458,16 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
             json_['relationships'][i] = relationships_json
         else:
             config['logger'].error('indicator %s stix could not be converted to crits json!' % str(i))
+    # sync indicators...
     for i in json_['indicators'].keys():
         stix_id = json_['indicators'][i]['stix_id']
         del json_['indicators'][i]['stix_id']
+        # inbox the indicator to crits...
         (id_, success) = crits_.crits_inbox(config, destination, 'indicators', json_['indicators'][i])
         if not success:
             config['logger'].error('%s object with id %s could not be synced from %s (edge) to %s (crits)!' % ('indicators', str(stix_id), source, destination))
         else:
+            # successfully inboxed indicator...
             if config['daemon']['debug']:
                 config['logger'].debug('%s object with id %s was synced from %s (edge) to %s (crits)' % ('indicators', str(stix_id), source, destination))
             # track unresolvable cybox observables in db so if we see
@@ -469,6 +485,8 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
                     (relationship_id_, success) = crits_.crits_inbox(config, destination, 'relationships', blob)
                     if not success:
                         config['logger'].error('unable to create crits indicator relationship %s (id %s) for crits indicator id %s!' % (blob['right_type'], blob['right_id'], id_))
+            # as we've now successfully processed the indicator, track
+            # the related crits/json ids (by source/dest)
             config['db'].set_object_id(source, destination, edge_id=stix_id, crits_id='indicators:%s' % str(id_), timestamp=util_.nowutc())
             subtotal_output['indicators'] += 1
             total_output += 1
@@ -480,6 +498,8 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
         config['logger'].info('%i (total) objects successfully synced between %s (edge) and %s (crits)' % (total_output, source, destination))
     if total_output < total_input:
         config['logger'].info('%i (total) objects could not be synced between %s (edge) and %s (crits)' % (total_input - total_output, source, destination))
+    # inbox any crits indicator relationships which were resolved by
+    # cybox observables inboxed during the current run...
     if resolved_crits_relationships:
         for blob in resolved_crits_relationships:
             stix_id = blob['stix_id']
@@ -487,6 +507,7 @@ def edge2crits(config, source, destination, daemon=False, now=None, last_run=Non
             (relationship_id_, success) = crits_.crits_inbox(config, destination, 'relationships', blob)
             if success:
                 config['logger'].debug('resolved outstanding crits indicator relationship %s (id %s) for crits indicator id %s, removing from mongo unresolved relationship tracker' % (blob['right_type'], blob['right_id'], blob['left_id']))
+                # mark the relationship as resolved in the db...
                 config['db'].resolve_crits_relationship(source, destination, crits_indicator_id=blob['left_id'], edge_observable_id=stix_id)
     # save state to disk for next run...
     if config['daemon']['debug']:
