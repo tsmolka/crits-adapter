@@ -21,5 +21,5 @@ mongo crits --eval "db.indicators.remove({})"
 # delete old logs
 rm -f /opt/soltra/edge/repository/adapters/crits/edgy_crits*.log*
 
-service httpd start
-service edgy_critsd start
+# service httpd start
+# service edgy_critsd start
