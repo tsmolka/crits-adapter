@@ -189,28 +189,29 @@ def stix_ind2json(config, source, destination, indicator, observable_composition
     indicator_json['indicator_confidence'] = util_.rgetattr(indicator, ['confidence', 'value', 'value'], default_='unknown')
     # TODO lookup the corresponding stix prop for indicator_impact
     indicator_json['indicator_impact'] = {'rating': 'unknown',}
-    if indicator.id_ in observable_compositions.keys():
-        # looks like it's an inline indicator
-        observables = observable_compositions[indicator.id_]
-        del observable_compositions[indicator.id_]
-        for observable_id in observables:
-            blob = dict()
-            blob['left_type'] = 'Indicator'
-            blob['left_id'] = None
-            rhs = config['db'].get_object_id(source, destination, edge_id=observable_id)
-            if not rhs:
-                config['logger'].error('unable to dereference observable composition for stix indicator %s!' % indicator.id_)
-                unresolvables.append(observable_id)
-            else:
-                if not rhs.get('crits_id', None):
-                    config['logger'].error('unable to dereference observable composition for stix indicator %s!' % indicator.id_)
-                else:
-                    blob['right_type'] = endpoint_trans[rhs['crits_id'].split(':')[0]]
-                    blob['right_id'] = rhs['crits_id'].split(':')[1]
-                    blob['rel_type'] = 'Contains'
-                    blob['rel_confidence'] = 'unknown'
-                    relationship_json.append(blob)
-    elif util_.rgetattr(indicator, ['observables']):
+    # if indicator.id_ in observable_compositions.keys():
+    #     # looks like it's an inline indicator
+    #     observables = observable_compositions[indicator.id_]
+    #     del observable_compositions[indicator.id_]
+    #     for observable_id in observables:
+    #         blob = dict()
+    #         blob['left_type'] = 'Indicator'
+    #         blob['left_id'] = None
+    #         rhs = config['db'].get_object_id(source, destination, edge_id=observable_id)
+    #         if not rhs:
+    #             config['logger'].error('unable to dereference observable composition for stix indicator %s!' % indicator.id_)
+    #             unresolvables.append(observable_id)
+    #         else:
+    #             if not rhs.get('crits_id', None):
+    #                 config['logger'].error('unable to dereference observable composition for stix indicator %s!' % indicator.id_)
+    #             else:
+    #                 blob['right_type'] = endpoint_trans[rhs['crits_id'].split(':')[0]]
+    #                 blob['right_id'] = rhs['crits_id'].split(':')[1]
+    #                 blob['rel_type'] = 'Contains'
+    #                 blob['rel_confidence'] = 'unknown'
+    #                 relationship_json.append(blob)
+    # elif util_.rgetattr(indicator, ['observables']):
+    if util_.rgetattr(indicator, ['observables']):
         # it's (presumably) a normal observable composition indicator
         container_observable = indicator.observables[0]
         composite_observable_id = util_.rgetattr(container_observable, ['idref'])
@@ -304,14 +305,18 @@ def taxii_poll(config, source, destination, timestamp=None):
             if stix_package.indicators:
                 for i in stix_package.indicators:
                     indicators[i.id_] = i
-                    if util_.rgetattr(i, ['observables']):
-                        observable_compositions[i.id_] = list()
-                        for observable in i.observables:
-                            if util_.rgetattr(observable, ['_idref']):
-                                # this is an inline observable and
-                                # hence has already been processed
-                                # above
-                                observable_compositions[i.id_].append(observable._idref)
+                    # TODO this was intented to address inline
+                    #      indicator observables however the logic was
+                    #      flawed and it's messing things up
+                    #
+                    # if util_.rgetattr(i, ['observables']):
+                    #     observable_compositions[i.id_] = list()
+                    #     for observable in i.observables:
+                    #         if util_.rgetattr(observable, ['_idref']):
+                    #             # this is an inline observable and
+                    #             # hence has already been processed
+                    #             # above
+                    #             observable_compositions[i.id_].append(observable._idref)
         return(json_, latest, indicators, observable_compositions)
 
 
@@ -344,7 +349,7 @@ def taxii_inbox(config, target, stix_package=None):
 
 
 def edge2crits(config, source, destination, daemon=False, now=None, last_run=None):
-    # import pudb; pu.db
+    import pudb; pu.db
     observable_endpoints = ['ips', 'domains', 'samples', 'emails']
     endpoint_trans = {'emails': 'Email', 'ips': 'IP', 'samples': 'Sample' , 'domains': 'Domain'}     # check if (and when) we synced source and destination...
     if not now:
