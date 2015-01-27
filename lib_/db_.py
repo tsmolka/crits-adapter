@@ -19,9 +19,9 @@ class DB(object):
     def __init__(self, config):
         self.host = config['daemon']['mongo']['host']
         self.port = config['daemon']['mongo']['port']
-        self.user=config['daemon']['mongo']['user']
-        self.password=config['daemon']['mongo']['pass']
-        self.logger=config['logger']
+        self.user = config['daemon']['mongo']['user']
+        self.password = config['daemon']['mongo']['pass']
+        self.logger = config['logger']
         if self.user and self.password:
             self.url = 'mongodb://%s:%s@%s:%s' % (self.user,
                                                   self.password,
@@ -45,10 +45,11 @@ class DB(object):
         self.collection.ensure_index('crits_id')
         self.collection.ensure_index('edge_id')
 
-
     def get_last_sync(self, source, destination, direction=None,):
         try:
-            doc = self.collection.find_one({'source': source, 'destination': destination, 'direction': direction})
+            doc = self.collection.find_one({'source': source,
+                                            'destination': destination,
+                                            'direction': direction})
             if doc and 'timestamp' in doc.keys():
                 return(doc['timestamp'])
             else:
@@ -58,22 +59,27 @@ class DB(object):
             self.logger.exception(e)
             exit()
 
-
-    def set_last_sync(self, source, destination, direction=None, timestamp=None):
+    def set_last_sync(self, source, destination, direction=None,
+                      timestamp=None):
         try:
-            doc = self.collection.find_one({'source': source, 'destination': destination, 'direction': direction})
+            doc = self.collection.find_one({'source': source,
+                                            'destination': destination,
+                                            'direction': direction})
             if doc:
                 self.collection.update(doc, {'$set': {'timestamp': timestamp}})
             else:
-                self.collection.insert({'source': source, 'destination': destination, 'direction': direction, 'timestamp': timestamp})
+                self.collection.insert({'source': source,
+                                        'destination': destination,
+                                        'direction': direction,
+                                        'timestamp': timestamp})
         except ConnectionFailure as e:
             self.logger.error('mongodb connection failed - exiting...')
             self.logger.exception(e)
             exit()
-        
 
     def get_object_id(self, source, destination, crits_id=None, edge_id=None):
-        if crits_id and edge_id: return None
+        if crits_id and edge_id:
+            return None
         try:
             query = {'source': source, 'destination': destination}
             if crits_id:
@@ -90,17 +96,19 @@ class DB(object):
             self.logger.exception(e)
             exit()
 
-
-    def set_object_id(self, source, destination, crits_id=None, edge_id=None, timestamp=None):
+    def set_object_id(self, source, destination, crits_id=None, edge_id=None,
+                      timestamp=None):
         try:
             query = {'source': source, 'destination': destination}
             if crits_id:
                 query['crits_id'] = crits_id
             elif edge_id:
                 query['edge_id'] = edge_id
-            doc = self.get_object_id(source, destination, crits_id=crits_id, edge_id=edge_id)
+            doc = self.get_object_id(source, destination,
+                                     crits_id=crits_id, edge_id=edge_id)
             if doc:
-                # there's already a crits-edge mapping so just update the timestamp
+                # there's already a crits-edge mapping so just update
+                # the timestamp
                 self.collection.update(doc, {'$set': {'modified': timestamp}})
             else:
                 # insert a new mapping
@@ -114,33 +122,43 @@ class DB(object):
             self.logger.exception(e)
             exit()
 
-            
-    def get_unresolved_crits_relationship(self, source, destination, edge_observable_id=None):
+    def get_pending_crits_link(self, source, destination, edge_id=None):
         try:
-            query = {'unresolved_crits_relationship': {'source': source, 'destination': destination, 'edge_observable_id': edge_observable_id}}
+            query = \
+                {'unresolved_crits_relationship':
+                 {'source': source,
+                  'destination': destination,
+                  'edge_observable_id': edge_id}}
             return(self.collection.find_one(query))
         except ConnectionFailure as e:
             self.logger.error('mongodb connection failed - exiting...')
             self.logger.exception(e)
             exit()
 
-            
-    def set_unresolved_crits_relationship(self, source, destination, crits_indicator_id=None, edge_observable_id=None):
+    def set_pending_crits_link(self, source, destination, crits_id=None,
+                               edge_id=None):
         try:
-            query = {'unresolved_crits_relationship': {'source': source, 'destination': destination, 'crits_indicator_id': crits_indicator_id, 'edge_observable_id': edge_observable_id}}
+            query = {'unresolved_crits_relationship':
+                     {'source': source,
+                      'destination': destination,
+                      'crits_indicator_id': crits_id,
+                      'edge_observable_id': edge_id}}
             self.collection.insert(query)
         except ConnectionFailure as e:
             self.logger.error('mongodb connection failed - exiting...')
             self.logger.exception(e)
             exit()
 
-
-    def resolve_crits_relationship(self, source, destination, crits_indicator_id=None, edge_observable_id=None):
+    def resolve_crits_link(self, source, destination, crits_id=None,
+                           edge_id=None):
         try:
-            query = {'unresolved_crits_relationship': {'source': source, 'destination': destination, 'crits_indicator_id': crits_indicator_id, 'edge_observable_id': edge_observable_id}}
+            query = {'unresolved_crits_relationship':
+                     {'source': source,
+                      'destination': destination,
+                      'crits_indicator_id': crits_id,
+                      'edge_observable_id': edge_id}}
             self.collection.remove(query)
         except ConnectionFailure as e:
             self.logger.error('mongodb connection failed - exiting...')
             self.logger.exception(e)
             exit()
-            
