@@ -118,11 +118,7 @@ class DB(object):
     def get_unresolved_crits_relationship(self, source, destination, edge_observable_id=None):
         try:
             query = {'unresolved_crits_relationship': {'source': source, 'destination': destination, 'edge_observable_id': edge_observable_id}}
-            doc = self.collection.find_one(query)
-            if doc:
-                return(doc)
-            else:
-                return None
+            return(self.collection.find_one(query))
         except ConnectionFailure as e:
             self.logger.error('mongodb connection failed - exiting...')
             self.logger.exception(e)
