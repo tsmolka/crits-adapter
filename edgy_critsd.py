@@ -31,6 +31,7 @@ Options:
 Please report bugs to support@soltra.com
 ''' % (default_config)
 
+
 def main():
     args = docopt(__doc__, version=__version__)
     config = util_.parse_config(args['--config'])

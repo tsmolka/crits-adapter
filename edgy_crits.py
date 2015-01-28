@@ -16,11 +16,11 @@ __version__ = '0.2'
 app_path = os.path.split(os.path.abspath(__file__))[0]
 default_config = os.path.join(app_path, 'config.yaml')
 
-__doc__ = '''edgy_crits.py: bidirectional synchronization between Soltra Edge and MITRE CRITs
+__doc__ = '''edgy_crits.py: bidirectional synch between Soltra Edge and CRITs
 
 Usage:
-    edgy_crits.py [--config=CONFIG] --sync-crits-to-edge --source=SOURCE --destination=DESTINATION
-    edgy_crits.py [--config=CONFIG] --sync-edge-to-crits --source=SOURCE --destination=DESTINATION
+    edgy_crits.py [--config=CONFIG] --c2e --src=SRC --dest=DEST
+    edgy_crits.py [--config=CONFIG] --e2c --src=SRC --dest=DEST
 
     edgy_crits.py --help
     edgy_crits.py --version
@@ -30,8 +30,8 @@ Options:
     -c CONFIG --config=CONFIG         Specify config file to use [default: %s].
     -h --help                         Show this screen.
     -V --version                      Show version.
-    SOURCE...                         Specify host defined in config.yaml
-    DESTINATION...                    Specify host defined in config.yaml
+    SRC...                            Specify host defined in config.yaml
+    DEST...                           Specify host defined in config.yaml
 
 Please report bugs to support@soltra.com
 ''' % (default_config)
@@ -46,14 +46,18 @@ def main():
     db = db_.DB(config)
     config['db'] = db
     config['daemon']['app_path'] = app_path
-    if args['--sync-crits-to-edge']:
-        if args['--source'] in config['crits']['sites'].keys() and args['--destination'] in config['edge']['sites'].keys():
-            logger.info('initiating crits=>edge sync between %s and %s' % (args['--source'], args['--destination']))
-            crits2edge(config, args['--source'], args['--destination'])
-    elif args['--sync-edge-to-crits']:
-        if args['--source'] in config['edge']['sites'].keys() and args['--destination'] in config['crits']['sites'].keys():
-            logger.info('initiating edge=>crits sync between %s and %s' % (args['--source'], args['--destination']))
-            edge2crits(config, args['--source'], args['--destination'])
+    if args['--c2e']:
+        if args['--src'] in config['crits']['sites'].keys() \
+           and args['--dest'] in config['edge']['sites'].keys():
+            logger.info('initiating crits=>edge sync between %s and %s'
+                        % (args['--src'], args['--dest']))
+            crits2edge(config, args['--src'], args['--dest'])
+    elif args['--e2c']:
+        if args['--src'] in config['edge']['sites'].keys() and \
+           args['--dest'] in config['crits']['sites'].keys():
+            logger.info('initiating edge=>crits sync between %s and %s'
+                        % (args['--src'], args['--dest']))
+            edge2crits(config, args['--src'], args['--dest'])
 
 
 if __name__ == '__main__':
