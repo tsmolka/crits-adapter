@@ -30,11 +30,14 @@ import yaml
 
 
 def mark_crits_releasability(config, source):
+    '''add releasability markings to crits json'''
     json = dict()
     json['releasability'] = \
         [{'name':
           config['crits']['sites'][source]['api']['source'],
-          'analyst': 'toor', 'instances': []}]
+          'analyst':
+          config['crits']['sites'][source]['api']['user'],
+          'instances': []}]
     json['c-releasability.name'] = \
         config['crits']['sites'][source]['api']['source']
     json['releasability.name'] = \
@@ -302,6 +305,48 @@ def stix_ind2json(config, source, destination, indicator,
     return(indicator_json, relationship_json, unresolvables)
 
 
+
+def process_taxii_content_blocks(config, content_block):
+    '''process taxii content blocks'''
+    observable_endpoints = ['ips', 'domains', 'samples', 'emails']
+    json_ = dict()
+    for endpoint in observable_endpoints:
+        json_[endpoint] = list()
+    json_['indicators'] = dict()
+    json_['relationships'] = dict()
+    observable_compositions = dict()
+    indicators = dict()
+    xml = StringIO.StringIO(content_block.content)
+    stix_package = STIXPackage.from_xml(xml)
+    xml.close()
+    if stix_package.observables:
+        for observable in stix_package.observables.observables:
+            if util_.rgetattr(observable, ['object_']):
+                (json, endpoint) = \
+                    cybox_observable_to_json(config, observable)
+                if json:
+                    # mark crits releasability...
+                    # json.update(mark_crits_releasability(
+                    #     config, source))
+                    json_[endpoint].append(json)
+                else:
+                    config['logger'].error('observable %s stix '
+                                           'could not be converted '
+                                           'to crits json!'
+                                           % str(observable.id_))
+            elif util_.rgetattr(observable, ['observable_composition',
+                                             'observables']):
+                observable_compositions[observable.id_] = observable
+            else:
+                config['logger'].error('observable %s stix could not '
+                                       'be converted to crits json!'
+                                       % str(observable.id_))
+    if stix_package.indicators:
+        for i in stix_package.indicators:
+            indicators[i.id_] = i
+    return(json_, indicators, observable_compositions)
+
+
 def taxii_poll(config, source, destination, timestamp=None):
     '''pull stix from edge via taxii'''
     client = tc.HttpClient()
@@ -338,42 +383,19 @@ def taxii_poll(config, source, destination, timestamp=None):
             json_[endpoint] = list()
         json_['indicators'] = dict()
         json_['relationships'] = dict()
-        # TODO use a generator here...
         observable_compositions = dict()
         indicators = dict()
         for content_block in taxii_message.content_blocks:
-            xml = StringIO.StringIO(content_block.content)
-            stix_package = STIXPackage.from_xml(xml)
-            xml.close()
-            if stix_package.observables:
-                for observable in stix_package.observables.observables:
-                    if util_.rgetattr(observable, ['object_']):
-                        (json, endpoint) = \
-                            cybox_observable_to_json(config, observable)
-                        if json:
-                            # mark crits releasability...
-                            # json.update(mark_crits_releasability(
-                            #     config, source))
-                            json_[endpoint].append(json)
-                        else:
-                            config['logger'].error('observable %s stix '
-                                                   'could not be converted '
-                                                   'to crits json!'
-                                                   % str(observable.id_))
-                    elif util_.rgetattr(observable, ['observable_composition',
-                                                     'observables']):
-                        observable_compositions[observable.id_] = observable
-                    else:
-                        config['logger'].error('observable %s stix could not '
-                                               'be converted to crits json!'
-                                               % str(observable.id_))
-            if stix_package.indicators:
-                for i in stix_package.indicators:
-                    indicators[i.id_] = i
+            (__json, __indicators, __observable_compositions) = \
+                process_taxii_content_blocks(config, content_block)
+            json_.update(__json)
+            indicators.update(__indicators)
+            observable_compositions.update(__observable_compositions)
         return(json_, latest, indicators, observable_compositions)
 
 
 def taxii_inbox(config, target, stix_package=None):
+    '''inbox a stix package via taxii'''
     if stix_package:
         stixroot = lxml.etree.fromstring(stix_package.to_xml())
         client = tc.HttpClient()
