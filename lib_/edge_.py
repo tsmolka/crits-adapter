@@ -202,7 +202,7 @@ def cybox_email_to_json(config, observable):
 
 
 def cybox_observable_to_json(config, observable):
-    '''translate a straight-up cybox observable to crits json'''
+    '''translate a cybox observable to crits json'''
     props = util_.rgetattr(observable.object_, ['properties'])
     if props and isinstance(props, Address):
         (json, endpoint) = cybox_address_to_json(config, observable)
@@ -222,99 +222,53 @@ def cybox_observable_to_json(config, observable):
         return(None, None)
 
 
-def stix_ind2json(config, src, dest, indicator,
-                  observable_compositions, problem_children):
-    '''translate a stix indicator to crits json'''
-    endpoint_trans = {'emails': 'Email', 'ips': 'IP',
-                      'samples': 'Sample', 'domains': 'Domain'}
-    indicator_json = dict()
-    relationship_json = list()
-    unresolvables = list()
-    indicator_json['stix_id'] = indicator.id_
-    indicator_json['type'] = 'Reference'
-    indicator_json['value'] = util_.rgetattr(indicator, ['title'],
-                                             default_='unknown')
-    indicator_json['indicator_confidence'] = \
-        util_.rgetattr(indicator, ['confidence', 'value', 'value'],
-                       default_='unknown')
-    # TODO lookup the corresponding stix prop for indicator_impact
-    indicator_json['indicator_impact'] = {'rating': 'unknown'}
-    if util_.rgetattr(indicator, ['observables']):
-        # it's (presumably) a normal observable composition indicator
-        container_observable = indicator.observables[0]
-        composite_observable_id = util_.rgetattr(container_observable,
-                                                 ['idref'])
-        if not composite_observable_id:
-            config['logger'].error('unable to dereference observable '
-                                   'composition for stix indicator %s!'
-                                   % indicator.id_)
-        else:
-            composite_observable = observable_compositions.get(
-                composite_observable_id, None)
-            if not composite_observable:
-                config['logger'].error('unable to dereference observable '
-                                       'composition for stix indicator %s!'
-                                       % indicator.id_)
+def process_observables(config, src, dest, observables):
+    for o in observables.keys():
+        json = dict()
+        if util_.rgetattr(observables[o], ['object_']):
+            (json, endpoint) = cybox_observable_to_json(config, observables[o])
+            if json:
+                # mark crits releasability
+                json.update(mark_crits_releasability(config, src))
             else:
-                observables_list = \
-                    util_.rgetattr(composite_observable,
-                                   ['observable_composition',
-                                    'observables'])
-                if not observables_list:
-                    config['logger'].error('unable to dereference observable '
-                                           'composition for stix indicator %s!'
-                                           % indicator.id_)
-                else:
-                    for i in observables_list:
-                        if i.idref in problem_children:
-                            config['logger'].error('observable %s '
-                                                   '(part of observable '
-                                                   'composition for stix '
-                                                   'indicator %s) could '
-                                                   'not be inboxed to '
-                                                   'crits; ignoring...'
-                                                   % (i.idref, indicator.id_))
-                            observables_list.remove(i)
-                            continue
-                        blob = dict()
-                        blob['left_type'] = 'Indicator'
-                        blob['left_id'] = None
-                        rhs = config['db'].get_object_id(src, dest,
-                                                         edge_id=i.idref)
-                        if not rhs:
-                            config['logger'].error('unable to dereference '
-                                                   'observable composition '
-                                                   'for stix indicator %s!'
-                                                   % indicator.id_)
-                            unresolvables.append(i.idref)
-                        else:
-                            if not rhs.get('crits_id', None):
-                                config['logger'].error('unable to dereference '
-                                                       'observable '
-                                                       'composition '
-                                                       'for stix indicator %s!'
-                                                       % indicator.id_)
-                            else:
-                                blob['right_type'] = \
-                                    endpoint_trans[
-                                        rhs['crits_id'].split(':')[0]]
-                                blob['right_id'] = \
-                                    rhs['crits_id'].split(':')[1]
-                                blob['rel_type'] = 'Contains'
-                                blob['rel_confidence'] = 'unknown'
-                                relationship_json.append(blob)
-    return(indicator_json, relationship_json, unresolvables)
+                config['logger'].error('observable %s stix '
+                                       'could not be converted '
+                                       'to crits json!'
+                                       % (o))
+                continue
+                    # don't process it if we already have it
+                del observables[o]
+                continue
+            else:
+            # inbox the observable to crits
+            (id_, success) = crits_.crits_inbox(config, dest,
+                                                endpoint, json, src=src, edge_id=o)
+            if not success:
+                config['logger'].error('%s object with id %s could not '
+                                       'be synced from %s (edge) to '
+                                       '%s (crits)!'
+                                       % (endpoint, o, src, dest))
+            else:
+                # successfully inboxed observable
+                if config['daemon']['debug']:
+                    config['logger'].debug('%s object with id %s was synced '
+                                           'from %s (edge) to %s (crits)'
+                                           % (endpoint, o, src, dest))
+            # observable_compositions = dict()
+            # elif util_.rgetattr(observable, ['observable_composition',
+            #                                  'observables']):
+            #     observable_compositions[observable.id_] = observable
+            # else:
+            #     config['logger'].error('observable %s stix could not '
+            #                            'be converted to crits json!'
+            #                            % str(observable.id_))
+
 
 
 def process_taxii_content_blocks(config, content_block):
     '''process taxii content blocks'''
-    # observable_endpoints = ['ips', 'domains', 'samples', 'emails']
-    # json_ = dict()
-    # for endpoint in observable_endpoints:
-    #     json_[endpoint] = list()
     # json_['indicators'] = dict()
     # json_['relationships'] = dict()
-    # observable_compositions = dict()
     indicators = dict()
     observables = dict()
     xml = StringIO.StringIO(content_block.content)
@@ -323,25 +277,6 @@ def process_taxii_content_blocks(config, content_block):
     if stix_package.observables:
         for o in stix_package.observables.observables:
             observables[o.id_] = o
-            # if util_.rgetattr(observable, ['object_']):
-            #     (json, endpoint) = \
-            #         cybox_observable_to_json(config, observable)
-            #     if json:
-            #         # mark crits releasability...
-            #         json.update(mark_crits_releasability(config, src))
-            #         json_[endpoint].append(json)
-            #     else:
-            #         config['logger'].error('observable %s stix '
-            #                                'could not be converted '
-            #                                'to crits json!'
-            #                                % str(observable.id_))
-            # elif util_.rgetattr(observable, ['observable_composition',
-            #                                  'observables']):
-            #     observable_compositions[observable.id_] = observable
-            # else:
-            #     config['logger'].error('observable %s stix could not '
-            #                            'be converted to crits json!'
-            #                            % str(observable.id_))
     if stix_package.indicators:
         for i in stix_package.indicators:
             indicators[i.id_] = i
@@ -378,21 +313,6 @@ def taxii_poll(config, src, dest, timestamp=None):
         config['logger'].error('unhandled taxii polling error! (%s)'
                                % taxii_message.message)
     elif isinstance(taxii_message, tm10.PollResponse):
-        # observable_endpoints = ['ips', 'domains', 'samples', 'emails']
-        # json_ = dict()
-        # for endpoint in observable_endpoints:
-        #     json_[endpoint] = list()
-        # json_['indicators'] = dict()
-        # json_['relationships'] = dict()
-        # observable_compositions = dict()
-        # indicators = dict()
-        # for content_block in taxii_message.content_blocks:
-        #     (__json, __indicators, __observable_compositions) = \
-        #         process_taxii_content_blocks(config, content_block)
-        #     json_.update(__json)
-        #     indicators.update(__indicators)
-        #     observable_compositions.update(__observable_compositions)
-        # return(json_, latest, indicators, observable_compositions)
         indicators = dict()
         observables = dict()
         for content_block in taxii_message.content_blocks:
@@ -455,91 +375,16 @@ def edge2crits(config, src, dest, daemon=False, now=None,
         now = util_.nowutc()
     if not last_run:
         # didn't get last_run as an arg so check the db...
-        last_run = config['db'].get_last_sync(
-            src=src, dest=dest,
-            direction='edge2crits').replace(tzinfo=pytz.utc)
+        last_run = config['db'].get_last_sync(src=src, dest=dest,
+                                              direction='edge2crits')
     config['logger'].info('syncing new edge data since %s between %s and %s'
                           % (str(last_run), src, dest))
     # poll for new edge data...
     (latest, indicators, observables) = \
         taxii_poll(config, src, dest, last_run)
-    # # setup counters for logging...
-    # total_input = 0
-    # total_output = 0
-    # subtotal_input = {}
-    # subtotal_output = {}
-    # subtotal_input['indicators'] = 0
-    # subtotal_output['indicators'] = 0
-    # unresolvables_dict = dict()
-    # resolved_crits_relationships = list()
-    # # get counts by endpoint for observables to be processed...
-    # for endpoint in observable_endpoints:
-    #     subtotal_input[endpoint] = 0
-    #     subtotal_output[endpoint] = 0
-    #     for blob in json_[endpoint]:
-    #         # check whether the observable has already been ingested...
-    #         sync_state = \
-    #             config['db'].get_object_id(src, dest,
-    #                                        edge_id=blob['stix_id'])
-    #         if sync_state:
-    #             if sync_state.get('crits_id', None):
-    #                 if config['daemon']['debug']:
-    #                     config['logger'].debug('edge object id %s '
-    #                                            'already in system'
-    #                                            % blob['stix_id'])
-    #                     # ...and don't process it if we already have it
-    #                     # in the system
-    #                     json_[endpoint].remove(blob)
-    #         else:
-    #             total_input += 1
-    #             subtotal_input[endpoint] += 1
-    # # get counts by for indicators to be processed...
-    # for i in indicators.keys():
-    #     # check whether the indicator has already been ingested...
-    #     sync_state = config['db'].get_object_id(src, dest, edge_id=i)
-    #     if sync_state:
-    #         if sync_state.get('crits_id', None):
-    #             if config['daemon']['debug']:
-    #                 config['logger'].debug('edge object id %s '
-    #                                        'already in system' % i)
-    #                 # ...and don't process it if we already have it
-    #                 # in the system
-    #                 del indicators[i]
-    #     else:
-    #         total_input += 1
-    #         subtotal_input['indicators'] += 1
-    # if total_input > 0:
-    #     config['logger'].info('%i (total) objects to be synced between '
-    #                           '%s (edge) and %s (crits)'
-    #                           % (total_input, src, dest))
-    # problem_children = list()
-    # # sync observables...
-    # for endpoint in observable_endpoints:
-    #     if subtotal_input[endpoint] > 0:
-    #         config['logger'].info('%i %s objects to be synced between '
-    #                               '%s (edge) and %s (crits)'
-    #                               % (subtotal_input[endpoint],
-    #                                  endpoint, src, dest))
-    #     for blob in json_[endpoint]:
-    #         stix_id = blob['stix_id']
-    #         del blob['stix_id']
-    #         # inbox the observable to crits...
-    #         (id_, success) = crits_.crits_inbox(config, dest,
-    #                                             endpoint, blob)
-    #         if not success:
-    #             config['logger'].error('%s object with id %s could not '
-    #                                    'be synced from %s (edge) to '
-    #                                    '%s (crits)!'
-    #                                    % (endpoint, str(stix_id),
-    #                                       src, dest))
-    #             problem_children.append(stix_id)
-    #         else:
-    #             # successfully inboxed observable...
-    #             if config['daemon']['debug']:
-    #                 config['logger'].debug('%s object with id %s was synced '
-    #                                        'from %s (edge) to %s (crits)'
-    #                                        % (endpoint, str(stix_id),
-    #                                           src, dest))
+    process_observables(config, src, dest, observables)
+    # process_indicators(config, src, dest, indicators)
+    
     #             # check whether this observable resolves a crits
     #             # indicator relationship...
     #             doc = \
@@ -561,26 +406,6 @@ def edge2crits(config, src, dest, daemon=False, now=None,
     #                         'unknown'
     #                     resolved_crits_relationships.append(
     #                         resolved_relationship_blob)
-    #             # as we've now successfully processed the observable,
-    #             # track the related crits/json ids (by src/dest)
-    #             config['db'].set_object_id(src, dest,
-    #                                        edge_id=stix_id,
-    #                                        crits_id=endpoint +
-    #                                        ':' + str(id_),
-    #                                        timestamp=util_.nowutc())
-    #             subtotal_output[endpoint] += 1
-    #             total_output += 1
-    #     if subtotal_output[endpoint] > 0:
-    #         config['logger'].info('%i %s objects successfully synced between '
-    #                               '%s (edge) and %s (crits)'
-    #                               % (subtotal_output[endpoint], endpoint,
-    #                                  src, dest))
-    #     if subtotal_output[endpoint] < subtotal_input[endpoint]:
-    #         config['logger'].info('%i %s objects could not be synced between '
-    #                               '%s (edge) and %s (crits)'
-    #                               % (subtotal_input[endpoint] -
-    #                                  subtotal_output[endpoint],
-    #                                  endpoint, src, dest))
     # # generate json for indicators (must be after observables because
     # # we need to know what id crits assigned for related observables)
     # for i in indicators.keys():
@@ -712,3 +537,87 @@ def edge2crits(config, src, dest, daemon=False, now=None,
         return(None)
     else:
         return(util_.nowutc())
+
+
+def stix_ind2json(config, src, dest, indicator,
+                  observable_compositions, problem_children):
+    '''translate a stix indicator to crits json'''
+    endpoint_trans = {'emails': 'Email', 'ips': 'IP',
+                      'samples': 'Sample', 'domains': 'Domain'}
+    indicator_json = dict()
+    relationship_json = list()
+    unresolvables = list()
+    indicator_json['stix_id'] = indicator.id_
+    indicator_json['type'] = 'Reference'
+    indicator_json['value'] = util_.rgetattr(indicator, ['title'],
+                                             default_='unknown')
+    indicator_json['indicator_confidence'] = \
+        util_.rgetattr(indicator, ['confidence', 'value', 'value'],
+                       default_='unknown')
+    # TODO lookup the corresponding stix prop for indicator_impact
+    indicator_json['indicator_impact'] = {'rating': 'unknown'}
+    if util_.rgetattr(indicator, ['observables']):
+        # it's (presumably) a normal observable composition indicator
+        container_observable = indicator.observables[0]
+        composite_observable_id = util_.rgetattr(container_observable,
+                                                 ['idref'])
+        if not composite_observable_id:
+            config['logger'].error('unable to dereference observable '
+                                   'composition for stix indicator %s!'
+                                   % indicator.id_)
+        else:
+            composite_observable = observable_compositions.get(
+                composite_observable_id, None)
+            if not composite_observable:
+                config['logger'].error('unable to dereference observable '
+                                       'composition for stix indicator %s!'
+                                       % indicator.id_)
+            else:
+                observables_list = \
+                    util_.rgetattr(composite_observable,
+                                   ['observable_composition',
+                                    'observables'])
+                if not observables_list:
+                    config['logger'].error('unable to dereference observable '
+                                           'composition for stix indicator %s!'
+                                           % indicator.id_)
+                else:
+                    for i in observables_list:
+                        if i.idref in problem_children:
+                            config['logger'].error('observable %s '
+                                                   '(part of observable '
+                                                   'composition for stix '
+                                                   'indicator %s) could '
+                                                   'not be inboxed to '
+                                                   'crits; ignoring...'
+                                                   % (i.idref, indicator.id_))
+                            observables_list.remove(i)
+                            continue
+                        blob = dict()
+                        blob['left_type'] = 'Indicator'
+                        blob['left_id'] = None
+                        rhs = config['db'].get_object_id(src, dest,
+                                                         edge_id=i.idref)
+                        if not rhs:
+                            config['logger'].error('unable to dereference '
+                                                   'observable composition '
+                                                   'for stix indicator %s!'
+                                                   % indicator.id_)
+                            unresolvables.append(i.idref)
+                        else:
+                            if not rhs.get('crits_id', None):
+                                config['logger'].error('unable to dereference '
+                                                       'observable '
+                                                       'composition '
+                                                       'for stix indicator %s!'
+                                                       % indicator.id_)
+                            else:
+                                blob['right_type'] = \
+                                    endpoint_trans[
+                                        rhs['crits_id'].split(':')[0]]
+                                blob['right_id'] = \
+                                    rhs['crits_id'].split(':')[1]
+                                blob['rel_type'] = 'Contains'
+                                blob['rel_confidence'] = 'unknown'
+                                relationship_json.append(blob)
+    return(indicator_json, relationship_json, unresolvables)
