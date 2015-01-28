@@ -197,7 +197,7 @@ def cybox_email_to_json(config, observable):
     return(json, endpoint)
 
 
-def cybox_observeable_to_json(config, observable):
+def cybox_observable_to_json(config, observable):
     '''translate a straight-up cybox observable to crits json'''
     props = util_.rgetattr(observable.object_, ['properties'])
     if props and isinstance(props, Address):
@@ -210,6 +210,8 @@ def cybox_observeable_to_json(config, observable):
         (json, endpoint) = cybox_file_to_json(config, observable)
     elif props and isinstance(props, EmailMessage):
         (json, endpoint) = cybox_email_to_json(config, observable)
+    if json and endpoint:
+        return(json, endpoint)
     else:
         config['logger'].error('unsupported stix object type %s!' %
                                type(props))
@@ -347,7 +349,7 @@ def taxii_poll(config, source, destination, timestamp=None):
                 for observable in stix_package.observables.observables:
                     if util_.rgetattr(observable, ['object_']):
                         (json, endpoint) = \
-                            cybox_observeable_to_json(config, observable)
+                            cybox_observable_to_json(config, observable)
                         if json:
                             # mark crits releasability...
                             # json.update(mark_crits_releasability(
