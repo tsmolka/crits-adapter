@@ -24,7 +24,6 @@ import libtaxii.messages_10 as tm10
 import libtaxii.messages_11 as tm11
 import log_
 import lxml.etree
-import pytz
 import util_
 import yaml
 
@@ -239,7 +238,6 @@ def process_observables(config, src, dest, observables):
                     # don't process it if we already have it
                 del observables[o]
                 continue
-            else:
             # inbox the observable to crits
             (id_, success) = crits_.crits_inbox(config, dest,
                                                 endpoint, json, src=src, edge_id=o)
