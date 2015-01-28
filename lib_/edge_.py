@@ -32,16 +32,17 @@ import yaml
 def mark_crits_releasability(config, source):
     '''add releasability markings to crits json'''
     json = dict()
-    json['releasability'] = \
-        [{'name':
-          config['crits']['sites'][source]['api']['source'],
-          'analyst':
-          config['crits']['sites'][source]['api']['user'],
-          'instances': []}]
-    json['c-releasability.name'] = \
-        config['crits']['sites'][source]['api']['source']
-    json['releasability.name'] = \
-        config['crits']['sites'][source]['api']['source']
+    if config['crits']['sites'][source]['api']['use_releasability']:
+        json['releasability'] = \
+            [{'name':
+              config['crits']['sites'][source]['api']['releasability'],
+              'analyst':
+              config['crits']['sites'][source]['api']['user'],
+              'instances': []}]
+        json['c-releasability.name'] = \
+            config['crits']['sites'][source]['api']['releasability']
+        json['releasability.name'] = \
+            config['crits']['sites'][source]['api']['releasability']
     return(json)
 
 
@@ -305,7 +306,6 @@ def stix_ind2json(config, source, destination, indicator,
     return(indicator_json, relationship_json, unresolvables)
 
 
-
 def process_taxii_content_blocks(config, content_block):
     '''process taxii content blocks'''
     observable_endpoints = ['ips', 'domains', 'samples', 'emails']
@@ -326,8 +326,7 @@ def process_taxii_content_blocks(config, content_block):
                     cybox_observable_to_json(config, observable)
                 if json:
                     # mark crits releasability...
-                    # json.update(mark_crits_releasability(
-                    #     config, source))
+                    json.update(mark_crits_releasability(config, source))
                     json_[endpoint].append(json)
                 else:
                     config['logger'].error('observable %s stix '
@@ -583,14 +582,14 @@ def edge2crits(config, source, destination, daemon=False, now=None,
             unresolvables_dict[indicator_json['stix_id']] = unresolvables
         if indicator_json:
             # mark crits releasability...
-            # json.update(mark_crits_releasability( config, source))
+            indicator_json.update(mark_crits_releasability(config, source))
             json_['indicators'][i] = indicator_json
         else:
             config['logger'].error('indicator %s stix could not be converted '
                                    'to crits json!' % str(i))
         if relationships_json:
             # mark crits releasability...
-            # json.update(mark_crits_releasability( config, source))
+            relationships_json.update(mark_crits_releasability(config, source))
             json_['relationships'][i] = relationships_json
         else:
             config['logger'].error('indicator %s stix could not be converted '
