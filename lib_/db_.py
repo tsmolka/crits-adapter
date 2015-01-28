@@ -30,13 +30,8 @@ class DB(object):
         else:
             self.url = 'mongodb://%s:%s' % (self.host,
                                             self.port)
-        try:
-            self.logger.info('initializing mongodb connection...')
-            self.client = MongoClient(self.url)
-        except ConnectionFailure as e:
-            self.logger.error('mongodb connection failed - exiting...')
-            self.logger.exception(e)
-            exit()
+        self.logger.info('initializing mongodb connection...')
+        self.client = MongoClient(self.url)
         self.db = self.client[config['daemon']['mongo']['db']]
         self.collection = self.db[config['daemon']['mongo']['collection']]
         self.logger.info('updating mongodb indices...')
@@ -46,18 +41,13 @@ class DB(object):
         self.collection.ensure_index('edge_id')
 
     def get_last_sync(self, src, dest, direction=None,):
-        try:
-            doc = self.collection.find_one({'src': src,
-                                            'dest': dest,
-                                            'direction': direction})
-            if doc and 'timestamp' in doc.keys():
-                return(doc['timestamp'])
-            else:
-                return(util_.epoch_start())
-        except ConnectionFailure as e:
-            self.logger.error('mongodb connection failed - exiting...')
-            self.logger.exception(e)
-            exit()
+        doc = self.collection.find_one({'src': src,
+                                        'dest': dest,
+                                        'direction': direction})
+        if doc and 'timestamp' in doc.keys():
+            return(doc['timestamp'].replace(tzinfo=pytz.utc))
+        else:
+            return(util_.epoch_start().replace(tzinfo=pytz.utc))
 
     def set_last_sync(self, src, dest, direction=None,
                       timestamp=None):
@@ -78,49 +68,32 @@ class DB(object):
             exit()
 
     def get_object_id(self, src, dest, crits_id=None, edge_id=None):
-        if crits_id and edge_id:
+        query = {'src': src, 'dest': dest}
+        if crits_id:
+            query['crits_id'] = crits_id
+        if edge_id:
+            query['edge_id'] = edge_id
+        doc = self.collection.find_one(query)
+        if doc:
+            return(doc)
+        else:
             return None
-        try:
-            query = {'src': src, 'dest': dest}
-            if crits_id:
-                query['crits_id'] = crits_id
-            elif edge_id:
-                query['edge_id'] = edge_id
-            doc = self.collection.find_one(query)
-            if doc:
-                return(doc)
-            else:
-                return None
-        except ConnectionFailure as e:
-            self.logger.error('mongodb connection failed - exiting...')
-            self.logger.exception(e)
-            exit()
 
-    def set_object_id(self, src, dest, crits_id=None, edge_id=None,
-                      timestamp=None):
-        try:
-            query = {'src': src, 'dest': dest}
-            if crits_id:
-                query['crits_id'] = crits_id
-            elif edge_id:
-                query['edge_id'] = edge_id
-            doc = self.get_object_id(src, dest,
-                                     crits_id=crits_id, edge_id=edge_id)
-            if doc:
-                # there's already a crits-edge mapping so just update
-                # the timestamp
-                self.collection.update(doc, {'$set': {'modified': timestamp}})
-            else:
-                # insert a new mapping
-                query['edge_id'] = edge_id
-                query['crits_id'] = crits_id
-                query['created'] = util_.nowutc()
-                query['modified'] = query['created']
-                self.collection.insert(query)
-        except ConnectionFailure as e:
-            self.logger.error('mongodb connection failed - exiting...')
-            self.logger.exception(e)
-            exit()
+    def set_object_id(self, src, dest, crits_id=None, edge_id=None):
+        timestamp=util_.nowutc()
+        query = {'src': src, 'dest': dest,
+                 'crits_id': crits_id, 'edge_id': edge_id}
+        doc = self.get_object_id(src, dest, crits_id=crits_id, edge_id=edge_id)
+        if doc:
+            # there's already a crits-edge mapping so just update
+            # the timestamp
+            self.collection.update(doc, {'$set': {'modified': timestamp}})
+        else:
+            # insert a new mapping
+            query['created'] = timestamp
+            query['modified'] = timestamp
+            self.collection.insert(query)
+
 
     def get_pending_crits_link(self, src, dest, edge_id=None):
         try:
