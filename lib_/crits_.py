@@ -19,7 +19,6 @@ from stix.utils import set_id_namespace as set_stix_id_namespace
 import datetime
 import edge_
 import json
-import pytz
 import requests
 import util_
 import yaml
@@ -78,12 +77,12 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
     data.update(json)
     if src and edge_id:
         # check whether this has already been ingested
-        sync_state = config['db'].get_object_id(src, dest, edge_id=o)
+        sync_state = config['db'].get_object_id(src, dest, edge_id=edge_id)
         if sync_state and sync_state.get('crits_id', None):
             if config['daemon']['debug']:
                 config['logger'].debug('edge object id %s (from %s)'
                                        'already in crits (%s) as %s'
-                                       % (o, src, dest,
+                                       % (edge_id, src, dest,
                                           sync_state['crits_id']))
         return(sync_state['crits_id'], True)
     if config['crits']['sites'][dest]['api']['ssl']:
@@ -274,7 +273,6 @@ def crits2edge(config, src, dest, daemon=False,
         last_run = config['db'].get_last_sync(src=src,
                                               dest=dest,
                                               direction='crits2edge')
-        last_run = last_run.replace(tzinfo=pytz.utc)
     config['logger'].info('syncing new crits data since %s between '
                           '%s and %s' % (str(last_run), src, dest))
     cybox_endpoints = ['ips', 'domains', 'samples', 'emails', 'indicators']
@@ -289,11 +287,12 @@ def crits2edge(config, src, dest, daemon=False,
             sync_state = config['db'].get_object_id(src, dest,
                                                     crits_id=endpoint + ':'
                                                     + str(id_))
-            if sync_state:
-                if sync_state.get('edge_id', None):
-                    if config['daemon']['debug']:
-                        config['logger'].debug('crits object id %s already '
-                                               'in system' % id_)
+            if sync_state and sync_state.get('edge_id', None):
+                if config['daemon']['debug']:
+                    config['logger'].debug('crits object id %s (from %s)'
+                                       'already in edge (%s) as %s'
+                                       % (id_, src, dest,
+                                          sync_state['edge_id']))
                     ids[endpoint].remove(id_)
         subtotal_input[endpoint] = len(ids[endpoint])
         subtotal_output[endpoint] = 0
@@ -341,11 +340,11 @@ def crits2edge(config, src, dest, daemon=False,
                         total_input -= 1
                         subtotal_output[endpoint] += 1
                         total_output += 1
+                        # track the related crits/json ids (by src/dest)
                         config['db'].set_object_id(src, dest,
                                                    edge_id=indicator.id_,
                                                    crits_id=endpoint + ':'
-                                                   + crits_id,
-                                                   timestamp=util_.nowutc())
+                                                   + crits_id)
                 else:
                     observable = json2cybox(config, src, dest, endpoint, json_)
                     if not observable:
@@ -376,8 +375,7 @@ def crits2edge(config, src, dest, daemon=False,
                         config['db'].set_object_id(src, dest,
                                                    edge_id=observable.id_,
                                                    crits_id=endpoint + ':'
-                                                   + crits_id,
-                                                   timestamp=util_.nowutc())
+                                                   + crits_id)
         if subtotal_output[endpoint] > 0:
             config['logger'].info('%i %s objects successfully synced between '
                                   '%s (crits) and %s (edge)'
