@@ -65,7 +65,7 @@ def crits_poll(config, src, endpoint, id_=None):
     return(id_, json_output)
 
 
-def crits_inbox(config, dest, endpoint, json):
+def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
     '''upload data to crits via api, return object id if successful'''
     url = crits_url(config, dest)
     allow_self_signed = \
@@ -76,6 +76,16 @@ def crits_inbox(config, dest, endpoint, json):
             'username': config['crits']['sites'][dest]['api']['user'],
             'source': config['crits']['sites'][dest]['api']['source']}
     data.update(json)
+    if src and edge_id:
+        # check whether this has already been ingested
+        sync_state = config['db'].get_object_id(src, dest, edge_id=o)
+        if sync_state and sync_state.get('crits_id', None):
+            if config['daemon']['debug']:
+                config['logger'].debug('edge object id %s (from %s)'
+                                       'already in crits (%s) as %s'
+                                       % (o, src, dest,
+                                          sync_state['crits_id']))
+        return(sync_state['crits_id'], True)
     if config['crits']['sites'][dest]['api']['ssl']:
         r = requests.post(url + endpoint + '/',
                           data=data,
@@ -84,8 +94,14 @@ def crits_inbox(config, dest, endpoint, json):
         r = requests.post(url + endpoint + '/', data=data)
     json_output = r.json()
     result_code = json_output[u'return_code']
+    id_ = None
     success = r.status_code in (200, 201) and result_code == 0
-    id_ = json_output.get(u'id')
+    if success:
+        id_ = json_output.get(u'id')
+        if src and edge_id:
+            # track the related crits/json ids (by src/dest)
+            config['db'].set_object_id(src, dest, edge_id=edge_id,
+                                       crits_id=endpoint + ':' + id_)
     return(id_, success)
 
 
