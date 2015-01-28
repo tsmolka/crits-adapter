@@ -26,32 +26,32 @@ import yaml
 import sys
 
 
-def crits_url(config, target):
+def crits_url(config, host):
     '''assemble base url for crits api'''
     url = str()
-    if config['crits']['sites'][target]['api']['ssl']:
+    if config['crits']['sites'][host]['api']['ssl']:
         url += 'https://'
     else:
         url += 'http://'
-    url += config['crits']['sites'][target]['host']
-    url += ':' + str(config['crits']['sites'][target]['api']['port'])
-    url += config['crits']['sites'][target]['api']['path']
+    url += config['crits']['sites'][host]['host']
+    url += ':' + str(config['crits']['sites'][host]['api']['port'])
+    url += config['crits']['sites'][host]['api']['path']
     return(url)
 
 
-def crits_poll(config, target, endpoint, id_=None):
+def crits_poll(config, src, endpoint, id_=None):
     '''pull data from crits via api, return json as a dict'''
-    url = crits_url(config, target)
+    url = crits_url(config, src)
     allow_self_signed = \
-        config['crits']['sites'][target]['api']['allow_self_signed']
+        config['crits']['sites'][src]['api']['allow_self_signed']
     if allow_self_signed:
         requests.packages.urllib3.disable_warnings()
-    data = {'api_key': config['crits']['sites'][target]['api']['key'],
-            'username': config['crits']['sites'][target]['api']['user']}
-    if config['crits']['sites'][source]['api']['use_releasability']:
+    data = {'api_key': config['crits']['sites'][src]['api']['key'],
+            'username': config['crits']['sites'][src]['api']['user']}
+    if config['crits']['sites'][src]['api']['use_releasability']:
         data.update({'c-releasability.name':
-                     config['crits']['sites'][target]['api']['source']})
-    if config['crits']['sites'][target]['api']['ssl']:
+                     config['crits']['sites'][src]['api']['source']})
+    if config['crits']['sites'][src]['api']['ssl']:
         r = requests.get(url + endpoint + '/' + id_ + '/',
                          params=data,
                          verify=not allow_self_signed)
@@ -65,18 +65,18 @@ def crits_poll(config, target, endpoint, id_=None):
     return(id_, json_output)
 
 
-def crits_inbox(config, target, endpoint, json):
+def crits_inbox(config, dest, endpoint, json):
     '''upload data to crits via api, return object id if successful'''
-    url = crits_url(config, target)
+    url = crits_url(config, dest)
     allow_self_signed = \
-        config['crits']['sites'][target]['api']['allow_self_signed']
+        config['crits']['sites'][dest]['api']['allow_self_signed']
     if allow_self_signed:
         requests.packages.urllib3.disable_warnings()
-    data = {'api_key': config['crits']['sites'][target]['api']['key'],
-            'username': config['crits']['sites'][target]['api']['user'],
-            'source': config['crits']['sites'][target]['api']['source']}
+    data = {'api_key': config['crits']['sites'][dest]['api']['key'],
+            'username': config['crits']['sites'][dest]['api']['user'],
+            'source': config['crits']['sites'][dest]['api']['source']}
     data.update(json)
-    if config['crits']['sites'][target]['api']['ssl']:
+    if config['crits']['sites'][dest]['api']['ssl']:
         r = requests.post(url + endpoint + '/',
                           data=data,
                           verify=not allow_self_signed)
@@ -89,14 +89,14 @@ def crits_inbox(config, target, endpoint, json):
     return(id_, success)
 
 
-def stix_pkg(config, source, endpoint, payload, title='random test data',
+def stix_pkg(config, src, endpoint, payload, title='random test data',
              description='random test data',
              package_intents='Indicators - Watchlist',
              tlp_color='WHITE'):
     '''package observables'''
     # setup the xmlns...
-    xmlns_url = config['edge']['sites'][source]['stix']['xmlns_url']
-    xmlns_name = config['edge']['sites'][source]['stix']['xmlns_name']
+    xmlns_url = config['edge']['sites'][src]['stix']['xmlns_url']
+    xmlns_name = config['edge']['sites'][src]['stix']['xmlns_name']
     set_stix_id_namespace({xmlns_url: xmlns_name})
     set_cybox_id_namespace(Namespace(xmlns_url, xmlns_name))
     # construct a stix package...
@@ -120,13 +120,13 @@ def stix_pkg(config, source, endpoint, payload, title='random test data',
     return(stix_package)
 
 
-def json2stix_ind(config, source, destination, endpoint, json_):
+def json2stix_ind(config, src, dest, endpoint, json_):
     '''transform crits indicators into stix indicators with embedded
     cybox observable composition'''
     try:
         set_id_method(IDGenerator.METHOD_UUID)
-        xmlns_url = config['edge']['sites'][source]['stix']['xmlns_url']
-        xmlns_name = config['edge']['sites'][source]['stix']['xmlns_name']
+        xmlns_url = config['edge']['sites'][dest]['stix']['xmlns_url']
+        xmlns_name = config['edge']['sites'][dest]['stix']['xmlns_name']
         set_cybox_id_namespace(Namespace(xmlns_url, xmlns_name))
         if endpoint == 'indicators':
             endpoint_trans = {'Email': 'emails', 'IP': 'ips',
@@ -149,8 +149,8 @@ def json2stix_ind(config, source, destination, endpoint, json_):
                                            % r['relationship'])
                     return(None)
                 doc = \
-                    config['db'].get_object_id(source,
-                                               destination,
+                    config['db'].get_object_id(src,
+                                               dest,
                                                crits_id='%s:%s'
                                                % (endpoint_trans[r['type']],
                                                   r['value']))
@@ -179,12 +179,12 @@ def json2stix_ind(config, source, destination, endpoint, json_):
         return(None)
 
 
-def json2cybox(config, source, endpoint, json_):
+def json2cybox(config, src, dest, endpoint, json_):
     '''transform crits observables into cybox'''
     try:
         set_id_method(IDGenerator.METHOD_UUID)
-        xmlns_url = config['edge']['sites'][source]['stix']['xmlns_url']
-        xmlns_name = config['edge']['sites'][source]['stix']['xmlns_name']
+        xmlns_url = config['edge']['sites'][dest]['stix']['xmlns_url']
+        xmlns_name = config['edge']['sites'][dest]['stix']['xmlns_name']
         set_cybox_id_namespace(Namespace(xmlns_url, xmlns_name))
         if endpoint == 'ips':
             crits_types = {'Address - cidr': 'cidr',
@@ -251,12 +251,12 @@ def json2cybox(config, source, endpoint, json_):
 
 def crits2edge(config, src, dest, daemon=False,
                now=None, last_run=None):
-    # check if (and when) we synced source and destination...
+    # check if (and when) we synced src and dest...
     if not now:
         now = util_.nowutc()
     if not last_run:
-        last_run = config['db'].get_last_sync(source=src,
-                                              destination=dest,
+        last_run = config['db'].get_last_sync(src=src,
+                                              dest=dest,
                                               direction='crits2edge')
         last_run = last_run.replace(tzinfo=pytz.utc)
     config['logger'].info('syncing new crits data since %s between '
@@ -270,7 +270,7 @@ def crits2edge(config, src, dest, daemon=False,
     for endpoint in cybox_endpoints:
         ids[endpoint] = fetch_crits_object_ids(config, src, endpoint, last_run)
         for id_ in ids[endpoint]:
-            sync_state = config['db'].get_object_id(src, destination,
+            sync_state = config['db'].get_object_id(src, dest,
                                                     crits_id=endpoint + ':'
                                                     + str(id_))
             if sync_state:
@@ -285,79 +285,79 @@ def crits2edge(config, src, dest, daemon=False,
     if total_input > 0:
         config['logger'].info('%i (total) objects to be synced between '
                               '%s (crits) and %s (edge)'
-                              % (total_input, src, destination))
+                              % (total_input, src, dest))
     for endpoint in cybox_endpoints:
         if subtotal_input[endpoint] > 0:
             config['logger'].info('%i %s objects to be synced between '
                                   '%s (crits) and %s (edge)'
                                   % (subtotal_input[endpoint],
-                                     endpoint, src, destination))
+                                     endpoint, src, dest))
         if not len(ids[endpoint]):
             continue
         else:
             for crits_id in ids[endpoint]:
                 (id_, json_) = crits_poll(config, src, endpoint, crits_id,)
                 if endpoint == 'indicators':
-                    indicator = json2stix_ind(config, src, destination,
+                    indicator = json2stix_ind(config, src, dest,
                                               endpoint, json_)
                     if not indicator:
                         config['logger'].info('crits object %s could not be '
                                               'synced between %s (crits) '
                                               'and %s (edge)'
-                                              % (crits_id, src, destination))
+                                              % (crits_id, src, dest))
                         continue
                     stix_ = stix_pkg(config, src, endpoint, indicator)
                     if not stix_:
                         config['logger'].info('crits object %s could not be '
                                               'synced between '
                                               '%s (crits) and %s (edge)'
-                                              % (crits_id, src, destination))
+                                              % (crits_id, src, dest))
                         continue
-                    success = edge_.taxii_inbox(config, destination, stix_)
+                    success = edge_.taxii_inbox(config, dest, stix_)
                     if not success:
                         config['logger'].info('crits object %s could not be '
                                               'synced between %s (crits) '
                                               'and %s (edge)'
-                                              % (crits_id, src, destination))
+                                              % (crits_id, src, dest))
                         continue
                     else:
                         subtotal_input[endpoint] -= 1
                         total_input -= 1
                         subtotal_output[endpoint] += 1
                         total_output += 1
-                        config['db'].set_object_id(src, destination,
+                        config['db'].set_object_id(src, dest,
                                                    edge_id=indicator.id_,
                                                    crits_id=endpoint + ':'
                                                    + crits_id,
                                                    timestamp=util_.nowutc())
                 else:
-                    observable = json2cybox(config, src, endpoint, json_)
+                    observable = json2cybox(config, src, dest, endpoint, json_)
                     if not observable:
                         config['logger'].info('crits object %s could not be '
                                               'synced between '
                                               '%s (crits) and %s (edge)'
-                                              % (crits_id, src, destination))
+                                              % (crits_id, src, dest))
                         continue
                     stix_ = stix_pkg(config, src, endpoint, observable)
                     if not stix_:
                         config['logger'].info('crits object %s could not be '
                                               'synced between '
                                               '%s (crits) and %s (edge)'
-                                              % (crits_id, src, destination))
+                                              % (crits_id, src, dest))
                         continue
-                    success = edge_.taxii_inbox(config, destination, stix_)
+                    success = edge_.taxii_inbox(config, dest, stix_)
                     if not success:
                         config['logger'].info('crits object %s could not be '
                                               'synced between '
                                               '%s (crits) and %s (edge)'
-                                              % (crits_id, src, destination))
+                                              % (crits_id, src, dest))
                         continue
                     else:
                         subtotal_input[endpoint] -= 1
                         total_input -= 1
                         subtotal_output[endpoint] += 1
                         total_output += 1
-                        config['db'].set_object_id(src, destination,
+                        config['db'].set_object_id(src, dest,
                                                    edge_id=observable.id_,
                                                    crits_id=endpoint + ':'
                                                    + crits_id,
@@ -366,20 +366,20 @@ def crits2edge(config, src, dest, daemon=False,
             config['logger'].info('%i %s objects successfully synced between '
                                   '%s (crits) and %s (edge)'
                                   % (subtotal_output[endpoint],
-                                     endpoint, src, destination))
+                                     endpoint, src, dest))
         if subtotal_output[endpoint] < subtotal_input[endpoint]:
             config['logger'].info('%i %s objects could not be synced '
                                   'between %s (crits) and %s (edge)'
                                   % (len(ids[endpoint]), endpoint,
-                                     src, destination))
+                                     src, dest))
     if total_output > 0:
         config['logger'].info('%i (total) objects successfully synced '
                               'between %s (crits) and %s (edge)'
-                              % (total_output, src, destination))
+                              % (total_output, src, dest))
     if total_output < total_input:
         config['logger'].info('%i (total) objects could not be synced '
                               'between %s (crits) and %s (edge)'
-                              % (total_input - total_output, src, destination))
+                              % (total_input - total_output, src, dest))
     # save state to disk for next run...
     if config['daemon']['debug']:
         poll_interval = config['crits']['sites'][src]['api']['poll_interval']
@@ -388,28 +388,28 @@ def crits2edge(config, src, dest, daemon=False,
                                      datetime.timedelta(
                                          seconds=poll_interval)))
     if not daemon:
-        config['db'].set_last_sync(source=src, destination=destination,
+        config['db'].set_last_sync(src=src, dest=dest,
                                    direction='crits2edge', timestamp=now)
         return(None)
     else:
         return(util_.nowutc())
 
 
-def __fetch_crits_object_ids(config, target, endpoint, params):
+def __fetch_crits_object_ids(config, src, endpoint, params):
     '''fetch all crits object ids from endpoint and return a list'''
-    url = crits_url(config, target)
+    url = crits_url(config, src)
     allow_self_signed = \
-        config['crits']['sites'][target]['api']['allow_self_signed']
+        config['crits']['sites'][src]['api']['allow_self_signed']
     if allow_self_signed:
         requests.packages.urllib3.disable_warnings()
-    if config['crits']['sites'][target]['api']['ssl']:
+    if config['crits']['sites'][src]['api']['ssl']:
         r = requests.get(url + endpoint + '/', params=params,
                          verify=not allow_self_signed)
     else:
         r = requests.get(url + endpoint + '/', params=params)
     json_output = r.json()
     object_count = int(json_output[u'meta'][u'total_count'])
-    max_results = config['crits']['sites'][target]['api']['max_results']
+    max_results = config['crits']['sites'][src]['api']['max_results']
     if object_count > max_results:
         page_count = object_count // max_results
         if object_count % max_results > 0:
@@ -421,7 +421,7 @@ def __fetch_crits_object_ids(config, target, endpoint, params):
     i = 0
     while i <= page_count:
         params['offset'] = i * max_results
-        if config['crits']['sites'][target]['api']['ssl']:
+        if config['crits']['sites'][src]['api']['ssl']:
             r = requests.get(url + endpoint + '/', params=params,
                              verify=not allow_self_signed)
         else:
@@ -433,41 +433,41 @@ def __fetch_crits_object_ids(config, target, endpoint, params):
     return(object_ids)
 
 
-def fetch_crits_object_ids(config, target, endpoint, timestamp=None):
+def fetch_crits_object_ids(config, src, endpoint, timestamp=None):
     '''fetch all crits object ids from endpoint and return a list'''
     object_ids = list()
     if timestamp:
         crits_timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S.%f')
         # first, check for newly created records...
-        params = {'api_key': config['crits']['sites'][target]['api']['key'],
-                  'username': config['crits']['sites'][target]['api']['user'],
+        params = {'api_key': config['crits']['sites'][src]['api']['key'],
+                  'username': config['crits']['sites'][src]['api']['user'],
                   'limit': 1,  # just grabbing meta for total object count...
                   'c-created__gt': crits_timestamp,
                   'offset': 0}
-        if config['crits']['sites'][source]['api']['use_releasability']:
+        if config['crits']['sites'][src]['api']['use_releasability']:
             params.update({'c-releasability.name':
-                           config['crits']['sites'][target]['api']['source']})
-        object_ids.extend(__fetch_crits_object_ids(config, target,
+                           config['crits']['sites'][src]['api']['source']})
+        object_ids.extend(__fetch_crits_object_ids(config, src,
                                                    endpoint, params))
         # TODO object updates have to be treated differently than creates...
         # # next, check for recently updated records...
-        # params = {'api_key': config['crits']['sites'][target]['api']['key'],
-        #           'username': config['crits']['sites'][target]['api']['user'],
+        # params = {'api_key': config['crits']['sites'][src]['api']['key'],
+        #           'username': config['crits']['sites'][src]['api']['user'],
         #           'limit': 1,  # just grabbing meta for total object count...
         #           'c-modified__gt': crits_timestamp,
         #           'c-releasability.name':
-        #           config['crits']['sites'][target]['api']['source'],
+        #           config['crits']['sites'][src]['api']['source'],
         #           'offset': 0}
-        # object_ids.update(__fetch_crits_object_ids(config, target,
+        # object_ids.update(__fetch_crits_object_ids(config, src,
         #                                            endpoint, params))
     else:
-        params = {'api_key': config['crits']['sites'][target]['api']['key'],
-                  'username': config['crits']['sites'][target]['api']['user'],
+        params = {'api_key': config['crits']['sites'][src]['api']['key'],
+                  'username': config['crits']['sites'][src]['api']['user'],
                   'limit': 1,  # just grabbing meta for total object count...
                   'offset': 0}
-        if config['crits']['sites'][source]['api']['use_releasability']:
+        if config['crits']['sites'][src]['api']['use_releasability']:
             params.update({'c-releasability.name':
-                           config['crits']['sites'][target]['api']['source']})
-        object_ids.extend(__fetch_crits_object_ids(config, target,
+                           config['crits']['sites'][src]['api']['source']})
+        object_ids.extend(__fetch_crits_object_ids(config, src,
                                                    endpoint, params))
     return(object_ids)

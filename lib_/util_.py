@@ -219,10 +219,10 @@ class Daemon:
             # sync crits to edge
             for c_site in enabled_crits_sites:
                 for e_site in enabled_edge_sites:
-                    # check if (and when) we synced source and destination...
+                    # check if (and when) we synced src and dest...
                     now = nowutc()
-                    last_run = self.db.get_last_sync(source=c_site,
-                                                     destination=e_site,
+                    last_run = self.db.get_last_sync(src=c_site,
+                                                     dest=e_site,
                                                      direction='c2e')
                     last_run = last_run.replace(tzinfo=pytz.utc)
                     poll_interval = self.get_poll_interval(c_site)
@@ -235,16 +235,16 @@ class Daemon:
                                                           now=now,
                                                           last_run=last_run)
                         if completed_run:
-                            self.db.set_last_sync(source=c_site,
-                                                  destination=e_site,
+                            self.db.set_last_sync(src=c_site,
+                                                  dest=e_site,
                                                   direction='c2e',
                                                   timestamp=completed_run)
             # sync edge to crits
             for e_site in enabled_edge_sites:
                 for c_site in enabled_crits_sites:
                     now = nowutc()
-                    last_run = self.db.get_last_sync(source=e_site,
-                                                     destination=c_site,
+                    last_run = self.db.get_last_sync(src=e_site,
+                                                     dest=c_site,
                                                      direction='e2c')
                     last_run = last_run.replace(tzinfo=pytz.utc)
                     poll_interval = self.get_poll_interval(e_site)
@@ -257,8 +257,8 @@ class Daemon:
                                                          now=now,
                                                          last_run=last_run)
                         if completed_run:
-                            self.db.set_last_sync(source=e_site,
-                                                  destination=c_site,
+                            self.db.set_last_sync(src=e_site,
+                                                  dest=c_site,
                                                   direction='e2c',
                                                   timestamp=completed_run)
             time.sleep(1)

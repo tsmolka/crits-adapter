@@ -40,15 +40,15 @@ class DB(object):
         self.db = self.client[config['daemon']['mongo']['db']]
         self.collection = self.db[config['daemon']['mongo']['collection']]
         self.logger.info('updating mongodb indices...')
-        self.collection.ensure_index('source')
-        self.collection.ensure_index('destination')
+        self.collection.ensure_index('src')
+        self.collection.ensure_index('dest')
         self.collection.ensure_index('crits_id')
         self.collection.ensure_index('edge_id')
 
-    def get_last_sync(self, source, destination, direction=None,):
+    def get_last_sync(self, src, dest, direction=None,):
         try:
-            doc = self.collection.find_one({'source': source,
-                                            'destination': destination,
+            doc = self.collection.find_one({'src': src,
+                                            'dest': dest,
                                             'direction': direction})
             if doc and 'timestamp' in doc.keys():
                 return(doc['timestamp'])
@@ -59,17 +59,17 @@ class DB(object):
             self.logger.exception(e)
             exit()
 
-    def set_last_sync(self, source, destination, direction=None,
+    def set_last_sync(self, src, dest, direction=None,
                       timestamp=None):
         try:
-            doc = self.collection.find_one({'source': source,
-                                            'destination': destination,
+            doc = self.collection.find_one({'src': src,
+                                            'dest': dest,
                                             'direction': direction})
             if doc:
                 self.collection.update(doc, {'$set': {'timestamp': timestamp}})
             else:
-                self.collection.insert({'source': source,
-                                        'destination': destination,
+                self.collection.insert({'src': src,
+                                        'dest': dest,
                                         'direction': direction,
                                         'timestamp': timestamp})
         except ConnectionFailure as e:
@@ -77,11 +77,11 @@ class DB(object):
             self.logger.exception(e)
             exit()
 
-    def get_object_id(self, source, destination, crits_id=None, edge_id=None):
+    def get_object_id(self, src, dest, crits_id=None, edge_id=None):
         if crits_id and edge_id:
             return None
         try:
-            query = {'source': source, 'destination': destination}
+            query = {'src': src, 'dest': dest}
             if crits_id:
                 query['crits_id'] = crits_id
             elif edge_id:
@@ -96,15 +96,15 @@ class DB(object):
             self.logger.exception(e)
             exit()
 
-    def set_object_id(self, source, destination, crits_id=None, edge_id=None,
+    def set_object_id(self, src, dest, crits_id=None, edge_id=None,
                       timestamp=None):
         try:
-            query = {'source': source, 'destination': destination}
+            query = {'src': src, 'dest': dest}
             if crits_id:
                 query['crits_id'] = crits_id
             elif edge_id:
                 query['edge_id'] = edge_id
-            doc = self.get_object_id(source, destination,
+            doc = self.get_object_id(src, dest,
                                      crits_id=crits_id, edge_id=edge_id)
             if doc:
                 # there's already a crits-edge mapping so just update
@@ -122,12 +122,12 @@ class DB(object):
             self.logger.exception(e)
             exit()
 
-    def get_pending_crits_link(self, source, destination, edge_id=None):
+    def get_pending_crits_link(self, src, dest, edge_id=None):
         try:
             query = \
                 {'unresolved_crits_relationship':
-                 {'source': source,
-                  'destination': destination,
+                 {'src': src,
+                  'dest': dest,
                   'edge_observable_id': edge_id}}
             return(self.collection.find_one(query))
         except ConnectionFailure as e:
@@ -135,12 +135,12 @@ class DB(object):
             self.logger.exception(e)
             exit()
 
-    def set_pending_crits_link(self, source, destination, crits_id=None,
+    def set_pending_crits_link(self, src, dest, crits_id=None,
                                edge_id=None):
         try:
             query = {'unresolved_crits_relationship':
-                     {'source': source,
-                      'destination': destination,
+                     {'src': src,
+                      'dest': dest,
                       'crits_indicator_id': crits_id,
                       'edge_observable_id': edge_id}}
             self.collection.insert(query)
@@ -149,12 +149,12 @@ class DB(object):
             self.logger.exception(e)
             exit()
 
-    def resolve_crits_link(self, source, destination, crits_id=None,
+    def resolve_crits_link(self, src, dest, crits_id=None,
                            edge_id=None):
         try:
             query = {'unresolved_crits_relationship':
-                     {'source': source,
-                      'destination': destination,
+                     {'src': src,
+                      'dest': dest,
                       'crits_indicator_id': crits_id,
                       'edge_observable_id': edge_id}}
             self.collection.remove(query)
