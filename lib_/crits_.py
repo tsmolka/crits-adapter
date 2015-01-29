@@ -66,6 +66,16 @@ def crits_poll(config, src, endpoint, id_=None):
 
 def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
     '''upload data to crits via api, return object id if successful'''
+    if src and edge_id:
+        # check whether this has already been ingested
+        sync_state = config['db'].get_object_id(src, dest, edge_id=edge_id)
+        if sync_state and sync_state.get('crits_id', None):
+            if config['daemon']['debug']:
+                config['logger'].debug(
+                    log_.log_messages['object_already_ingested'].format(
+                        src_type='edge', src_id=edge_id, src=src, 
+                        dest_type='crits', dest_id=sync_state['crits_id']))
+            return(sync_state['crits_id'], True)
     url = crits_url(config, dest)
     allow_self_signed = \
         config['crits']['sites'][dest]['api']['allow_self_signed']
@@ -75,16 +85,6 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
             'username': config['crits']['sites'][dest]['api']['user'],
             'source': config['crits']['sites'][dest]['api']['source']}
     data.update(json)
-    if src and edge_id:
-        # check whether this has already been ingested
-        sync_state = config['db'].get_object_id(src, dest, edge_id=edge_id)
-        if sync_state and sync_state.get('crits_id', None):
-            if config['daemon']['debug']:
-                config['logger'].debug('edge object id %s (from %s)'
-                                       'already in crits (%s) as %s'
-                                       % (edge_id, src, dest,
-                                          sync_state['crits_id']))
-            return(sync_state['crits_id'], True)
     if config['crits']['sites'][dest]['api']['ssl']:
         r = requests.post(url + endpoint + '/',
                           data=data,
@@ -135,7 +135,7 @@ def stix_pkg(config, src, endpoint, payload, title='random test data',
     return(stix_package)
 
 
-def json2stix_ind(config, src, dest, endpoint, json_):
+def json2stix_ind(config, src, dest, endpoint, json_, crits_id):
     '''transform crits indicators into stix indicators with embedded
     cybox observable composition'''
     try:
@@ -147,8 +147,10 @@ def json2stix_ind(config, src, dest, endpoint, json_):
             endpoint_trans = {'Email': 'emails', 'IP': 'ips',
                               'Sample': 'samples', 'Domain': 'domains'}
             if json_['type'] != 'Reference':
-                config['logger'].error('unsupported crits indicator type %s!'
-                                       % json_['type'])
+                config['logger'].error(
+                    log_.log_messages['unsupported_object_error'].format(
+                        type_='crits', obj_type='indicator type ' + json_['type'],
+                        id_=crits_id))
                 return(None)
             indicator_ = Indicator()
             indicator_.title = json_['value']
@@ -159,9 +161,10 @@ def json2stix_ind(config, src, dest, endpoint, json_):
                 indicator_.observable_composition_operator
             for r in json_['relationships']:
                 if r['relationship'] != 'Contains':
-                    config['logger'].error('unsupported crits indicator '
-                                           'relationship type %s!'
-                                           % r['relationship'])
+                    config['logger'].error(
+                        log_.log_messages['unsupported_object_error'].format(
+                            type_='crits', obj_type='indicator relationship type '
+                            + r['relationship'], id_=crits_id))
                     return(None)
                 doc = \
                     config['db'].get_object_id(src,
@@ -183,18 +186,21 @@ def json2stix_ind(config, src, dest, endpoint, json_):
                     observable_composition_
                 return(indicator_)
         else:
-            config['logger'].error('unsupported crits object type %s!'
-                                   % endpoint)
+            config['logger'].error(
+                log_.log_messages['unsupported_object_error'].format(
+                    type_='crits', obj_type=endpoint, id_=crits_id))
             return(None)
     except:
         e = sys.exc_info()[0]
-        config['logger'].error('unhandled error converting crits indicator '
-                               'json to stix!')
+        config['logger'].error(log_.log_messages['obj_convert_error'].format(
+            src_type='crits', src_obj='indicator', id_=crits_id,
+            dest_type='stix', dest_obj='indicator'))
         config['logger'].exception(e)
         return(None)
 
 
-def json2cybox(config, src, dest, endpoint, json_):
+def json2cybox(config, src, dest, endpoint, json_, crits_id):
+    # TODO split into smaller functions
     '''transform crits observables into cybox'''
     try:
         set_id_method(IDGenerator.METHOD_UUID)
@@ -253,163 +259,23 @@ def json2cybox(config, src, dest, endpoint, json_):
                         'Equals'
             return(Observable(email))
         else:
-            config['logger'].error('unsupported crits object type %s!'
-                                   % endpoint)
+            config['logger'].error(
+                log_.log_messages['unsupported_object_error'].format(
+                    type_='crits', obj_type=endpoint, id_=crits_id))
             return(None)
     except:
         e = sys.exc_info()[0]
-        config['logger'].error('unhandled error converting crits observable '
-                               'json to cybox!')
+        config['logger'].error(
+            log_.log_messages['obj_convert_error'].format(
+                src_type='crits', src_obj='observable', id_=crits_id,
+                dest_type='cybox', dest_obj='observable'))
         config['logger'].exception(e)
         return(None)
 
 
-def crits2edge(config, src, dest, daemon=False,
-               now=None, last_run=None):
-    # check if (and when) we synced src and dest...
-    if not now:
-        now = util_.nowutc()
-    if not last_run:
-        last_run = config['db'].get_last_sync(src=src,
-                                              dest=dest,
-                                              direction='crits2edge')
-    config['logger'].info('syncing new crits data since %s between '
-                          '%s and %s' % (str(last_run), src, dest))
-    cybox_endpoints = ['ips', 'domains', 'samples', 'emails', 'indicators']
-    ids = dict()
-    total_input = 0
-    total_output = 0
-    subtotal_input = {}
-    subtotal_output = {}
-    for endpoint in cybox_endpoints:
-        ids[endpoint] = fetch_crits_object_ids(config, src, endpoint, last_run)
-        for id_ in ids[endpoint]:
-            sync_state = config['db'].get_object_id(src, dest,
-                                                    crits_id=endpoint + ':'
-                                                    + str(id_))
-            if sync_state and sync_state.get('edge_id', None):
-                if config['daemon']['debug']:
-                    config['logger'].debug('crits object id %s (from %s)'
-                                       'already in edge (%s) as %s'
-                                       % (id_, src, dest,
-                                          sync_state['edge_id']))
-                    ids[endpoint].remove(id_)
-        subtotal_input[endpoint] = len(ids[endpoint])
-        subtotal_output[endpoint] = 0
-        total_input += len(ids[endpoint])
-    if total_input > 0:
-        config['logger'].info('%i (total) objects to be synced between '
-                              '%s (crits) and %s (edge)'
-                              % (total_input, src, dest))
-    for endpoint in cybox_endpoints:
-        if subtotal_input[endpoint] > 0:
-            config['logger'].info('%i %s objects to be synced between '
-                                  '%s (crits) and %s (edge)'
-                                  % (subtotal_input[endpoint],
-                                     endpoint, src, dest))
-        if not len(ids[endpoint]):
-            continue
-        else:
-            for crits_id in ids[endpoint]:
-                (id_, json_) = crits_poll(config, src, endpoint, crits_id,)
-                if endpoint == 'indicators':
-                    indicator = json2stix_ind(config, src, dest,
-                                              endpoint, json_)
-                    if not indicator:
-                        config['logger'].info('crits object %s could not be '
-                                              'synced between %s (crits) '
-                                              'and %s (edge)'
-                                              % (crits_id, src, dest))
-                        continue
-                    stix_ = stix_pkg(config, src, endpoint, indicator)
-                    if not stix_:
-                        config['logger'].info('crits object %s could not be '
-                                              'synced between '
-                                              '%s (crits) and %s (edge)'
-                                              % (crits_id, src, dest))
-                        continue
-                    success = edge_.taxii_inbox(config, dest, stix_)
-                    if not success:
-                        config['logger'].info('crits object %s could not be '
-                                              'synced between %s (crits) '
-                                              'and %s (edge)'
-                                              % (crits_id, src, dest))
-                        continue
-                    else:
-                        subtotal_input[endpoint] -= 1
-                        total_input -= 1
-                        subtotal_output[endpoint] += 1
-                        total_output += 1
-                        # track the related crits/json ids (by src/dest)
-                        config['db'].set_object_id(src, dest,
-                                                   edge_id=indicator.id_,
-                                                   crits_id=endpoint + ':'
-                                                   + crits_id)
-                else:
-                    observable = json2cybox(config, src, dest, endpoint, json_)
-                    if not observable:
-                        config['logger'].info('crits object %s could not be '
-                                              'synced between '
-                                              '%s (crits) and %s (edge)'
-                                              % (crits_id, src, dest))
-                        continue
-                    stix_ = stix_pkg(config, src, endpoint, observable)
-                    if not stix_:
-                        config['logger'].info('crits object %s could not be '
-                                              'synced between '
-                                              '%s (crits) and %s (edge)'
-                                              % (crits_id, src, dest))
-                        continue
-                    success = edge_.taxii_inbox(config, dest, stix_)
-                    if not success:
-                        config['logger'].info('crits object %s could not be '
-                                              'synced between '
-                                              '%s (crits) and %s (edge)'
-                                              % (crits_id, src, dest))
-                        continue
-                    else:
-                        subtotal_input[endpoint] -= 1
-                        total_input -= 1
-                        subtotal_output[endpoint] += 1
-                        total_output += 1
-                        config['db'].set_object_id(src, dest,
-                                                   edge_id=observable.id_,
-                                                   crits_id=endpoint + ':'
-                                                   + crits_id)
-        if subtotal_output[endpoint] > 0:
-            config['logger'].info('%i %s objects successfully synced between '
-                                  '%s (crits) and %s (edge)'
-                                  % (subtotal_output[endpoint],
-                                     endpoint, src, dest))
-        if subtotal_output[endpoint] < subtotal_input[endpoint]:
-            config['logger'].info('%i %s objects could not be synced '
-                                  'between %s (crits) and %s (edge)'
-                                  % (len(ids[endpoint]), endpoint,
-                                     src, dest))
-    if total_output > 0:
-        config['logger'].info('%i (total) objects successfully synced '
-                              'between %s (crits) and %s (edge)'
-                              % (total_output, src, dest))
-    if total_output < total_input:
-        config['logger'].info('%i (total) objects could not be synced '
-                              'between %s (crits) and %s (edge)'
-                              % (total_input - total_output, src, dest))
-    # save state to disk for next run...
-    if config['daemon']['debug']:
-        poll_interval = config['crits']['sites'][src]['api']['poll_interval']
-        config['logger'].debug('saving state until next run [%s]'
-                               % str(now +
-                                     datetime.timedelta(
-                                         seconds=poll_interval)))
-    if not daemon:
-        config['db'].set_last_sync(src=src, dest=dest,
-                                   direction='crits2edge', timestamp=now)
-        return(None)
-    else:
-        return(util_.nowutc())
-
-
 def __fetch_crits_object_ids(config, src, endpoint, params):
+    # TODO refactor this and merge with fetch_crits_object_ids() /
+    #      split into smaller functions
     '''fetch all crits object ids from endpoint and return a list'''
     url = crits_url(config, src)
     allow_self_signed = \
@@ -485,3 +351,121 @@ def fetch_crits_object_ids(config, src, endpoint, timestamp=None):
         object_ids.extend(__fetch_crits_object_ids(config, src,
                                                    endpoint, params))
     return(object_ids)
+
+
+def crits2edge(config, src, dest, daemon=False,
+               now=None, last_run=None):
+    # check if (and when) we synced src and dest...
+    if not now:
+        now = util_.nowutc()
+    if not last_run:
+        last_run = config['db'].get_last_sync(src=src, dest=dest,
+                                              direction='c2e')
+    config['logger'].info(
+        log_.log_messages['start_sync'].format(
+            type_='crits', last_run=last_run, src=src, dest=dest))
+    endpoints = ['ips', 'domains', 'samples', 'emails', 'indicators']
+    # setup the tally counters
+    config['crits_tally'] = dict()
+    config['crits_tally']['all'] = {'incoming': 0, 'processed': 0}
+    for endpoint in endpoints:
+        config['crits_tally'][endpoint] = {'incoming': 0, 'processed': 0}
+    ids = dict()
+    for endpoint in endpoints:
+        ids[endpoint] = fetch_crits_object_ids(config, src, endpoint, last_run)
+        if not len(ids[endpoint]):
+            continue
+        else:
+            for crits_id in ids[endpoint]:
+                (id_, json_) = crits_poll(config, src, endpoint, crits_id,)
+                if endpoint == 'indicators':
+                    indicator = json2stix_ind(config, src, dest,
+                                              endpoint, json_, id_)
+                    config['crits_tally']['indicators']['incoming'] += 1
+                    config['crits_tally']['all']['incoming'] += 1
+                    if not indicator:
+                        config['logger'].info(
+                            log_.log_messages['obj_inbox_error'].format(
+                                src_type='crits', id_=crits_id, dest_type='edge'))
+                        continue
+                    stix_ = stix_pkg(config, src, endpoint, indicator)
+                    if not stix_:
+                        config['logger'].info(
+                            log_.log_messages['obj_inbox_error'].format(
+                                src_type='crits', id_=crits_id, dest_type='edge'))
+                        continue
+                    success = edge_.taxii_inbox(config, dest, stix_, src=src,
+                                                crits_id=endpoint + ':'
+                                                + crits_id)
+                    if not success:
+                        config['logger'].info(
+                            log_.log_messages['obj_inbox_error'].format(
+                                src_type='crits', id_=crits_id, dest_type='edge'))
+                        continue
+                    else:
+                        # track the related crits/json ids (by src/dest)
+                        config['db'].set_object_id(src, dest,
+                                                   edge_id=indicator.id_,
+                                                   crits_id=endpoint + ':'
+                                                   + crits_id)
+                        config['crits_tally']['relationships']['incoming'] += 1
+                        config['crits_tally']['all']['incoming'] += 1
+                else:
+                    observable = json2cybox(config, src, dest, endpoint, json_, crits_id)
+                    if not observable:
+                        config['logger'].info(
+                            log_.log_messages['obj_inbox_error'].format(
+                                src_type='crits', id_=crits_id, dest_type='edge'))
+                        continue
+                    stix_ = stix_pkg(config, src, endpoint, observable)
+                    if not stix_:
+                        config['logger'].info(
+                            log_.log_messages['obj_inbox_error'].format(
+                                src_type='crits', id_=crits_id, dest_type='edge'))
+                        continue
+                    success = edge_.taxii_inbox(config, dest, stix_)
+                    if not success:
+                        config['logger'].info(
+                            log_.log_messages['obj_inbox_error'].format(
+                                src_type='crits', id_=crits_id, dest_type='edge'))
+                        continue
+                    else:
+                        config['crits_tally'][endpoint]['processed'] += 1
+                        config['crits_tally']['all']['processed'] += 1
+                        config['db'].set_object_id(src, dest,
+                                                   edge_id=observable.id_,
+                                                   crits_id=endpoint + ':'
+                                                   + crits_id)
+    for endpoint in endpoints:
+        config['logger'].info(log_.log_messages['incoming_tally'].format(
+            count=config['crits_tally'][endpoint]['incoming'], type_=endpoint,
+            src='crits', dest='edge'))
+        config['logger'].info(log_.log_messages['failed_tally'].format(
+            count=(config['crits_tally'][endpoint]['incoming'] -
+                   config['crits_tally'][endpoint]['processed']),
+                   type_=endpoint, src='crits', dest='edge'))
+        config['logger'].info(log_.log_messages['processed_tally'].format(
+            count=config['crits_tally'][endpoint]['processed'], type_=endpoint,
+            src='crits', dest='edge'))
+    config['logger'].info(log_.log_messages['incoming_tally'].format(
+        count=config['crits_tally']['all']['incoming'], type_='total',
+        src='crits', dest='edge'))
+    config['logger'].info(log_.log_messages['failed_tally'].format(
+        count=(config['crits_tally']['all']['incoming'] -
+               config['crits_tally']['all']['processed']),
+        type_='total', src='crits', dest='edge'))
+    config['logger'].info(log_.log_messages['processed_tally'].format(
+        count=config['crits_tally']['all']['processed'], type_='total',
+        src='crits', dest='edge'))
+    # save state to disk for next run...
+    if config['daemon']['debug']:
+        poll_interval = config['crits']['sites'][src]['api']['poll_interval']
+        config['logger'].debug(
+            log_.log_messages['saving_state'].format(
+                next_run=str(now + datetime.timedelta(seconds=poll_interval))))
+    if not daemon:
+        config['db'].set_last_sync(src=src, dest=dest,
+                                   direction='c2e', timestamp=now)
+        return(None)
+    else:
+        return(util_.nowutc())
