@@ -318,7 +318,7 @@ def process_indicators(config, src, dest, indicators):
                     # try to fetch the observable composition o.idref
                     # points to
                     observable_composition = \
-                        config['db'].get_observable_composition(src, dest, observable_id=o)
+                        config['db'].get_observable_composition(src, dest, observable_id=o.idref)
                     if not observable_composition:
                         # assumption: the observable composition was
                         # previously ingested. TODO what about when
@@ -341,7 +341,7 @@ def process_indicators(config, src, dest, indicators):
                                 # the db for later processing
                                 config['db'].set_pending_crits_link(src, dest,
                                                                     crits_id=crits_indicator_id,
-                                                                    edge_id=j.id_)
+                                                                    edge_id=j.idref)
                 elif util_.rgetattr(o, ['object_']):
                     if util_.rgetattr(o.object_, ['properties']):
                         # [ o == embedded observable]
