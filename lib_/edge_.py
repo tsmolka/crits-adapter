@@ -95,8 +95,8 @@ def cybox_uri_to_json(config, observable):
     if domain_category and domain_value:
         if domain_category not in crits_types.keys():
             config['logger'].error(
-                log_.log_messages['unsupported_stix_object_error'].format(
-                    type_=type(props), id_=observable.id_))
+                log_.log_messages['unsupported_object_error'].format(
+                    type_'edge', obj_type=type(props), id_=observable.id_))
             endpoint = None
             return(None, endpoint)
         json = {'domain': domain_value, 'type': crits_types[domain_category]}
@@ -218,8 +218,8 @@ def cybox_observable_to_json(config, observable):
         return(json, endpoint)
     else:
         config['logger'].error(
-            log_.log_messages['unsupported_stix_object_error'].format(
-                type_=type(props), id_=observable.id_))
+            log_.log_messages['unsupported_object_error'].format(
+                type_'edge', obj_type=type(props), id_=observable.id_))
         return(None, None)
 
 
@@ -248,7 +248,11 @@ def process_observables(config, src, dest, observables):
             else:
                 config['logger'].error(
                     log_.log_messages[
-                        'observable_convert_error'].format(id_=o))
+                        'obj_convert_error'].format(src_type='cybox',
+                                                    src_obj='observable',
+                                                    id_=o,
+                                                    dest_type='crits',
+                                                    dest_obj='json'))
                 continue
             # inbox the observable to crits
             config['edge_tally'][endpoint]['incoming'] += 1
@@ -267,8 +271,9 @@ def process_observables(config, src, dest, observables):
                 config['edge_tally']['all']['processed'] += 1
                 if config['daemon']['debug']:
                     config['logger'].debug(
-                        log_.log_messages['crits_inbox_success'].format(
-                            id_=o, endpoint=endpoint))
+                        log_.log_messages['obj_inbox_success'].format(
+                            src_type='edge', id_=o,
+                            dest_type='crits ' + endpoint + ' api endpoint'))
 
 
 def process_indicators(config, src, dest, indicators):
@@ -299,9 +304,10 @@ def process_indicators(config, src, dest, indicators):
             config['edge_tally']['indicators']['processed'] += 1
             config['edge_tally']['all']['processed'] += 1
             if config['daemon']['debug']:
-                config['logger'].debug(log_.log_messages[
-                    'crits_inbox_success'].format(id_=i,
-                                                  endpoint='indicators'))
+                config['logger'].debug(
+                    log_.log_messages['obj_inbox_success'].format(
+                        src_type='edge', id_=i,
+                        dest_type='crits indicators api endpoint'))
         if util_.rgetattr(indicators[i], ['observables']):
             for o in indicators[i].observables:
                 if util_.rgetattr(o, ['idref']) and \
@@ -391,9 +397,9 @@ def process_relationships(config, src, dest):
                                        'relationships', json)
                 if not success:
                     config['logger'].error(
-                        log_.log_messages['crits_inbox_error'].format(
-                            id_=r['edge_observable_id'],
-                            endpoint='relationships'))
+                        log_.log_messages['obj_inbox_error'].format(
+                            src_type='edge', id_=r['edge_observable_id'],
+                            dest_type='crits relationships api endpoint'))
                 else:
                     # remove the pending crits relationship from the db
                     config['edge_tally']['relationships']['processed'] += 1
@@ -446,8 +452,8 @@ def taxii_poll(config, src, dest, timestamp=None):
     taxii_message = t.get_message_from_http_response(http_response,
                                                      poll_request.message_id)
     if isinstance(taxii_message, tm10.StatusMessage):
-        config['logger'].error(log_.log_messages['taxii_polling_error'].format(
-            error=taxii_message.message))
+        config['logger'].error(log_.log_messages['polling_error'].format(
+            type_='taxii', error=taxii_message.message))
     elif isinstance(taxii_message, tm10.PollResponse):
         indicators = dict()
         observables = dict()
@@ -459,8 +465,18 @@ def taxii_poll(config, src, dest, timestamp=None):
         return(latest, indicators, observables)
 
 
-def taxii_inbox(config, dest, stix_package=None):
+def taxii_inbox(config, dest, stix_package=None, src=None, crits_id=None):
     '''inbox a stix package via taxii'''
+    if src and crits_id:
+        # check whether this has already been ingested
+        sync_state = config['db'].get_object_id(src, dest, crits_id=crits_id)
+        if sync_state and sync_state.get('crits_id', None):
+            if config['daemon']['debug']:
+                config['logger'].debug(
+                    log_.log_messages['object_already_ingested'].format(
+                        in_type='crits', in_id=crits_id, src=src, 
+                        out_type='edge', out_id=sync_state['edge_id']))
+            return(True)
     if stix_package:
         stixroot = lxml.etree.fromstring(stix_package.to_xml())
         client = tc.HttpClient()
@@ -482,7 +498,7 @@ def taxii_inbox(config, dest, stix_package=None):
         if config['daemon']['debug']:
             config['logger'].debug(
                 log_.log_messages[
-                    'taxii_open_session'].format(host=dest))
+                    'open_session'].format(type_='taxii', host=dest))
         taxii_response = client.callTaxiiService2(
             config['edge']['sites'][dest]['host'],
             config['edge']['sites'][dest]['taxii']['path'],
@@ -492,13 +508,14 @@ def taxii_inbox(config, dest, stix_package=None):
             success = False
             config['logger'].error(
                 log_.log_messages[
-                    'taxii_inbox_error'].format(host=dest,
-                                                msg=taxii_response.msg))
+                    'inbox_error'].format(type_='taxii', host=dest,
+                                          msg=taxii_response.msg))
         else:
             success = True
             if config['daemon']['debug']:
                 config['logger'].debug(
-                    log_.log_messages['taxii_inbox_success'].format(host=dest))
+                    log_.log_messages['inbox_success'].format(type_='taxii',
+                                                              host=dest))
         return(success)
 
 
@@ -511,15 +528,16 @@ def edge2crits(config, src, dest, daemon=False, now=None,
     if not last_run:
         # didn't get last_run as an arg so check the db...
         last_run = config['db'].get_last_sync(src=src, dest=dest,
-                                              direction='edge2crits')
+                                              direction='e2c')
     config['logger'].info(log_.log_messages['start_sync'].format(
         type_='edge', last_run=str(last_run), src=src, dest=dest))
-    # poll for new edge data...
+    # setup the tally counters
     config['edge_tally'] = dict()
     endpoints = ['ips', 'domains', 'samples', 'emails', 'indicators', 'relationships']
     config['edge_tally']['all'] = {'incoming': 0, 'processed': 0}
     for endpoint in endpoints:
         config['edge_tally'][endpoint] = {'incoming': 0, 'processed': 0}
+    # poll for new edge data...
     (latest, indicators, observables) = \
         taxii_poll(config, src, dest, last_run)
     process_observables(config, src, dest, observables)
@@ -555,7 +573,7 @@ def edge2crits(config, src, dest, daemon=False, now=None,
             next_run=next_run))
     if not daemon:
         config['db'].set_last_sync(src=src, dest=dest,
-                                   direction='edge2crits', timestamp=now)
+                                   direction='e2c', timestamp=now)
         return(None)
     else:
         return(util_.nowutc())

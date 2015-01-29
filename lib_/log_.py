@@ -21,20 +21,19 @@ def setup_logging(config):
     return log
 
 log_messages = {
-    'unsupported_stix_object_error':
-    'unsupported stix object type {type_} (id: {id_})',
-    'observable_convert_error':
-    'cybox observable (id: {id_}) could not be converted to crits json',
-    'crits_inbox_error':
-    'error inboxing edge object (id: {id_}) to crits {endpoint} api endpoint',
-    'crits_inbox_success':
-    'edge object (id: {id_}) was successfully inboxed to crits '
-    '{endpoint} api endpoint',
-    'taxii_polling_error':
-    'unhandled taxii polling error! {error}',
-    'taxii_open_session': 'initiating taxii connection to {host}',
-    'taxii_inbox_error': 'taxii inboxing to {host} failed! ({msg})',
-    'taxii_inbox_success': 'taxii inboxing to {host} was successful',
+    'unsupported_object_error':
+    'unsupported {type_} object type {obj_type} (id: {id_})',
+    'obj_convert_error':
+    '{src_type} {src_obj} (id: {id_}) could not be converted to {dest_type} {dest_obj}',
+    'obj_inbox_error':
+    'error inboxing {src_type} object (id: {id_}) to {dest_type}',
+    'obj_inbox_success':
+    '{src_type} object (id: {id_}) was successfully inboxed to {dest_type}'
+    'polling_error':
+    'unhandled {type_} polling error! {error}',
+    'open_session': 'initiating {type_} connection to {host}',
+    'inbox_error': '{type_} inboxing to {host} failed ({msg})',
+    'inbox_success': '{type_} inboxing to {host} successful',
     'start_sync': 'syncing new {type_} data since {last_run} between {src} and {dest}',
     'saving_state': 'saving state until next run {next_run}',
     'obs_comp_dereference_error':
@@ -43,5 +42,7 @@ log_messages = {
     'no pending crits relationships to be processed at this time',
     'incoming_tally': '{count} {type_} objects to be synced from {src} to {dest}',
     'processed_tally': '{count} {type_} objects successfully synced from {src} to {dest}',
-    'failed_tally': '{count} {type_} objects could not be synced from {src} to {dest}'
+    'failed_tally': '{count} {type_} objects could not be synced from {src} to {dest}',
+    'object_already_ingested': '{src_type} object id {src_id} (from {src})'
+                                       'already in {dest_type} ({dest}) as {dest_id}'
     }
