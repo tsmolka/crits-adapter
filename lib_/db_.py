@@ -52,21 +52,16 @@ class DB(object):
 
     def set_last_sync(self, src, dest, direction=None,
                       timestamp=None):
-        try:
-            doc = self.collection.find_one({'src': src,
-                                            'dest': dest,
-                                            'direction': direction})
-            if doc:
-                self.collection.update(doc, {'$set': {'timestamp': timestamp}})
-            else:
-                self.collection.insert({'src': src,
+        doc = self.collection.find_one({'src': src,
                                         'dest': dest,
-                                        'direction': direction,
-                                        'timestamp': timestamp})
-        except ConnectionFailure as e:
-            self.logger.error('mongodb connection failed - exiting...')
-            self.logger.exception(e)
-            exit()
+                                        'direction': direction})
+        if doc:
+            self.collection.update(doc, {'$set': {'timestamp': timestamp}})
+        else:
+            self.collection.insert({'src': src,
+                                    'dest': dest,
+                                    'direction': direction,
+                                    'timestamp': timestamp})
 
     def get_object_id(self, src, dest, crits_id=None, edge_id=None):
         query = {'src': src, 'dest': dest}
@@ -95,44 +90,36 @@ class DB(object):
             query['modified'] = timestamp
             self.collection.insert(query)
 
-
     def get_pending_crits_link(self, src, dest, edge_id=None):
-        try:
-            query = \
-                {'unresolved_crits_relationship':
-                 {'src': src,
-                  'dest': dest,
-                  'edge_observable_id': edge_id}}
-            return(self.collection.find_one(query))
-        except ConnectionFailure as e:
-            self.logger.error('mongodb connection failed - exiting...')
-            self.logger.exception(e)
-            exit()
+        query = \
+            {'unresolved_crits_relationship':
+             {'src': src,
+              'dest': dest,
+              'edge_observable_id': edge_id}}
+        return(self.collection.find_one(query))
+
+    def get_pending_crits_links(self, src, dest):
+        query = \
+            {'unresolved_crits_relationship':
+             {'src': src,
+              'dest': dest}
+        return(self.collection.find(query))
 
     def set_pending_crits_link(self, src, dest, crits_id=None,
                                edge_id=None):
-        try:
-            query = {'unresolved_crits_relationship':
-                     {'src': src,
-                      'dest': dest,
-                      'crits_indicator_id': crits_id,
-                      'edge_observable_id': edge_id}}
-            self.collection.insert(query)
-        except ConnectionFailure as e:
-            self.logger.error('mongodb connection failed - exiting...')
-            self.logger.exception(e)
-            exit()
+        query = {'unresolved_crits_relationship':
+                 {'src': src,
+                  'dest': dest,
+                  'crits_indicator_id': crits_id,
+                  'edge_observable_id': edge_id}}
+        self.collection.insert(query)
 
     def resolve_crits_link(self, src, dest, crits_id=None,
                            edge_id=None):
-        try:
-            query = {'unresolved_crits_relationship':
-                     {'src': src,
-                      'dest': dest,
-                      'crits_indicator_id': crits_id,
-                      'edge_observable_id': edge_id}}
-            self.collection.remove(query)
-        except ConnectionFailure as e:
-            self.logger.error('mongodb connection failed - exiting...')
-            self.logger.exception(e)
-            exit()
+        query = {'unresolved_crits_relationship':
+                 {'src': src,
+                  'dest': dest,
+                  'crits_indicator_id': crits_id,
+                  'edge_observable_id': edge_id}}
+        self.collection.remove(query)
+
