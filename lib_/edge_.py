@@ -94,8 +94,9 @@ def cybox_uri_to_json(config, observable):
                                   ['value', 'value'])
     if domain_category and domain_value:
         if domain_category not in crits_types.keys():
-            config['logger'].error('unsupported stix object type %s!'
-                                   % type(props))
+            config['logger'].error(
+                log_messages['unsupported_stix_object_error'].format(
+                    type_=type(props), id_=observable.id_))
             endpoint = None
             return(None, endpoint)
         json = {'domain': domain_value, 'type': crits_types[domain_category]}
@@ -216,8 +217,9 @@ def cybox_observable_to_json(config, observable):
     if json and endpoint:
         return(json, endpoint)
     else:
-        config['logger'].error('unsupported stix object type %s!' %
-                               type(props))
+        config['logger'].error(
+            log_messages['unsupported_stix_object_error'].format(
+                type_=type(props), id_=observable.id_))
         return(None, None)
 
 
@@ -230,43 +232,176 @@ def process_observables(config, src, dest, observables):
                 # mark crits releasability
                 json.update(mark_crits_releasability(config, src))
             else:
-                config['logger'].error('observable %s stix '
-                                       'could not be converted '
-                                       'to crits json!'
-                                       % (o))
-                continue
-                    # don't process it if we already have it
+                config['logger'].error(
+                    log_messages['observable_convert_error'].format(id_=o))
+                # don't process it if we already have it
                 del observables[o]
                 continue
             # inbox the observable to crits
-            (id_, success) = crits_.crits_inbox(config, dest,
-                                                endpoint, json, src=src, edge_id=o)
+            (id_, success) = \
+                crits_.crits_inbox(config, dest, endpoint, json,
+                                   src=src, edge_id=o)
             if not success:
-                config['logger'].error('%s object with id %s could not '
-                                       'be synced from %s (edge) to '
-                                       '%s (crits)!'
-                                       % (endpoint, o, src, dest))
+                config['logger'].error(
+                    log_messages['crits_inbox_error'].format(
+                        id_=o, endpoint=endpoint))
             else:
                 # successfully inboxed observable
                 if config['daemon']['debug']:
-                    config['logger'].debug('%s object with id %s was synced '
-                                           'from %s (edge) to %s (crits)'
-                                           % (endpoint, o, src, dest))
-            # observable_compositions = dict()
-            # elif util_.rgetattr(observable, ['observable_composition',
-            #                                  'observables']):
-            #     observable_compositions[observable.id_] = observable
-            # else:
-            #     config['logger'].error('observable %s stix could not '
-            #                            'be converted to crits json!'
-            #                            % str(observable.id_))
+                    config['logger'].debug(
+                        log_messages['crits_inbox_success'].format(
+                            id_=o, endpoint=endpoint)
 
+
+def process_indicators(config, src, dest, indicators):
+    for i in indicators.keys():
+        json = dict()
+        json['type'] = 'Reference'
+        json['value'] = util_.rgetattr(indicators[i], ['title'],
+                                       default_='unknown')
+        json['indicator_confidence'] = \
+            util_.rgetattr(indicators[i], ['confidence', 'value', 'value'],
+                           default_='unknown')
+        # TODO lookup the corresponding stix prop for indicator_impact
+        json['indicator_impact'] = {'rating': 'unknown'}
+        # inbox the indicator (we need to crits id!)
+        (indicator_id, success) = crits_.crits_inbox(config, dest,
+                                                     'indicators',
+                                                     json)
+        if not success:
+            config['logger'].error(log_messages['crits_inbox_error'].format(
+                id_=i, endpoint='indicators'))
+        else:
+            # successfully inboxed indicator...
+            if config['daemon']['debug']:
+                config['logger'].debug(log_messages[
+                    'crits_inbox_success'].format(id_=i,
+                                                  endpoint='indicators'))
+        # [pseudocode]
+        # for o in indicator observables:
+        #     if it's an observable composition with idrefs, call
+        #     set_pending_crits_link() to store the edge_id / crits
+        #     indicator pairing for later processing.
+        # 
+        #     elif it's an observable composition with inline
+        #     observables, pass them to observable composition with
+        #     inline observables, pass them to process_observables(),
+        #     (which will store the edge/crits id indicator pairing
+        #     for later processing.
+        # 
+        #     elif it's an indicator with inline observables, pass
+        #     them to observable composition with inline observables,
+        #     pass them to process_observables(), (which will store
+        #     the edge/crits id indicator pairing for later
+        #     processing.
+        #
+        # finally, (write a db func) call
+        # db.get_unresolved_crits_links(), loop through them, call
+        # get_object_id() to find the crits observable id
+        # corresponding to the edge id, generate the relationship
+        # json, inbox it to crits, and call resolve_crits_link() if
+        # successful
+        
+        if util_.rgetattr(indicator, ['observables']):
+            for o in indicator.observables:
+                if util_.rgetattr(o, ['idref']):
+                    pass
+                elif util_.rgetattr(o, ['object_']):
+                    if util_.rgetattr(o.object_, ['properties']):
+                        pass
+
+    #     container_observable = indicator.observables[0]
+    #     composite_observable_id = \
+    #         util_.rgetattr(container_observable, ['idref'])
+    #     if not composite_observable_id:
+    #         config['logger'].error(
+    #             log_messages['obs_comp_dereference_error'].format(
+    #                 id_=indicator.id_)
+    #     else:
+    #         composite_observable = observable_compositions.get(
+    #             composite_observable_id, None)
+    #         if not composite_observable:
+    #             config['logger'].error(
+    #                 log_messages['obs_comp_dereference_error'].format(
+    #                     id_=indicator.id_)
+    #         else:
+    #             observables_list = \
+    #                 util_.rgetattr(composite_observable,
+    #                                ['observable_composition',
+    #                                 'observables'])
+    #             if not observables_list:
+    #                 config['logger'].error(
+    #                     log_messages['obs_comp_dereference_error'
+    #                              ].format(id_=indicator.id_)
+    #             else:
+    #                 for i in observables_list:
+    #                     blob = dict()
+    #                     blob['left_type'] = 'Indicator'
+    #                     blob['left_id'] = None
+    #                     rhs = config['db'].get_object_id(src, dest,
+    #                                                      edge_id=i.idref)
+    #                     if not rhs:
+    #                         config['logger'].error(
+    #                             log_messages['obs_comp_dereference_error'
+    #                                      ].format(id_=indicator.id_)
+    #                         unresolvables.append(i.idref)
+    #                     else:
+    #                         if not rhs.get('crits_id', None):
+    #                             config['logger'].error(
+    #                                 log_messages['obs_comp_dereference_error'
+    #                                          ].format(id_=indicator.id_)
+    #                         else:
+    #                             blob['right_type'] = \
+    #                                 endpoint_trans[
+    #                                     rhs['crits_id'].split(':')[0]]
+    #                             blob['right_id'] = \
+    #                                 rhs['crits_id'].split(':')[1]
+    #                             blob['rel_type'] = 'Contains'
+    #                             blob['rel_confidence'] = 'unknown'
+    #                             relationship_json.append(blob)
+    # return(indicator_json, relationship_json, unresolvables)
+
+
+                                   
+    #         # track unresolvable cybox observables in db so if we see
+    #         # them later we can build the corresponding crits
+    #         # relationship
+    #         if stix_id in unresolvables_dict.keys():
+    #             for unresolvable in unresolvables_dict[stix_id]:
+    #                 if config['daemon']['debug']:
+    #                     config['logger'].debug('cybox observable id %s should '
+    #                                            'be linked to crits indicator '
+    #                                            'id %s but we haven\'t seen it '
+    #                                            'yet so tracking it in mongo'
+    #                                            % (str(stix_id), id_))
+    #                 config['db'].set_pending_crits_link(src, dest,
+    #                                                     crits_id=id_,
+    #                                                     edge_id=unresolvable)
+    #         # if indicator was inboxed successfully, inbox the
+    #         # connected relationships...
+    #         if json_['relationships'].get(i, None):
+    #             for blob in json_['relationships'][i]:
+    #                 blob['left_id'] = id_
+    #                 (relationship_id_, success) = \
+    #                     crits_.crits_inbox(config, dest,
+    #                                        'relationships', blob)
+    #                 if not success:
+    #                     config['logger'].error('unable to create crits '
+    #                                            'indicator relationship %s '
+    #                                            '(id %s) for crits indicator '
+    #                                            'id %s!'
+    #                                            % (blob['right_type'],
+    #                                               blob['right_id'], id_))
+    #         # as we've now successfully processed the indicator, track
+    #         # the related crits/json ids (by src/dest)
+    #         config['db'].set_object_id(src, dest,
+    #                                    edge_id=stix_id,
+    #                                    crits_id='indicators:%s'
+    #                                    % str(id_), timestamp=util_.nowutc())
 
 
 def process_taxii_content_blocks(config, content_block):
     '''process taxii content blocks'''
-    # json_['indicators'] = dict()
-    # json_['relationships'] = dict()
     indicators = dict()
     observables = dict()
     xml = StringIO.StringIO(content_block.content)
@@ -294,8 +429,8 @@ def taxii_poll(config, src, dest, timestamp=None):
     else:
         earliest = timestamp
     latest = util_.nowutc()
-    poll_request = tm10.PollRequest(
-        message_id=tm10.generate_message_id(),
+    poll_request = tm10.PollRequest( 
+       message_id=tm10.generate_message_id(),
         feed_name=config['edge']['sites'][src]['taxii']['collection'],
         exclusive_begin_timestamp_label=earliest,
         inclusive_end_timestamp_label=latest,
@@ -308,8 +443,8 @@ def taxii_poll(config, src, dest, timestamp=None):
     taxii_message = t.get_message_from_http_response(http_response,
                                                      poll_request.message_id)
     if isinstance(taxii_message, tm10.StatusMessage):
-        config['logger'].error('unhandled taxii polling error! (%s)'
-                               % taxii_message.message)
+        config['logger'].error(log_messages['taxii_polling_error'].format(
+            error=taxii_message.message))
     elif isinstance(taxii_message, tm10.PollResponse):
         indicators = dict()
         observables = dict()
@@ -342,8 +477,8 @@ def taxii_inbox(config, dest, stix_package=None):
                 [config['edge']['sites'][dest]['taxii']['collection']]
         message.content_blocks.append(content_block)
         if config['daemon']['debug']:
-            config['logger'].debug('initiating taxii connection to %s'
-                                   % dest)
+            config['logger'].debug(log_messages['taxii_open_session'].format(
+                host=dest))
         taxii_response = client.callTaxiiService2(
             config['edge']['sites'][dest]['host'],
             config['edge']['sites'][dest]['taxii']['path'],
@@ -351,20 +486,19 @@ def taxii_inbox(config, dest, stix_package=None):
             port=config['edge']['sites'][dest]['taxii']['port'])
         if taxii_response.code != 200 or taxii_response.msg != 'OK':
             success = False
-            config['logger'].error('taxii inboxing to %s failed! [%s]'
-                                   % (dest, taxii_response.msg))
+            config['logger'].error(log_messages['taxii_inbox_error'].format(
+                host=dest, msg=taxii_response.msg))
         else:
             success = True
             if config['daemon']['debug']:
-                config['logger'].debug('taxii inboxing to %s was successful'
-                                       % dest)
+                config['logger'].debug(
+                    log_messages['taxii_inbox_success'].format(host=dest))
         return(success)
 
 
 def edge2crits(config, src, dest, daemon=False, now=None,
                last_run=None):
     '''sync an edge instance with crits'''
-    # import pudb; pu.db
     observable_endpoints = ['ips', 'domains', 'samples', 'emails']
     endpoint_trans = {'emails': 'Email', 'ips': 'IP',
                       'samples': 'Sample', 'domains': 'Domain'}
@@ -375,14 +509,32 @@ def edge2crits(config, src, dest, daemon=False, now=None,
         # didn't get last_run as an arg so check the db...
         last_run = config['db'].get_last_sync(src=src, dest=dest,
                                               direction='edge2crits')
-    config['logger'].info('syncing new edge data since %s between %s and %s'
-                          % (str(last_run), src, dest))
+    config['logger'].info(log_messages['start_sync'].format(
+        type_='edge', last_run=str(last_run), src=src, dest=dest))
     # poll for new edge data...
     (latest, indicators, observables) = \
         taxii_poll(config, src, dest, last_run)
     process_observables(config, src, dest, observables)
-    # process_indicators(config, src, dest, indicators)
-    
+    process_indicators(config, src, dest, indicators)
+    # save state to disk for next run...
+    if config['daemon']['debug']:
+        poll_interval = \
+            config['edge']['sites'][src]['taxii']['poll_interval']
+        next_run = str(now + datetime.timedelta(seconds=poll_interval))
+        config['logger'].debug(log_messages['saving_state'].format(
+            next_run=next_run))
+    if not daemon:
+        config['db'].set_last_sync(src=src, dest=dest,
+                                   direction='edge2crits', timestamp=now)
+        return(None)
+    else:
+        return(util_.nowutc())
+
+
+
+
+
+
     #             # check whether this observable resolves a crits
     #             # indicator relationship...
     #             doc = \
@@ -428,194 +580,13 @@ def edge2crits(config, src, dest, daemon=False, now=None,
     #         config['logger'].error('indicator %s stix could not be converted '
     #                                'to crits json!' % str(i))
     # # sync indicators...
-    # for i in json_['indicators'].keys():
-    #     stix_id = json_['indicators'][i]['stix_id']
-    #     del json_['indicators'][i]['stix_id']
-    #     # inbox the indicator to crits...
-    #     (id_, success) = crits_.crits_inbox(config, dest,
-    #                                         'indicators',
-    #                                         json_['indicators'][i])
-    #     if not success:
-    #         config['logger'].error('%s object with id %s could not be synced '
-    #                                'from %s (edge) to %s (crits)!'
-    #                                % ('indicators', str(stix_id),
-    #                                   src, dest))
-    #     else:
-    #         # successfully inboxed indicator...
-    #         if config['daemon']['debug']:
-    #             config['logger'].debug('%s object with id %s was synced from '
-    #                                    '%s (edge) to %s (crits)'
-    #                                    % ('indicators', str(stix_id),
-    #                                       src, dest))
-    #         # track unresolvable cybox observables in db so if we see
-    #         # them later we can build the corresponding crits
-    #         # relationship
-    #         if stix_id in unresolvables_dict.keys():
-    #             for unresolvable in unresolvables_dict[stix_id]:
-    #                 if config['daemon']['debug']:
-    #                     config['logger'].debug('cybox observable id %s should '
-    #                                            'be linked to crits indicator '
-    #                                            'id %s but we haven\'t seen it '
-    #                                            'yet so tracking it in mongo'
-    #                                            % (str(stix_id), id_))
-    #                 config['db'].set_pending_crits_link(src, dest,
-    #                                                     crits_id=id_,
-    #                                                     edge_id=unresolvable)
-    #         # if indicator was inboxed successfully, inbox the
-    #         # connected relationships...
-    #         if json_['relationships'].get(i, None):
-    #             for blob in json_['relationships'][i]:
-    #                 blob['left_id'] = id_
-    #                 (relationship_id_, success) = \
-    #                     crits_.crits_inbox(config, dest,
-    #                                        'relationships', blob)
-    #                 if not success:
-    #                     config['logger'].error('unable to create crits '
-    #                                            'indicator relationship %s '
-    #                                            '(id %s) for crits indicator '
-    #                                            'id %s!'
-    #                                            % (blob['right_type'],
-    #                                               blob['right_id'], id_))
-    #         # as we've now successfully processed the indicator, track
-    #         # the related crits/json ids (by src/dest)
-    #         config['db'].set_object_id(src, dest,
-    #                                    edge_id=stix_id,
-    #                                    crits_id='indicators:%s'
-    #                                    % str(id_), timestamp=util_.nowutc())
-    #         subtotal_output['indicators'] += 1
-    #         total_output += 1
-    # if subtotal_output['indicators'] > 0:
-    #     config['logger'].info('%i %s objects successfully synced between '
-    #                           '%s (edge) and %s (crits)'
-    #                           % (subtotal_output['indicators'], 'indicators',
-    #                              src, dest))
-    # if subtotal_output['indicators'] < subtotal_input['indicators']:
-    #     config['logger'].info('%i %s objects could not be synced between '
-    #                           '%s (edge) and %s (crits)'
-    #                           % (subtotal_input['indicators'] -
-    #                              subtotal_output['indicators'], 'indicators',
-    #                              src, dest))
-    # if total_output > 0:
-    #     config['logger'].info('%i (total) objects successfully synced between '
-    #                           '%s (edge) and %s (crits)'
-    #                           % (total_output, src, dest))
-    # if total_output < total_input:
-    #     config['logger'].info('%i (total) objects could not be synced between '
-    #                           '%s (edge) and %s (crits)'
-    #                           % (total_input - total_output,
-    #                              src, dest))
-    # # inbox any crits indicator relationships which were resolved by
-    # # cybox observables inboxed during the current run...
-    # if resolved_crits_relationships:
-    #     for blob in resolved_crits_relationships:
-    #         stix_id = blob['stix_id']
-    #         del blob['stix_id']
-    #         (relationship_id_, success) = \
-    #             crits_.crits_inbox(config, dest, 'relationships', blob)
-    #         if success:
-    #             config['logger'].debug('resolved outstanding crits indicator '
-    #                                    'relationship %s (id %s) for crits '
-    #                                    'indicator id %s, removing from mongo '
-    #                                    'unresolved relationship tracker'
-    #                                    % (blob['right_type'], blob['right_id'],
-    #                                       blob['left_id']))
-    #             # mark the relationship as resolved in the db...
-    #             config['db'].resolve_crits_link(src, dest,
-    #                                             crits_id=blob['left_id'],
-    #                                             edge_id=stix_id)
-    # save state to disk for next run...
-    if config['daemon']['debug']:
-        poll_interval = \
-            config['edge']['sites'][src]['taxii']['poll_interval']
-        next_run = str(now + datetime.timedelta(seconds=poll_interval))
-        config['logger'].debug('saving state until next run [%s]' % next_run)
-    if not daemon:
-        config['db'].set_last_sync(src=src, dest=dest,
-                                   direction='edge2crits', timestamp=now)
-        return(None)
-    else:
-        return(util_.nowutc())
 
 
-def stix_ind2json(config, src, dest, indicator,
-                  observable_compositions, problem_children):
-    '''translate a stix indicator to crits json'''
-    endpoint_trans = {'emails': 'Email', 'ips': 'IP',
-                      'samples': 'Sample', 'domains': 'Domain'}
-    indicator_json = dict()
-    relationship_json = list()
-    unresolvables = list()
-    indicator_json['stix_id'] = indicator.id_
-    indicator_json['type'] = 'Reference'
-    indicator_json['value'] = util_.rgetattr(indicator, ['title'],
-                                             default_='unknown')
-    indicator_json['indicator_confidence'] = \
-        util_.rgetattr(indicator, ['confidence', 'value', 'value'],
-                       default_='unknown')
-    # TODO lookup the corresponding stix prop for indicator_impact
-    indicator_json['indicator_impact'] = {'rating': 'unknown'}
-    if util_.rgetattr(indicator, ['observables']):
-        # it's (presumably) a normal observable composition indicator
-        container_observable = indicator.observables[0]
-        composite_observable_id = util_.rgetattr(container_observable,
-                                                 ['idref'])
-        if not composite_observable_id:
-            config['logger'].error('unable to dereference observable '
-                                   'composition for stix indicator %s!'
-                                   % indicator.id_)
-        else:
-            composite_observable = observable_compositions.get(
-                composite_observable_id, None)
-            if not composite_observable:
-                config['logger'].error('unable to dereference observable '
-                                       'composition for stix indicator %s!'
-                                       % indicator.id_)
-            else:
-                observables_list = \
-                    util_.rgetattr(composite_observable,
-                                   ['observable_composition',
-                                    'observables'])
-                if not observables_list:
-                    config['logger'].error('unable to dereference observable '
-                                           'composition for stix indicator %s!'
-                                           % indicator.id_)
-                else:
-                    for i in observables_list:
-                        if i.idref in problem_children:
-                            config['logger'].error('observable %s '
-                                                   '(part of observable '
-                                                   'composition for stix '
-                                                   'indicator %s) could '
-                                                   'not be inboxed to '
-                                                   'crits; ignoring...'
-                                                   % (i.idref, indicator.id_))
-                            observables_list.remove(i)
-                            continue
-                        blob = dict()
-                        blob['left_type'] = 'Indicator'
-                        blob['left_id'] = None
-                        rhs = config['db'].get_object_id(src, dest,
-                                                         edge_id=i.idref)
-                        if not rhs:
-                            config['logger'].error('unable to dereference '
-                                                   'observable composition '
-                                                   'for stix indicator %s!'
-                                                   % indicator.id_)
-                            unresolvables.append(i.idref)
-                        else:
-                            if not rhs.get('crits_id', None):
-                                config['logger'].error('unable to dereference '
-                                                       'observable '
-                                                       'composition '
-                                                       'for stix indicator %s!'
-                                                       % indicator.id_)
-                            else:
-                                blob['right_type'] = \
-                                    endpoint_trans[
-                                        rhs['crits_id'].split(':')[0]]
-                                blob['right_id'] = \
-                                    rhs['crits_id'].split(':')[1]
-                                blob['rel_type'] = 'Contains'
-                                blob['rel_confidence'] = 'unknown'
-                                relationship_json.append(blob)
-    return(indicator_json, relationship_json, unresolvables)
+# observable_compositions = dict()
+# elif util_.rgetattr(observable, ['observable_composition',
+#                                  'observables']):
+#     observable_compositions[observable.id_] = observable
+# else:
+#     config['logger'].error('observable %s stix could not '
+#                            'be converted to crits json!'
+#                            % str(observable.id_))
