@@ -93,55 +93,57 @@ class DB(object):
 
     def get_pending_crits_link(self, src, dest, edge_id=None):
         query = \
-            {'unresolved_crits_relationship':
-             {'src': src,
-              'dest': dest,
-              'edge_observable_id': edge_id}}
+            {'type_': 'unresolved_crits_relationship',
+             'src': src,
+             'dest': dest,
+             'edge_observable_id': edge_id}
         return(self.collection.find_one(query))
 
     def get_pending_crits_links(self, src, dest):
         query = \
-            {'unresolved_crits_relationship':
-             {'src': src,
-              'dest': dest}}
+            {'type_': 'unresolved_crits_relationship',
+             'src': src,
+             'dest': dest}
         return(self.collection.find(query))
 
     def set_pending_crits_link(self, src, dest, crits_id=None,
                                edge_id=None):
-        query = {'unresolved_crits_relationship':
-                 {'src': src,
-                  'dest': dest,
-                  'crits_indicator_id': crits_id,
-                  'edge_observable_id': edge_id}}
+        query = {'type_': 'unresolved_crits_relationship',
+                 'src': src,
+                 'dest': dest,
+                 'crits_indicator_id': crits_id,
+                 'edge_observable_id': edge_id}
         self.collection.insert(query)
 
     def resolve_crits_link(self, src, dest, crits_id=None,
                            edge_id=None):
-        query = {'unresolved_crits_relationship':
-                 {'src': src,
-                  'dest': dest,
-                  'crits_indicator_id': crits_id,
-                  'edge_observable_id': edge_id}}
+        query = {'type_': 'unresolved_crits_relationship',
+                 'src': src,
+                 'dest': dest,
+                 'crits_indicator_id': crits_id,
+                 'edge_observable_id': edge_id}
         self.collection.remove(query)
 
     def store_observable_composition(self, src, dest, observable_id=None,
                                      observable_composition=None):
-        query = {'observable_composition':
-                 {'src': src,
-                  'dest': dest,
-                  'observable_id': observable_id,
-                  'observable_composition': observable_composition.to_json()}}
+        obs_json = observable_composition.to_json()
+        query = {'type_': 'observable_composition',
+                 'src': src,
+                 'dest': dest,
+                 'observable_id': observable_id,
+                 'observable_composition': obs_json}
         self.collection.insert(query)
 
-    def get_observable_composition(self, src, dest, observable_id=None)
-        query = {'observable_composition':
-                 {'src': src,
-                  'dest': dest,
-                  'observable_id': observable_id,}}
+    def get_observable_composition(self, src, dest, observable_id=None):
+        query = {'type_': 'observable_composition',
+                 'src': src,
+                 'dest': dest,
+                 'observable_id': observable_id}
         doc = self.collection.find_one(query)
-        if 'observable_composition' in doc.keys():
-            observable_composition = \
-                ObservableComposition.from_json(doc['observable_composition'])
-            return(observable_composition)
+        if doc:
+            if 'observable_composition' in doc.keys():
+                observable_composition = \
+                    ObservableComposition.from_json(doc['observable_composition'])
+                return(observable_composition)
         else:
             return(None)
