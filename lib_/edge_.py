@@ -224,6 +224,7 @@ def cybox_observable_to_json(config, observable):
 
 
 def process_observables(config, src, dest, observables):
+    # TODO some of the hailataxii date uses the cybox ###comma### construct, which is currently unsupported
     for o in observables.keys():
         json = dict()
         if util_.rgetattr(observables[o], ['observable_composition']) \
@@ -286,49 +287,24 @@ def process_indicators(config, src, dest, indicators):
                 config['logger'].debug(log_.log_messages[
                     'crits_inbox_success'].format(id_=i,
                                                   endpoint='indicators'))
-        # [pseudocode]
-        # for o in indicator observables:
-        #     if it's an observable composition with idrefs, call
-        #     set_pending_crits_link() to store the edge_id / crits
-        #     indicator pairing for later processing.
-        # 
-        #     elif it's an observable composition with inline
-        #     observables, pass them to observable composition with
-        #     inline observables, pass them to process_observables(),
-        #     (which will store the edge/crits id indicator pairing
-        #     for later processing.
-        # 
-        #     elif it's an indicator with inline observables, pass
-        #     them to observable composition with inline observables,
-        #     pass them to process_observables(), (which will store
-        #     the edge/crits id indicator pairing for later
-        #     processing.
-        #
-        # finally, (write a db func) call
-        # db.get_unresolved_crits_links(), loop through them, call
-        # get_object_id() to find the crits observable id
-        # corresponding to the edge id, generate the relationship
-        # json, inbox it to crits, and call resolve_crits_link() if
-        # successful
-        
         if util_.rgetattr(indicators[i], ['observables']):
             for o in indicators[i].observables:
                 if util_.rgetattr(o, ['idref']) and not util_.rgetattr(o, ['object_']):
-                    # [o == idref observable composition]
-                    # try to fetch the observable composition o.idref
-                    # points to
                     observable_composition = \
                         config['db'].get_observable_composition(src, dest, observable_id=o.idref)
                     if not observable_composition:
+                        # [ o == embedded observable]
+                        config['db'].set_pending_crits_link(src, dest,
+                                                            crits_id=crits_indicator_id,
+                                                            edge_id=o.idref)
+                    elif observable_composition:
+                        # [o == idref observable composition]
+                        # try to fetch the observable composition o.idref
+                        # points to
                         # assumption: the observable composition was
                         # previously ingested. TODO what about when
                         # the observable composition comes in *after*
                         # the indicator?
-                        config['logger'].error(
-                            log_.log_messages['obs_comp_dereference_error'
-                                          ].format(id_=i))
-                        continue
-                    else:
                         observables_list = util_.rgetattr(observable_composition, ['observables'])
                         if not observables_list:
                             config['logger'].error(
@@ -342,17 +318,17 @@ def process_indicators(config, src, dest, indicators):
                                 config['db'].set_pending_crits_link(src, dest,
                                                                     crits_id=crits_indicator_id,
                                                                     edge_id=j.idref)
-                elif util_.rgetattr(o, ['object_']):
-                    if util_.rgetattr(o.object_, ['properties']):
-                        # [ o == embedded observable]
-                        observables = {o.id_: o}
-                        # inbox the inline observable
-                        process_observables(config, src, dest, observables)
-                        # store the pending relationship in
-                        # the db for later processing
-                        config['db'].set_pending_crits_link(src, dest,
-                                                            crits_id=crits_indicator_id,
-                                                            edge_id=o.id_)
+                    # TODO (need to dig up suitable sample data)
+                    # if it's an observable composition with inline
+                    # observables, pass them to observable composition with
+                    # inline observables, pass them to process_observables(),
+                    # (which will store the edge/crits id indicator pairing
+                    # for later processing.
+                    else:
+                        config['logger'].error(
+                            log_.log_messages['obs_comp_dereference_error'
+                                          ].format(id_=i))
+                        continue
         # as we've now successfully processed the indicator, track
         # the related crits/json ids (by src/dest)
         config['db'].set_object_id(src, dest,
