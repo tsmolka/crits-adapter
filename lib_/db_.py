@@ -2,6 +2,7 @@
 
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
+from cybox.core.observable import ObservableComposition
 import log_
 import pytz
 import util_
@@ -123,3 +124,24 @@ class DB(object):
                   'edge_observable_id': edge_id}}
         self.collection.remove(query)
 
+    def store_observable_composition(self, src, dest, observable_id=None,
+                                     observable_composition=None):
+        query = {'observable_composition':
+                 {'src': src,
+                  'dest': dest,
+                  'observable_id': observable_id,
+                  'observable_composition': observable_composition.to_json()}}
+        self.collection.insert(query)
+
+    def get_observable_composition(self, src, dest, observable_id=None)
+        query = {'observable_composition':
+                 {'src': src,
+                  'dest': dest,
+                  'observable_id': observable_id,}}
+        doc = self.collection.find_one(query)
+        if 'observable_composition' in doc.keys():
+            observable_composition = \
+                ObservableComposition.from_json(doc['observable_composition'])
+            return(observable_composition)
+        else:
+            return(None)
