@@ -95,7 +95,7 @@ def cybox_uri_to_json(config, observable):
     if domain_category and domain_value:
         if domain_category not in crits_types.keys():
             config['logger'].error(
-                log_messages['unsupported_stix_object_error'].format(
+                log_.log_messages['unsupported_stix_object_error'].format(
                     type_=type(props), id_=observable.id_))
             endpoint = None
             return(None, endpoint)
@@ -218,7 +218,7 @@ def cybox_observable_to_json(config, observable):
         return(json, endpoint)
     else:
         config['logger'].error(
-            log_messages['unsupported_stix_object_error'].format(
+            log_.log_messages['unsupported_stix_object_error'].format(
                 type_=type(props), id_=observable.id_))
         return(None, None)
 
@@ -233,7 +233,7 @@ def process_observables(config, src, dest, observables):
                 json.update(mark_crits_releasability(config, src))
             else:
                 config['logger'].error(
-                    log_messages['observable_convert_error'].format(id_=o))
+                    log_.log_messages['observable_convert_error'].format(id_=o))
                 # don't process it if we already have it
                 del observables[o]
                 continue
@@ -243,14 +243,14 @@ def process_observables(config, src, dest, observables):
                                    src=src, edge_id=o)
             if not success:
                 config['logger'].error(
-                    log_messages['crits_inbox_error'].format(
+                    log_.log_messages['crits_inbox_error'].format(
                         id_=o, endpoint=endpoint))
             else:
                 # successfully inboxed observable
                 if config['daemon']['debug']:
                     config['logger'].debug(
-                        log_messages['crits_inbox_success'].format(
-                            id_=o, endpoint=endpoint)
+                        log_.log_messages['crits_inbox_success'].format(
+                            id_=o, endpoint=endpoint))
 
 
 def process_indicators(config, src, dest, indicators):
@@ -269,12 +269,12 @@ def process_indicators(config, src, dest, indicators):
                                                      'indicators',
                                                      json)
         if not success:
-            config['logger'].error(log_messages['crits_inbox_error'].format(
+            config['logger'].error(log_.log_messages['crits_inbox_error'].format(
                 id_=i, endpoint='indicators'))
         else:
             # successfully inboxed indicator...
             if config['daemon']['debug']:
-                config['logger'].debug(log_messages[
+                config['logger'].debug(log_.log_messages[
                     'crits_inbox_success'].format(id_=i,
                                                   endpoint='indicators'))
         # [pseudocode]
@@ -302,8 +302,8 @@ def process_indicators(config, src, dest, indicators):
         # json, inbox it to crits, and call resolve_crits_link() if
         # successful
         
-        if util_.rgetattr(indicator, ['observables']):
-            for o in indicator.observables:
+        if util_.rgetattr(indicators[i], ['observables']):
+            for o in indicators[i].observables:
                 if util_.rgetattr(o, ['idref']):
                     pass
                 elif util_.rgetattr(o, ['object_']):
@@ -315,14 +315,14 @@ def process_indicators(config, src, dest, indicators):
     #         util_.rgetattr(container_observable, ['idref'])
     #     if not composite_observable_id:
     #         config['logger'].error(
-    #             log_messages['obs_comp_dereference_error'].format(
+    #             log_.log_messages['obs_comp_dereference_error'].format(
     #                 id_=indicator.id_)
     #     else:
     #         composite_observable = observable_compositions.get(
     #             composite_observable_id, None)
     #         if not composite_observable:
     #             config['logger'].error(
-    #                 log_messages['obs_comp_dereference_error'].format(
+    #                 log_.log_messages['obs_comp_dereference_error'].format(
     #                     id_=indicator.id_)
     #         else:
     #             observables_list = \
@@ -331,7 +331,7 @@ def process_indicators(config, src, dest, indicators):
     #                                 'observables'])
     #             if not observables_list:
     #                 config['logger'].error(
-    #                     log_messages['obs_comp_dereference_error'
+    #                     log_.log_messages['obs_comp_dereference_error'
     #                              ].format(id_=indicator.id_)
     #             else:
     #                 for i in observables_list:
@@ -342,13 +342,13 @@ def process_indicators(config, src, dest, indicators):
     #                                                      edge_id=i.idref)
     #                     if not rhs:
     #                         config['logger'].error(
-    #                             log_messages['obs_comp_dereference_error'
+    #                             log_.log_messages['obs_comp_dereference_error'
     #                                      ].format(id_=indicator.id_)
     #                         unresolvables.append(i.idref)
     #                     else:
     #                         if not rhs.get('crits_id', None):
     #                             config['logger'].error(
-    #                                 log_messages['obs_comp_dereference_error'
+    #                                 log_.log_messages['obs_comp_dereference_error'
     #                                          ].format(id_=indicator.id_)
     #                         else:
     #                             blob['right_type'] = \
@@ -443,7 +443,7 @@ def taxii_poll(config, src, dest, timestamp=None):
     taxii_message = t.get_message_from_http_response(http_response,
                                                      poll_request.message_id)
     if isinstance(taxii_message, tm10.StatusMessage):
-        config['logger'].error(log_messages['taxii_polling_error'].format(
+        config['logger'].error(log_.log_messages['taxii_polling_error'].format(
             error=taxii_message.message))
     elif isinstance(taxii_message, tm10.PollResponse):
         indicators = dict()
@@ -477,7 +477,7 @@ def taxii_inbox(config, dest, stix_package=None):
                 [config['edge']['sites'][dest]['taxii']['collection']]
         message.content_blocks.append(content_block)
         if config['daemon']['debug']:
-            config['logger'].debug(log_messages['taxii_open_session'].format(
+            config['logger'].debug(log_.log_messages['taxii_open_session'].format(
                 host=dest))
         taxii_response = client.callTaxiiService2(
             config['edge']['sites'][dest]['host'],
@@ -486,13 +486,13 @@ def taxii_inbox(config, dest, stix_package=None):
             port=config['edge']['sites'][dest]['taxii']['port'])
         if taxii_response.code != 200 or taxii_response.msg != 'OK':
             success = False
-            config['logger'].error(log_messages['taxii_inbox_error'].format(
+            config['logger'].error(log_.log_messages['taxii_inbox_error'].format(
                 host=dest, msg=taxii_response.msg))
         else:
             success = True
             if config['daemon']['debug']:
                 config['logger'].debug(
-                    log_messages['taxii_inbox_success'].format(host=dest))
+                    log_.log_messages['taxii_inbox_success'].format(host=dest))
         return(success)
 
 
@@ -509,7 +509,7 @@ def edge2crits(config, src, dest, daemon=False, now=None,
         # didn't get last_run as an arg so check the db...
         last_run = config['db'].get_last_sync(src=src, dest=dest,
                                               direction='edge2crits')
-    config['logger'].info(log_messages['start_sync'].format(
+    config['logger'].info(log_.log_messages['start_sync'].format(
         type_='edge', last_run=str(last_run), src=src, dest=dest))
     # poll for new edge data...
     (latest, indicators, observables) = \
@@ -521,7 +521,7 @@ def edge2crits(config, src, dest, daemon=False, now=None,
         poll_interval = \
             config['edge']['sites'][src]['taxii']['poll_interval']
         next_run = str(now + datetime.timedelta(seconds=poll_interval))
-        config['logger'].debug(log_messages['saving_state'].format(
+        config['logger'].debug(log_.log_messages['saving_state'].format(
             next_run=next_run))
     if not daemon:
         config['db'].set_last_sync(src=src, dest=dest,
