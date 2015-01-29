@@ -39,4 +39,6 @@ log_messages = {
     'saving_state': 'saving state until next run {next_run}',
     'obs_comp_dereference_error':
     'unable to dereference observable composition for stix indicator {id_}',
+    'no_pending_crits_relationships':
+    'no pending crits relationships to be processed at this time',
     }
