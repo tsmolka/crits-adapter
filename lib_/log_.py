@@ -41,4 +41,7 @@ log_messages = {
     'unable to dereference observable composition for stix indicator {id_}',
     'no_pending_crits_relationships':
     'no pending crits relationships to be processed at this time',
+    'incoming_tally': '{count} {type_} objects to be synced from {src} to {dest}',
+    'processed_tally': '{count} {type_} objects successfully synced from {src} to {dest}',
+    'failed_tally': '{count} {type_} objects could not be synced from {src} to {dest}'
     }
