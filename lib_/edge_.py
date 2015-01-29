@@ -224,7 +224,9 @@ def cybox_observable_to_json(config, observable):
 
 
 def process_observables(config, src, dest, observables):
-    # TODO some of the hailataxii date uses the cybox ###comma### construct, which is currently unsupported
+    '''handle incoming cybox observables and observable compositions'''
+    # TODO some of the hailataxii date uses the cybox ###comma###
+    #      construct, which is currently unsupported
     for o in observables.keys():
         json = dict()
         if util_.rgetattr(observables[o], ['observable_composition']) \
@@ -233,7 +235,9 @@ def process_observables(config, src, dest, observables):
             # store it in the db...maybe the indicator will only come
             # across in a subsequent run so we can't rely on passing
             # this around in memory
-            config['db'].store_observable_composition(src, dest, observable_id=o, observable_composition=observables[o].observable_composition)
+            config['db'].store_obs_comp(src, dest,
+                                        obs_id=o,
+                                        obs_comp=observables[o].observable_composition)
             continue
         elif util_.rgetattr(observables[o], ['object_']):
             # it's a normal observable
@@ -243,9 +247,12 @@ def process_observables(config, src, dest, observables):
                 json.update(mark_crits_releasability(config, src))
             else:
                 config['logger'].error(
-                    log_.log_messages['observable_convert_error'].format(id_=o))
+                    log_.log_messages[
+                        'observable_convert_error'].format(id_=o))
                 continue
             # inbox the observable to crits
+            config['edge_tally'][endpoint]['incoming'] += 1
+            config['edge_tally']['all']['incoming'] += 1
             (id_, success) = \
                 crits_.crits_inbox(config, dest, endpoint, json,
                                    src=src, edge_id=o)
@@ -256,6 +263,8 @@ def process_observables(config, src, dest, observables):
                 continue
             else:
                 # successfully inboxed observable
+                config['edge_tally'][endpoint]['processed'] += 1
+                config['edge_tally']['all']['processed'] += 1
                 if config['daemon']['debug']:
                     config['logger'].debug(
                         log_.log_messages['crits_inbox_success'].format(
@@ -263,6 +272,7 @@ def process_observables(config, src, dest, observables):
 
 
 def process_indicators(config, src, dest, indicators):
+    '''handle incoming stix indicators'''
     for i in indicators.keys():
         json = dict()
         json['type'] = 'Reference'
@@ -274,30 +284,36 @@ def process_indicators(config, src, dest, indicators):
         # TODO lookup the corresponding stix prop for indicator_impact
         json['indicator_impact'] = {'rating': 'unknown'}
         # inbox the indicator (we need to crits id!)
+        config['edge_tally']['indicators']['incoming'] += 1
+        config['edge_tally']['all']['incoming'] += 1
         (crits_indicator_id, success) = crits_.crits_inbox(config, dest,
-                                                     'indicators',
-                                                     json)
+                                                           'indicators',
+                                                           json)
         if not success:
-            config['logger'].error(log_.log_messages['crits_inbox_error'].format(
-                id_=i, endpoint='indicators'))
+            config['logger'].error(
+                log_.log_messages['crits_inbox_error'].format(
+                    id_=i, endpoint='indicators'))
             continue
         else:
             # successfully inboxed indicator...
+            config['edge_tally']['indicators']['processed'] += 1
+            config['edge_tally']['all']['processed'] += 1
             if config['daemon']['debug']:
                 config['logger'].debug(log_.log_messages[
                     'crits_inbox_success'].format(id_=i,
                                                   endpoint='indicators'))
         if util_.rgetattr(indicators[i], ['observables']):
             for o in indicators[i].observables:
-                if util_.rgetattr(o, ['idref']) and not util_.rgetattr(o, ['object_']):
-                    observable_composition = \
-                        config['db'].get_observable_composition(src, dest, observable_id=o.idref)
-                    if not observable_composition:
+                if util_.rgetattr(o, ['idref']) and \
+                   not util_.rgetattr(o, ['object_']):
+                    obs_comp = \
+                        config['db'].get_obs_comp(src, dest, observable_id=o.idref)
+                    if not obs_comp:
                         # [ o == embedded observable]
                         config['db'].set_pending_crits_link(src, dest,
                                                             crits_id=crits_indicator_id,
                                                             edge_id=o.idref)
-                    elif observable_composition:
+                    elif obs_comp:
                         # [o == idref observable composition]
                         # try to fetch the observable composition o.idref
                         # points to
@@ -305,7 +321,8 @@ def process_indicators(config, src, dest, indicators):
                         # previously ingested. TODO what about when
                         # the observable composition comes in *after*
                         # the indicator?
-                        observables_list = util_.rgetattr(observable_composition, ['observables'])
+                        observables_list = util_.rgetattr(obs_comp,
+                                                          ['observables'])
                         if not observables_list:
                             config['logger'].error(
                                 log_.log_messages['obs_comp_dereference_error'
@@ -338,11 +355,14 @@ def process_indicators(config, src, dest, indicators):
 
 
 def process_relationships(config, src, dest):
+    '''forge the crits relationship links between incoming observables
+    and indicators'''
     endpoint_trans = {'emails': 'Email', 'ips': 'IP',
                       'samples': 'Sample', 'domains': 'Domain'}
     pending_crits_links = config['db'].get_pending_crits_links(src, dest)
     if not pending_crits_links:
-        config['logger'].info(log_.log_messages['no_pending_crits_relationships'])
+        config['logger'].info(
+            log_.log_messages['no_pending_crits_relationships'])
     else:
         for r in pending_crits_links:
             json = dict()
@@ -364,6 +384,8 @@ def process_relationships(config, src, dest):
                     rhs['crits_id'].split(':')[1]
                 json['rel_type'] = 'Contains'
                 json['rel_confidence'] = 'unknown'
+                config['edge_tally']['relationships']['incoming'] += 1
+                config['edge_tally']['all']['incoming'] += 1
                 (relationship_id_, success) = \
                     crits_.crits_inbox(config, dest,
                                        'relationships', json)
@@ -374,10 +396,12 @@ def process_relationships(config, src, dest):
                             endpoint='relationships'))
                 else:
                     # remove the pending crits relationship from the db
+                    config['edge_tally']['relationships']['processed'] += 1
+                    config['edge_tally']['all']['processed'] += 1
                     config['db'].resolve_crits_link(src, dest,
                                                     crits_id=r['crits_indicator_id'],
                                                     edge_id=r['edge_observable_id'])
-    
+
 
 def process_taxii_content_blocks(config, content_block):
     '''process taxii content blocks'''
@@ -408,7 +432,7 @@ def taxii_poll(config, src, dest, timestamp=None):
     else:
         earliest = timestamp
     latest = util_.nowutc()
-    poll_request = tm10.PollRequest( 
+    poll_request = tm10.PollRequest(
        message_id=tm10.generate_message_id(),
         feed_name=config['edge']['sites'][src]['taxii']['collection'],
         exclusive_begin_timestamp_label=earliest,
@@ -456,8 +480,9 @@ def taxii_inbox(config, dest, stix_package=None):
                 [config['edge']['sites'][dest]['taxii']['collection']]
         message.content_blocks.append(content_block)
         if config['daemon']['debug']:
-            config['logger'].debug(log_.log_messages['taxii_open_session'].format(
-                host=dest))
+            config['logger'].debug(
+                log_.log_messages[
+                    'taxii_open_session'].format(host=dest))
         taxii_response = client.callTaxiiService2(
             config['edge']['sites'][dest]['host'],
             config['edge']['sites'][dest]['taxii']['path'],
@@ -465,8 +490,10 @@ def taxii_inbox(config, dest, stix_package=None):
             port=config['edge']['sites'][dest]['taxii']['port'])
         if taxii_response.code != 200 or taxii_response.msg != 'OK':
             success = False
-            config['logger'].error(log_.log_messages['taxii_inbox_error'].format(
-                host=dest, msg=taxii_response.msg))
+            config['logger'].error(
+                log_.log_messages[
+                    'taxii_inbox_error'].format(host=dest,
+                                                msg=taxii_response.msg))
         else:
             success = True
             if config['daemon']['debug']:
@@ -488,11 +515,37 @@ def edge2crits(config, src, dest, daemon=False, now=None,
     config['logger'].info(log_.log_messages['start_sync'].format(
         type_='edge', last_run=str(last_run), src=src, dest=dest))
     # poll for new edge data...
+    config['edge_tally'] = dict()
+    endpoints = ['ips', 'domains', 'samples', 'emails', 'indicators', 'relationships']
+    config['edge_tally']['all'] = {'incoming': 0, 'processed': 0}
+    for endpoint in endpoints:
+        config['edge_tally'][endpoint] = {'incoming': 0, 'processed': 0}
     (latest, indicators, observables) = \
         taxii_poll(config, src, dest, last_run)
     process_observables(config, src, dest, observables)
     process_indicators(config, src, dest, indicators)
     process_relationships(config, src, dest)
+    for endpoint in endpoints:
+        config['logger'].info(log_.log_messages['incoming_tally'].format(
+            count=config['edge_tally'][endpoint]['incoming'], type_=endpoint,
+            src='edge', dest='crits')
+        config['logger'].info(log_.log_messages['processed_tally'].format(
+            count=config['edge_tally'][endpoint]['processed'], type_=endpoint,
+            src='edge', dest='crits')
+        config['logger'].info(log_.log_messages['failed_tally'].format(
+            count=(config['edge_tally'][endpoint]['incoming'] -
+                   config['edge_tally'][endpoint]['processed']),
+                   type_=endpoint, src='edge', dest='crits')
+    config['logger'].info(log_.log_messages['incoming_tally'].format(
+        count=config['edge_tally']['all']['incoming'], type_='total',
+        src='edge', dest='crits')
+    config['logger'].info(log_.log_messages['processed_tally'].format(
+        count=config['edge_tally']['all']['processed'], type_='total',
+        src='edge', dest='crits')
+    config['logger'].info(log_.log_messages['failed_tally'].format(
+        count=(config['edge_tally']['all']['incoming'] -
+               config['edge_tally']['all]['processed']),
+        type_='total', src='edge', dest='crits')
     # save state to disk for next run...
     if config['daemon']['debug']:
         poll_interval = \
