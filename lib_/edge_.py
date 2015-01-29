@@ -312,6 +312,8 @@ def process_indicators(config, src, dest, indicators):
             for o in indicators[i].observables:
                 if util_.rgetattr(o, ['idref']) and \
                    not util_.rgetattr(o, ['object_']):
+                    # TODO need to delete observable compositions from
+                    #      mongo once we've processed them
                     obs_comp = \
                         config['db'].get_obs_comp(src, dest, obs_id=o.idref)
                     if not obs_comp:
