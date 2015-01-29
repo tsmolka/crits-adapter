@@ -96,7 +96,7 @@ def cybox_uri_to_json(config, observable):
         if domain_category not in crits_types.keys():
             config['logger'].error(
                 log_.log_messages['unsupported_object_error'].format(
-                    type_'edge', obj_type=type(props), id_=observable.id_))
+                    type_='edge', obj_type=type(props), id_=observable.id_))
             endpoint = None
             return(None, endpoint)
         json = {'domain': domain_value, 'type': crits_types[domain_category]}
@@ -219,7 +219,7 @@ def cybox_observable_to_json(config, observable):
     else:
         config['logger'].error(
             log_.log_messages['unsupported_object_error'].format(
-                type_'edge', obj_type=type(props), id_=observable.id_))
+                type_='edge', obj_type=type(props), id_=observable.id_))
         return(None, None)
 
 

@@ -28,7 +28,7 @@ log_messages = {
     'obj_inbox_error':
     'error inboxing {src_type} object (id: {id_}) to {dest_type}',
     'obj_inbox_success':
-    '{src_type} object (id: {id_}) was successfully inboxed to {dest_type}'
+    '{src_type} object (id: {id_}) was successfully inboxed to {dest_type}',
     'polling_error':
     'unhandled {type_} polling error! {error}',
     'open_session': 'initiating {type_} connection to {host}',
