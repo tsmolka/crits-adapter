@@ -124,26 +124,26 @@ class DB(object):
                  'edge_observable_id': edge_id}
         self.collection.remove(query)
 
-    def store_observable_composition(self, src, dest, observable_id=None,
-                                     observable_composition=None):
-        obs_json = observable_composition.to_json()
-        query = {'type_': 'observable_composition',
+    def store_obs_comp(self, src, dest, obs_id=None,
+                                     obs_comp=None):
+        obs_json = obs_comp.to_json()
+        query = {'type_': 'obs_comp',
                  'src': src,
                  'dest': dest,
-                 'observable_id': observable_id,
-                 'observable_composition': obs_json}
+                 'obs_id': obs_id,
+                 'obs_comp': obs_json}
         self.collection.insert(query)
 
-    def get_observable_composition(self, src, dest, observable_id=None):
-        query = {'type_': 'observable_composition',
+    def get_obs_comp(self, src, dest, obs_id=None):
+        query = {'type_': 'obs_comp',
                  'src': src,
                  'dest': dest,
-                 'observable_id': observable_id}
+                 'obs_id': obs_id}
         doc = self.collection.find_one(query)
         if doc:
-            if 'observable_composition' in doc.keys():
-                observable_composition = \
-                    ObservableComposition.from_json(doc['observable_composition'])
-                return(observable_composition)
+            if 'obs_comp' in doc.keys():
+                obs_comp = \
+                    ObservableComposition.from_json(doc['obs_comp'])
+                return(obs_comp)
         else:
             return(None)
