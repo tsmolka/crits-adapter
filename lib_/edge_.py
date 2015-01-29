@@ -345,7 +345,14 @@ def process_indicators(config, src, dest, indicators):
                 elif util_.rgetattr(o, ['object_']):
                     if util_.rgetattr(o.object_, ['properties']):
                         # [ o == embedded observable]
-                        pass
+                        observables = {o.id_: o}
+                        # inbox the inline observable
+                        process_observables(config, src, dest, observables)
+                        # store the pending relationship in
+                        # the db for later processing
+                        config['db'].set_pending_crits_link(src, dest,
+                                                            crits_id=crits_indicator_id,
+                                                            edge_id=o.id_)
         # as we've now successfully processed the indicator, track
         # the related crits/json ids (by src/dest)
         config['db'].set_object_id(src, dest,
