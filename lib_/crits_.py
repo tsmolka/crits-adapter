@@ -23,6 +23,7 @@ import requests
 import util_
 import yaml
 import sys
+import log_
 
 
 def crits_url(config, host):
