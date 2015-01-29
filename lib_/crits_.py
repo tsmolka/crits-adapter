@@ -84,7 +84,7 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
                                        'already in crits (%s) as %s'
                                        % (edge_id, src, dest,
                                           sync_state['crits_id']))
-        return(sync_state['crits_id'], True)
+            return(sync_state['crits_id'], True)
     if config['crits']['sites'][dest]['api']['ssl']:
         r = requests.post(url + endpoint + '/',
                           data=data,
