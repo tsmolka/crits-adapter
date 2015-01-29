@@ -102,7 +102,7 @@ class DB(object):
         query = \
             {'unresolved_crits_relationship':
              {'src': src,
-              'dest': dest}
+              'dest': dest}}
         return(self.collection.find(query))
 
     def set_pending_crits_link(self, src, dest, crits_id=None,
