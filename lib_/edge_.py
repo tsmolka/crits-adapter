@@ -307,7 +307,7 @@ def process_indicators(config, src, dest, indicators):
                 if util_.rgetattr(o, ['idref']) and \
                    not util_.rgetattr(o, ['object_']):
                     obs_comp = \
-                        config['db'].get_obs_comp(src, dest, observable_id=o.idref)
+                        config['db'].get_obs_comp(src, dest, obs_id=o.idref)
                     if not obs_comp:
                         # [ o == embedded observable]
                         config['db'].set_pending_crits_link(src, dest,
@@ -528,24 +528,24 @@ def edge2crits(config, src, dest, daemon=False, now=None,
     for endpoint in endpoints:
         config['logger'].info(log_.log_messages['incoming_tally'].format(
             count=config['edge_tally'][endpoint]['incoming'], type_=endpoint,
-            src='edge', dest='crits')
-        config['logger'].info(log_.log_messages['processed_tally'].format(
-            count=config['edge_tally'][endpoint]['processed'], type_=endpoint,
-            src='edge', dest='crits')
+            src='edge', dest='crits'))
         config['logger'].info(log_.log_messages['failed_tally'].format(
             count=(config['edge_tally'][endpoint]['incoming'] -
                    config['edge_tally'][endpoint]['processed']),
-                   type_=endpoint, src='edge', dest='crits')
+                   type_=endpoint, src='edge', dest='crits'))
+        config['logger'].info(log_.log_messages['processed_tally'].format(
+            count=config['edge_tally'][endpoint]['processed'], type_=endpoint,
+            src='edge', dest='crits'))
     config['logger'].info(log_.log_messages['incoming_tally'].format(
         count=config['edge_tally']['all']['incoming'], type_='total',
-        src='edge', dest='crits')
-    config['logger'].info(log_.log_messages['processed_tally'].format(
-        count=config['edge_tally']['all']['processed'], type_='total',
-        src='edge', dest='crits')
+        src='edge', dest='crits'))
     config['logger'].info(log_.log_messages['failed_tally'].format(
         count=(config['edge_tally']['all']['incoming'] -
-               config['edge_tally']['all]['processed']),
-        type_='total', src='edge', dest='crits')
+               config['edge_tally']['all']['processed']),
+        type_='total', src='edge', dest='crits'))
+    config['logger'].info(log_.log_messages['processed_tally'].format(
+        count=config['edge_tally']['all']['processed'], type_='total',
+        src='edge', dest='crits'))
     # save state to disk for next run...
     if config['daemon']['debug']:
         poll_interval = \
