@@ -75,7 +75,7 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
                 config['logger'].debug(
                     log_.log_messages['object_already_ingested'].format(
                         src_type='edge', src_id=edge_id, src=src, 
-                        dest_type='crits', dest_id=sync_state['crits_id']))
+                        dest_type='crits', dest=dest, dest_id=sync_state['crits_id']))
             return(sync_state['crits_id'], True)
     url = crits_url(config, dest)
     allow_self_signed = \
@@ -182,10 +182,10 @@ def json2stix_ind(config, src, dest, endpoint, json_, crits_id):
                 observable_ = Observable()
                 observable_.idref = doc['edge_id']
                 observable_composition_.add(observable_)
-                indicator_.observable = Observable()
-                indicator_.observable.observable_composition = \
-                    observable_composition_
-                return(indicator_)
+            indicator_.observable = Observable()
+            indicator_.observable.observable_composition = \
+                observable_composition_
+            return(indicator_)
         else:
             config['logger'].error(
                 log_.log_messages['unsupported_object_error'].format(
@@ -409,10 +409,12 @@ def crits2edge(config, src, dest, daemon=False,
                                                    edge_id=indicator.id_,
                                                    crits_id=endpoint + ':'
                                                    + crits_id)
-                        config['crits_tally']['relationships']['incoming'] += 1
-                        config['crits_tally']['all']['incoming'] += 1
+                        config['crits_tally']['indicators']['processed'] += 1
+                        config['crits_tally']['all']['processed'] += 1
                 else:
                     observable = json2cybox(config, src, dest, endpoint, json_, crits_id)
+                    config['crits_tally'][endpoint]['incoming'] += 1
+                    config['crits_tally']['all']['incoming'] += 1
                     if not observable:
                         config['logger'].info(
                             log_.log_messages['obj_inbox_error'].format(
