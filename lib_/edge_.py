@@ -476,8 +476,8 @@ def taxii_inbox(config, dest, stix_package=None, src=None, crits_id=None):
             if config['daemon']['debug']:
                 config['logger'].debug(
                     log_.log_messages['object_already_ingested'].format(
-                        in_type='crits', in_id=crits_id, src=src, 
-                        out_type='edge', out_id=sync_state['edge_id']))
+                        src_type='crits', src_id=crits_id, src=src, 
+                        dest_type='edge', dest=dest, dest_id=sync_state['edge_id']))
             return(True)
     if stix_package:
         stixroot = lxml.etree.fromstring(stix_package.to_xml())
