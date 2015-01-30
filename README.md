@@ -33,9 +33,11 @@ Constraints
 
 * STIX indicator objects: by last count there are at least
   [12 different ways][2] to express context between 2 IP addresses.
-  This adapter currently only supports STIX indicators containing one
+  This adapter currently only supports STIX indicators containing
   inline CybOX Observable Composition externally referencing (idref)
-  the related CybOX Observable objects (#2 in [the IP address example][2].)
+  the related CybOX Observable objects (#2 in
+  [the IP address example][2]) and STIX indicators containing inline
+  CybOX Observable objects (#1 in [the IP address example][2])
 
 
 Commands
@@ -55,8 +57,8 @@ Commands
 * edgy_crits.py
     * Description: Performs a one-off, unidirectional sync between a
       configured CRITs and Soltra Edge instance
-    * Example usage: `./edgy_crits.py --sync-crits-to-edge
-      --source=localhost --destination=localhost` (as repo user)
+    * Example usage: `./edgy_crits.py --c2e
+      --src=localhost --dest=localhost` (as repo user)
 * util/flush.sh
     * Description: Flush all indicator and observable data from
       (localhost) CRITs and Edge MongoDB collections, edgy_crits
