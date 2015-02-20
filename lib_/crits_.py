@@ -16,6 +16,8 @@ from stix.data_marking import Marking, MarkingSpecification
 from stix.extensions.marking.tlp import TLPMarkingStructure
 from stix.indicator import Indicator
 from stix.utils import set_id_namespace as set_stix_id_namespace
+from stix.incident import Incident
+from stix.common.related import RelatedIndicator, RelatedObservable, RelatedIncident
 import datetime
 import edge_
 import json
@@ -133,10 +135,12 @@ def stix_pkg(config, src, endpoint, payload, title='random test data',
         stix_package.add_observable(payload)
     elif isinstance(payload, Indicator):
         stix_package.add_indicator(payload)
+    elif isinstance(payload, Incident):
+        stix_package.add_incident(payload)
     return(stix_package)
 
 
-def json2stix_ind(config, src, dest, endpoint, json_, crits_id):
+def json2indicator(config, src, dest, endpoint, json_, crits_id):
     '''transform crits indicators into stix indicators with embedded
     cybox observable composition'''
     try:
@@ -146,14 +150,17 @@ def json2stix_ind(config, src, dest, endpoint, json_, crits_id):
         set_cybox_id_namespace(Namespace(xmlns_url, xmlns_name))
         if endpoint == 'indicators':
             endpoint_trans = {'Email': 'emails', 'IP': 'ips',
-                              'Sample': 'samples', 'Domain': 'domains'}
-            if json_['type'] != 'Reference':
+                              'Sample': 'samples', 'Domain': 'domains', 
+                              'Indicator': 'indicators', 'Event': 'events'}
+            if json_['type'] not in ['Reference', 'Related_To']:
                 config['logger'].error(
                     log_.log_messages['unsupported_object_error'].format(
                         type_='crits', obj_type='indicator type ' + json_['type'],
                         id_=crits_id))
                 return(None)
             indicator_ = Indicator()
+            indicator_.id = xmlns_name + ':indicator-' + crits_id
+            indicator_.id_ = indicator_.id
             indicator_.title = json_['value']
             indicator_.confidence = json_['confidence']['rating'].capitalize()
             indicator_.add_indicator_type('Malware Artifacts')
@@ -161,27 +168,23 @@ def json2stix_ind(config, src, dest, endpoint, json_, crits_id):
             observable_composition_.operator = \
                 indicator_.observable_composition_operator
             for r in json_['relationships']:
-                if r['relationship'] != 'Contains':
+                if r['relationship'] not in ['Contains', 'Related_To']:
                     config['logger'].error(
                         log_.log_messages['unsupported_object_error'].format(
                             type_='crits', obj_type='indicator relationship type '
                             + r['relationship'], id_=crits_id))
-                    return(None)
-                doc = \
-                    config['db'].get_object_id(src,
-                                               dest,
-                                               crits_id='%s:%s'
-                                               % (endpoint_trans[r['type']],
-                                                  r['value']))
-                # TODO if missing, try to inject the corresponding observable?
-                if not doc or not doc.get('edge_id', None):
-                    config['logger'].error('cybox observable corresponding to '
-                                           'crits indicator relationship %s '
-                                           'could not be found!' % r['value'])
-                    return(None)
-                observable_ = Observable()
-                observable_.idref = doc['edge_id']
-                observable_composition_.add(observable_)
+                    continue
+                if r['type'] in ['Sample', 'Email', 'IP', 'Sample', 'Domain']:
+                    observable_ = Observable()
+                    observable_.idref = xmlns_name + ':observable-' + r['value']
+                    observable_composition_.add(observable_)
+                elif r['type'] == 'Indicator':
+                    related_indicator = RelatedIndicator(Indicator(idref=xmlns_name + ':indicator-' + r['value']))
+                    indicator_.related_indicators.append(related_indicator)
+                # stix indicators don't support related_incident :-(
+                # elif r['type'] == 'Event':
+                #     related_incident = RelatedIncident(Incident(idref=xmlns_name + ':incident-' + r['value']))
+                #     indicator_.related_incidents.append(related_incident)
             indicator_.observable = Observable()
             indicator_.observable.observable_composition = \
                 observable_composition_
@@ -200,7 +203,58 @@ def json2stix_ind(config, src, dest, endpoint, json_, crits_id):
         return(None)
 
 
-def json2cybox(config, src, dest, endpoint, json_, crits_id):
+def json2incident(config, src, dest, endpoint, json_, crits_id):
+    '''transform crits events into stix incidents with related indicators'''
+    try:
+        set_id_method(IDGenerator.METHOD_UUID)
+        xmlns_url = config['edge']['sites'][dest]['stix']['xmlns_url']
+        xmlns_name = config['edge']['sites'][dest]['stix']['xmlns_name']
+        set_cybox_id_namespace(Namespace(xmlns_url, xmlns_name))
+        if endpoint == 'events':
+            endpoint_trans = {'Email': 'emails', 'IP': 'ips',
+                              'Sample': 'samples', 'Domain': 'domains', 
+                              'Indicator': 'indicators'}
+            status_trans = {'New': 'New', 'In Progress': 'Open',
+                            'Analyzed': 'Closed', 'Deprecated': 'Rejected'}
+            incident_ = Incident()
+            incident_.id = xmlns_name + ':incident-' + crits_id
+            incident_.id_ = incident_.id
+            incident_.title = json_['title']
+            incident_.description = json_['description']
+            incident_.status = status_trans[json_['status']]
+            # incident_.confidence = json_['confidence']['rating'].capitalize()
+            for r in json_['relationships']:
+                if r['relationship'] not in ['Contains', 'Related_To']:
+                    config['logger'].error(
+                        log_.log_messages['unsupported_object_error'].format(
+                            type_='crits', obj_type='event relationship type '
+                            + r['relationship'], id_=crits_id))
+                    continue
+                if r['type'] in ['Sample', 'Email', 'IP', 'Sample', 'Domain']:
+                    related_observable = RelatedObservable(Observable(idref=xmlns_name + ':observable-' + r['value']))
+                    incident_.related_observables.append(related_observable)
+                elif r['type'] == 'Indicator':
+                    related_indicator = RelatedIndicator(Indicator(idref=xmlns_name + ':indicator-' + r['value']))
+                    incident_.related_indicators.append(related_indicator)
+                elif r['type'] == 'Event':
+                    related_incident = RelatedIncident(Incident(idref=xmlns_name + ':incident-' + r['value']))
+                    incident_.related_incidents.append(related_incident)
+            return(incident_)
+        else:
+            config['logger'].error(
+                log_.log_messages['unsupported_object_error'].format(
+                    type_='crits', obj_type=endpoint, id_=crits_id))
+            return(None)
+    except:
+        e = sys.exc_info()[0]
+        config['logger'].error(log_.log_messages['obj_convert_error'].format(
+            src_type='crits', src_obj='event', id_=crits_id,
+            dest_type='stix', dest_obj='incident'))
+        config['logger'].exception(e)
+        return(None)
+
+
+def json2observable(config, src, dest, endpoint, json_, crits_id):
     # TODO split into smaller functions
     '''transform crits observables into cybox'''
     try:
@@ -219,13 +273,13 @@ def json2cybox(config, src, dest, endpoint, json_, crits_id):
             addr = Address(address_value=json_['ip'],
                            category=crits_types[json_['type']])
             addr.condition = 'Equals'
-            return(Observable(addr))
+            observable_ = Observable(addr)
         elif endpoint == 'domains':
             domain = DomainName()
             domain.type_ = 'FQDN'
             domain.value = json_['domain']
             domain.condition = 'Equals'
-            return(Observable(domain))
+            observable_ = Observable(domain)
         elif endpoint == 'samples':
             crits_types = {'md5': 'MD5',
                            'sha1': 'SHA1',
@@ -242,7 +296,7 @@ def json2cybox(config, src, dest, endpoint, json_, crits_id):
                                               type_=crits_types[hash]))
             for i in file_object.hashes:
                 i.simple_hash_value.condition = "Equals"
-            return(Observable(file_object))
+            observable_ = Observable(file_object)
         elif endpoint == 'emails':
             crits_types = {'subject': 'subject', 'to': 'to', 'cc': 'cc',
                            'from_address': 'from_', 'sender': 'sender',
@@ -258,12 +312,15 @@ def json2cybox(config, src, dest, endpoint, json_, crits_id):
                     email.header.__setattr__(crits_types[k], val)
                     email.header.__getattribute__(crits_types[k]).condition = \
                         'Equals'
-            return(Observable(email))
+            observable_ = Observable(email)
         else:
             config['logger'].error(
                 log_.log_messages['unsupported_object_error'].format(
                     type_='crits', obj_type=endpoint, id_=crits_id))
             return(None)
+        observable_.id = xmlns_name + ':observable-' + crits_id
+        observable_.id_ = observable_.id
+        return(observable_)
     except:
         e = sys.exc_info()[0]
         config['logger'].error(
@@ -356,6 +413,7 @@ def fetch_crits_object_ids(config, src, endpoint, timestamp=None):
 
 def crits2edge(config, src, dest, daemon=False,
                now=None, last_run=None):
+    import pudb; pu.db
     # check if (and when) we synced src and dest...
     if not now:
         now = util_.nowutc()
@@ -365,7 +423,7 @@ def crits2edge(config, src, dest, daemon=False,
     config['logger'].info(
         log_.log_messages['start_sync'].format(
             type_='crits', last_run=last_run, src=src, dest=dest))
-    endpoints = ['ips', 'domains', 'samples', 'emails', 'indicators']
+    endpoints = ['ips', 'domains', 'samples', 'emails', 'indicators', 'events']
     # setup the tally counters
     config['crits_tally'] = dict()
     config['crits_tally']['all'] = {'incoming': 0, 'processed': 0}
@@ -380,7 +438,7 @@ def crits2edge(config, src, dest, daemon=False,
             for crits_id in ids[endpoint]:
                 (id_, json_) = crits_poll(config, src, endpoint, crits_id,)
                 if endpoint == 'indicators':
-                    indicator = json2stix_ind(config, src, dest,
+                    indicator = json2indicator(config, src, dest,
                                               endpoint, json_, id_)
                     config['crits_tally']['indicators']['incoming'] += 1
                     config['crits_tally']['all']['incoming'] += 1
@@ -411,8 +469,40 @@ def crits2edge(config, src, dest, daemon=False,
                                                    + crits_id)
                         config['crits_tally']['indicators']['processed'] += 1
                         config['crits_tally']['all']['processed'] += 1
+                elif endpoint == 'events':
+                    incident = json2incident(config, src, dest,
+                                              endpoint, json_, id_)
+                    config['crits_tally']['events']['incoming'] += 1
+                    config['crits_tally']['all']['incoming'] += 1
+                    if not incident:
+                        config['logger'].info(
+                            log_.log_messages['obj_inbox_error'].format(
+                                src_type='crits', id_=crits_id, dest_type='edge'))
+                        continue
+                    stix_ = stix_pkg(config, src, endpoint, incident)
+                    if not stix_:
+                        config['logger'].info(
+                            log_.log_messages['obj_inbox_error'].format(
+                                src_type='crits', id_=crits_id, dest_type='edge'))
+                        continue
+                    success = edge_.taxii_inbox(config, dest, stix_, src=src,
+                                                crits_id=endpoint + ':'
+                                                + crits_id)
+                    if not success:
+                        config['logger'].info(
+                            log_.log_messages['obj_inbox_error'].format(
+                                src_type='crits', id_=crits_id, dest_type='edge'))
+                        continue
+                    else:
+                        # track the related crits/json ids (by src/dest)
+                        config['db'].set_object_id(src, dest,
+                                                   edge_id=incident.id_,
+                                                   crits_id=endpoint + ':'
+                                                   + crits_id)
+                        config['crits_tally']['events']['processed'] += 1
+                        config['crits_tally']['all']['processed'] += 1
                 else:
-                    observable = json2cybox(config, src, dest, endpoint, json_, crits_id)
+                    observable = json2observable(config, src, dest, endpoint, json_, crits_id)
                     config['crits_tally'][endpoint]['incoming'] += 1
                     config['crits_tally']['all']['incoming'] += 1
                     if not observable:
@@ -440,26 +530,34 @@ def crits2edge(config, src, dest, daemon=False,
                                                    crits_id=endpoint + ':'
                                                    + crits_id)
     for endpoint in endpoints:
+        if config['crits_tally'][endpoint]['incoming'] > 0:
+            config['logger'].info(log_.log_messages['incoming_tally'].format(
+                    count=config['crits_tally'][endpoint]['incoming'],
+                    type_=endpoint, src='crits', dest='edge'))
+        if (config['crits_tally'][endpoint]['incoming'] -
+                   config['crits_tally'][endpoint]['processed']) > 0:
+            config['logger'].info(log_.log_messages['failed_tally'].format(
+                    count=(config['crits_tally'][endpoint]['incoming'] -
+                           config['crits_tally'][endpoint]['processed']),
+                    type_=endpoint, src='crits', dest='edge'))
+        if config['crits_tally'][endpoint]['processed'] > 0:
+            config['logger'].info(log_.log_messages['processed_tally'].format(
+                    count=config['crits_tally'][endpoint]['processed'], 
+                    type_=endpoint, src='crits', dest='edge'))
+    if config['crits_tally']['all']['incoming'] > 0:
         config['logger'].info(log_.log_messages['incoming_tally'].format(
-            count=config['crits_tally'][endpoint]['incoming'], type_=endpoint,
-            src='crits', dest='edge'))
+                count=config['crits_tally']['all']['incoming'], type_='total',
+                src='crits', dest='edge'))
+    if (config['crits_tally']['all']['incoming'] -
+               config['crits_tally']['all']['processed']) > 0:
         config['logger'].info(log_.log_messages['failed_tally'].format(
-            count=(config['crits_tally'][endpoint]['incoming'] -
-                   config['crits_tally'][endpoint]['processed']),
-                   type_=endpoint, src='crits', dest='edge'))
+                count=(config['crits_tally']['all']['incoming'] -
+                       config['crits_tally']['all']['processed']),
+                type_='total', src='crits', dest='edge'))
+    if config['crits_tally']['all']['processed'] > 0:
         config['logger'].info(log_.log_messages['processed_tally'].format(
-            count=config['crits_tally'][endpoint]['processed'], type_=endpoint,
-            src='crits', dest='edge'))
-    config['logger'].info(log_.log_messages['incoming_tally'].format(
-        count=config['crits_tally']['all']['incoming'], type_='total',
-        src='crits', dest='edge'))
-    config['logger'].info(log_.log_messages['failed_tally'].format(
-        count=(config['crits_tally']['all']['incoming'] -
-               config['crits_tally']['all']['processed']),
-        type_='total', src='crits', dest='edge'))
-    config['logger'].info(log_.log_messages['processed_tally'].format(
-        count=config['crits_tally']['all']['processed'], type_='total',
-        src='crits', dest='edge'))
+                count=config['crits_tally']['all']['processed'], type_='total',
+                src='crits', dest='edge'))
     # save state to disk for next run...
     if config['daemon']['debug']:
         poll_interval = config['crits']['sites'][src]['api']['poll_interval']
