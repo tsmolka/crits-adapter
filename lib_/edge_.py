@@ -280,7 +280,7 @@ def process_indicators(config, src, dest, indicators):
     '''handle incoming stix indicators'''
     for i in indicators.keys():
         json = dict()
-        json['type'] = 'Reference'
+        json['type'] = 'Related_To'
         json['value'] = util_.rgetattr(indicators[i], ['title'],
                                        default_='unknown')
         json['indicator_confidence'] = \
@@ -546,26 +546,34 @@ def edge2crits(config, src, dest, daemon=False, now=None,
     process_indicators(config, src, dest, indicators)
     process_relationships(config, src, dest)
     for endpoint in endpoints:
+        if config['edge_tally'][endpoint]['incoming'] > 0:
+            config['logger'].info(log_.log_messages['incoming_tally'].format(
+                    count=config['edge_tally'][endpoint]['incoming'],
+                    type_=endpoint, src='edge', dest='crits'))
+        if (config['edge_tally'][endpoint]['incoming'] -
+                   config['edge_tally'][endpoint]['processed']) > 0:
+            config['logger'].info(log_.log_messages['failed_tally'].format(
+                    count=(config['edge_tally'][endpoint]['incoming'] -
+                           config['edge_tally'][endpoint]['processed']),
+                    type_=endpoint, src='edge', dest='crits'))
+        if config['edge_tally'][endpoint]['processed'] > 0:
+            config['logger'].info(log_.log_messages['processed_tally'].format(
+                    count=config['edge_tally'][endpoint]['processed'], 
+                    type_=endpoint, src='edge', dest='crits'))
+    if config['edge_tally']['all']['incoming'] > 0:
         config['logger'].info(log_.log_messages['incoming_tally'].format(
-            count=config['edge_tally'][endpoint]['incoming'], type_=endpoint,
-            src='edge', dest='crits'))
+                count=config['edge_tally']['all']['incoming'], type_='total',
+                src='edge', dest='crits'))
+    if (config['edge_tally']['all']['incoming'] -
+               config['edge_tally']['all']['processed']) > 0:
         config['logger'].info(log_.log_messages['failed_tally'].format(
-            count=(config['edge_tally'][endpoint]['incoming'] -
-                   config['edge_tally'][endpoint]['processed']),
-                   type_=endpoint, src='edge', dest='crits'))
+                count=(config['edge_tally']['all']['incoming'] -
+                       config['edge_tally']['all']['processed']),
+                type_='total', src='edge', dest='crits'))
+    if config['edge_tally']['all']['processed'] > 0:
         config['logger'].info(log_.log_messages['processed_tally'].format(
-            count=config['edge_tally'][endpoint]['processed'], type_=endpoint,
-            src='edge', dest='crits'))
-    config['logger'].info(log_.log_messages['incoming_tally'].format(
-        count=config['edge_tally']['all']['incoming'], type_='total',
-        src='edge', dest='crits'))
-    config['logger'].info(log_.log_messages['failed_tally'].format(
-        count=(config['edge_tally']['all']['incoming'] -
-               config['edge_tally']['all']['processed']),
-        type_='total', src='edge', dest='crits'))
-    config['logger'].info(log_.log_messages['processed_tally'].format(
-        count=config['edge_tally']['all']['processed'], type_='total',
-        src='edge', dest='crits'))
+                count=config['edge_tally']['all']['processed'], type_='total',
+                src='edge', dest='crits'))
     # save state to disk for next run...
     if config['daemon']['debug']:
         poll_interval = \
