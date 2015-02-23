@@ -2,24 +2,17 @@
 
 service httpd stop
 service edgy_critsd stop
-# flush edge mongodb
-mongo inbox --eval "db.stix.remove({})"
-mongo inbox --eval "db.uploads.remove({})"
-mongo inbox --eval "db.adapters.crits.remove({})"
-mongo inbox --eval "db.stats_indicators.remove({})"
-mongo inbox --eval "db.cache.remove({})"
-mongo inbox --eval "db.indicators_by_date.remove({})"
-mongo inbox --eval "db.uploads.remove({})"
-mongo inbox --eval "db.peer_log.remove({})"
-mongo inbox --eval "db.peer_sessions.remove({})"
-# flush crits mongodb
-mongo crits --eval "db.ips.remove({})"
-mongo crits --eval "db.domains.remove({})"
-mongo crits --eval "db.sample.remove({})"
-mongo crits --eval "db.email.remove({})"
-mongo crits --eval "db.indicators.remove({})"
+flush edge mongodb
+EDGE_COLLECTIONS='stix uploads adapters.crits stats_indicators cache indicators_by_date peer_log peer_sessions'
+for EDGE_COLLECTION in ${EDGE_COLLECTIONS}; do
+    mongo inbox --eval "db.${EDGE_COLLECTION}.remove({})"
+done
+CRITS_COLLECTIONS='ips domains sample email indicators events'
+for CRITS_COLLECTION in ${CRITS_COLLECTIONS}; do
+    mongo crits --eval "db.${CRITS_COLLECTION}.remove({})"
+done
 # delete old logs
 rm -f /opt/soltra/edge/repository/adapters/crits/edgy_crits*.log*
 
-# service httpd start
-# service edgy_critsd start
+service httpd start
+service edgy_critsd start

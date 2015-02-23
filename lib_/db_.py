@@ -106,22 +106,27 @@ class DB(object):
              'dest': dest}
         return(self.collection.find(query))
 
-    def set_pending_crits_link(self, src, dest, crits_id=None,
-                               edge_id=None):
+    def set_pending_crits_link(self, src, dest, rhs_id=None,
+                               lhs_id=None):
+        # both rhs and lhs need to be _crits_ objects however we need
+        # to support the fact that we have no way of determining an
+        # object's crits id until it has been inboxed (ie, this cannot
+        # be statically specified on the cli) nor can we control the
+        # order in which edge objects come to us in a taxii feed...
         query = {'type_': 'unresolved_crits_relationship',
                  'src': src,
                  'dest': dest,
-                 'crits_indicator_id': crits_id,
-                 'edge_observable_id': edge_id}
+                 'rhs_id': rhs_id,
+                 'lhs_id': lhs_id}
         self.collection.insert(query)
 
-    def resolve_crits_link(self, src, dest, crits_id=None,
-                           edge_id=None):
+    def resolve_crits_link(self, src, dest, rhs_id=None,
+                           lhs_id=None):
         query = {'type_': 'unresolved_crits_relationship',
                  'src': src,
                  'dest': dest,
-                 'crits_indicator_id': crits_id,
-                 'edge_observable_id': edge_id}
+                 'rhs_id': rhs_id,
+                 'lhs_id': lhs_id}
         self.collection.remove(query)
 
     def store_obs_comp(self, src, dest, obs_id=None,

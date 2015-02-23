@@ -69,16 +69,20 @@ def crits_poll(config, src, endpoint, id_=None):
 
 def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
     '''upload data to crits via api, return object id if successful'''
-    if src and edge_id:
-        # check whether this has already been ingested
-        sync_state = config['db'].get_object_id(src, dest, edge_id=edge_id)
-        if sync_state and sync_state.get('crits_id', None):
-            if config['daemon']['debug']:
-                config['logger'].debug(
-                    log_.log_messages['object_already_ingested'].format(
-                        src_type='edge', src_id=edge_id, src=src, 
-                        dest_type='crits', dest=dest, dest_id=sync_state['crits_id']))
-            return(sync_state['crits_id'], True)
+    if src:
+        xmlns_name = config['edge']['sites'][src]['stix']['xmlns_name']
+        if edge_id:
+            # check whether this has already been ingested
+            sync_state = config['db'].get_object_id(src, dest, edge_id=edge_id)
+            if sync_state and sync_state.get('crits_id', None):
+                if config['daemon']['debug']:
+                    config['logger'].debug(
+                        log_.log_messages['object_already_ingested'].format(
+                            src_type='edge', src_id=edge_id, src=src, 
+                            dest_type='crits', dest=dest, dest_id=sync_state['crits_id']))
+                    return(sync_state['crits_id'], True)
+    else:
+        xmlns_name = config['crits']['sites'][dest]['api']['source']
     url = crits_url(config, dest)
     allow_self_signed = \
         config['crits']['sites'][dest]['api']['allow_self_signed']
@@ -96,15 +100,16 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
         r = requests.post(url + endpoint + '/', data=data)
     json_output = r.json()
     result_code = json_output[u'return_code']
-    id_ = None
+    crits_id = None
     success = r.status_code in (200, 201) and result_code == 0
     if success:
-        id_ = json_output.get(u'id')
+        crits_id = json_output.get(u'id')
         if src and edge_id:
             # track the related crits/json ids (by src/dest)
             config['db'].set_object_id(src, dest, edge_id=edge_id,
-                                       crits_id=endpoint + ':' + id_)
-    return(id_, success)
+                                       crits_id=(xmlns_name + ':' + 
+                                                 endpoint + '-' + crits_id))
+    return(crits_id, success)
 
 
 def stix_pkg(config, src, endpoint, payload, title='random test data',
@@ -413,7 +418,7 @@ def fetch_crits_object_ids(config, src, endpoint, timestamp=None):
 
 def crits2edge(config, src, dest, daemon=False,
                now=None, last_run=None):
-    import pudb; pu.db
+    xmlns_name = config['edge']['sites'][dest]['stix']['xmlns_name']
     # check if (and when) we synced src and dest...
     if not now:
         now = util_.nowutc()
@@ -465,8 +470,8 @@ def crits2edge(config, src, dest, daemon=False,
                         # track the related crits/json ids (by src/dest)
                         config['db'].set_object_id(src, dest,
                                                    edge_id=indicator.id_,
-                                                   crits_id=endpoint + ':'
-                                                   + crits_id)
+                                                   crits_id=(xmlns_name + ':' + 
+                                                             endpoint + '-' + crits_id))
                         config['crits_tally']['indicators']['processed'] += 1
                         config['crits_tally']['all']['processed'] += 1
                 elif endpoint == 'events':
@@ -497,8 +502,8 @@ def crits2edge(config, src, dest, daemon=False,
                         # track the related crits/json ids (by src/dest)
                         config['db'].set_object_id(src, dest,
                                                    edge_id=incident.id_,
-                                                   crits_id=endpoint + ':'
-                                                   + crits_id)
+                                                   crits_id=(xmlns_name + ':' + 
+                                                             endpoint + '-' + crits_id))
                         config['crits_tally']['events']['processed'] += 1
                         config['crits_tally']['all']['processed'] += 1
                 else:
@@ -527,8 +532,8 @@ def crits2edge(config, src, dest, daemon=False,
                         config['crits_tally']['all']['processed'] += 1
                         config['db'].set_object_id(src, dest,
                                                    edge_id=observable.id_,
-                                                   crits_id=endpoint + ':'
-                                                   + crits_id)
+                                                   crits_id=(xmlns_name + ':' + 
+                                                             endpoint + '-' + crits_id))
     for endpoint in endpoints:
         if config['crits_tally'][endpoint]['incoming'] > 0:
             config['logger'].info(log_.log_messages['incoming_tally'].format(
