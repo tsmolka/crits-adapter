@@ -101,7 +101,7 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
     json_output = r.json()
     result_code = json_output[u'return_code']
     crits_id = None
-    success = r.status_code in (200, 201) and result_code == 0
+    success = r.status_code in (200, 201) and result_code == 0 and 'id' in json_output.keys()
     if success:
         crits_id = json_output.get(u'id')
         if src and edge_id:
