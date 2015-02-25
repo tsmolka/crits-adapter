@@ -268,8 +268,8 @@ def process_observables(config, src, dest, observables):
                                    src=src, edge_id=o)
             if not success:
                 config['logger'].error(
-                    log_.log_messages['crits_inbox_error'].format(
-                        id_=o, endpoint=endpoint))
+                    log_.log_messages['obj_inbox_error'].format(
+                        src_type='edge', id_=o, dest_type='crits ' + endpoint + ' api endpoint'))
                 continue
             else:
                 # successfully inboxed observable
@@ -289,20 +289,21 @@ def process_incidents(config, src, dest, incidents):
                     'Closed': 'Analyzed', 'Rejected': 'Deprecated'}
     for i in incidents.keys():
         json = dict()
-        json['type'] = 'Threat Report'
+        json['event_type'] = 'Threat Report'
         json['title'] = incidents[i].title
-        json['description'] = incidents[i].description
-        json_['status'] = status_trans[incidents[i].status]
+        json['description'] = incidents[i].description.value
+        json['status'] = status_trans[incidents[i].status.value]
         # inbox the incident (we need to crits id!)
         config['edge_tally']['events']['incoming'] += 1
         config['edge_tally']['all']['incoming'] += 1
         (crits_event_id, success) = crits_.crits_inbox(config, dest,
-                                                           'events',
-                                                           json)
+                                                       'events',
+                                                       json, src=src)
         if not success:
             config['logger'].error(
-                log_.log_messages['crits_inbox_error'].format(
-                    id_=i, endpoint='events'))
+                log_.log_messages['obj_inbox_error'].format(
+                    src_type='edge', id_=i, 
+                    dest_type='crits events api endpoint'))
             continue
         else:
             # successfully inboxed event...
@@ -370,11 +371,12 @@ def process_indicators(config, src, dest, indicators):
         config['edge_tally']['all']['incoming'] += 1
         (crits_indicator_id, success) = crits_.crits_inbox(config, dest,
                                                            'indicators',
-                                                           json)
+                                                           json, src=src)
         if not success:
             config['logger'].error(
-                log_.log_messages['crits_inbox_error'].format(
-                    id_=i, endpoint='indicators'))
+                log_.log_messages['obj_inbox_error'].format(
+                    src_type='edge', id_=i, 
+                    dest_type='crits indicators api endpoint'))
             continue
         else:
             # successfully inboxed indicator...
@@ -463,7 +465,6 @@ def process_indicators(config, src, dest, indicators):
 def process_relationships(config, src, dest):
     '''forge the crits relationship links between incoming observables
     and indicators'''
-    # import pudb; pu.db
     endpoint_trans = {'emails': 'Email', 'ips': 'IP',
                       'samples': 'Sample', 'domains': 'Domain',
                       'indicators': 'Indicator', 'events': 'Event'}
@@ -480,7 +481,7 @@ def process_relationships(config, src, dest):
             # the edge id
             rhs = config['db'].get_object_id(src, dest,
                                              edge_id=r['rhs_id'])
-            if not rhs.get('crits_id', None):
+            if not rhs or not rhs.get('crits_id', None):
                 config['logger'].error(
                     log_.log_messages['obs_comp_dereference_error'
                                   ].format(id_=r['rhs_id']))
@@ -496,7 +497,7 @@ def process_relationships(config, src, dest):
                 config['edge_tally']['all']['incoming'] += 1
                 (relationship_id_, success) = \
                     crits_.crits_inbox(config, dest,
-                                       'relationships', json)
+                                       'relationships', json, src=src)
                 if not success:
                     config['logger'].error(
                         log_.log_messages['obj_inbox_error'].format(
@@ -516,10 +517,9 @@ def process_taxii_content_blocks(config, content_block):
     incidents = dict()
     indicators = dict()
     observables = dict()
-    xml = StringIO.StringIO(content_block.content)
+    xml = StringIO.StringIO(content_block)
     stix_package = STIXPackage.from_xml(xml)
     xml.close()
-    # import pudb; pu.db
     if stix_package.incidents:
         for j in stix_package.incidents:
             incidents[j.id_] = j
