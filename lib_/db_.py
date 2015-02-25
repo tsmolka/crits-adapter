@@ -122,12 +122,14 @@ class DB(object):
 
     def resolve_crits_link(self, src, dest, rhs_id=None,
                            lhs_id=None):
+        # purge the resolved link...
         query = {'type_': 'unresolved_crits_relationship',
                  'src': src,
                  'dest': dest,
                  'rhs_id': rhs_id,
                  'lhs_id': lhs_id}
         self.collection.remove(query)
+
 
     def store_obs_comp(self, src, dest, obs_id=None,
                                      obs_comp=None):
