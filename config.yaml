@@ -14,7 +14,7 @@ crits:
         releasability: dsie                                # crits releasability flag
         use_releasability: false                           # use releasability flag?
         ssl: true                                          # use ssl?
-        allow_self_signed: true                            # self-signed certs probably won't validate
+        attempt_certificate_validation: true                            # self-signed certs probably won't validate
   datagen:
       indicator_count: 100                                 # default number of indicators for datagen
 edge:
@@ -34,7 +34,7 @@ edge:
         collection: system.Default                         # taxii collection
         version: 1.1                                       # taxii version
         ssl: true                                          # use ssl?
-        allow_self_signed: false                           # self-signed certs probably won't validate
+        attempt_certificate_validation: false                           # self-signed certs probably won't validate
   datagen:
       indicator_count: 100                                 # default number of indicators for datagen
 daemon:

@@ -44,9 +44,9 @@ def crits_url(config, host):
 def crits_poll(config, src, endpoint, id_=None):
     '''pull data from crits via api, return json as a dict'''
     url = crits_url(config, src)
-    allow_self_signed = \
-        config['crits']['sites'][src]['api']['allow_self_signed']
-    if allow_self_signed:
+    attempt_certificate_validation = \
+        config['crits']['sites'][src]['api']['attempt_certificate_validation']
+    if attempt_certificate_validation:
         requests.packages.urllib3.disable_warnings()
     data = {'api_key': config['crits']['sites'][src]['api']['key'],
             'username': config['crits']['sites'][src]['api']['user']}
@@ -56,7 +56,7 @@ def crits_poll(config, src, endpoint, id_=None):
     if config['crits']['sites'][src]['api']['ssl']:
         r = requests.get(url + endpoint + '/' + id_ + '/',
                          params=data,
-                         verify=not allow_self_signed)
+                         verify=not attempt_certificate_validation)
     else:
         r = requests.get(url + endpoint + '/' + id_ + '/', params=data)
     json_output = r.json()
@@ -84,9 +84,9 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
     else:
         xmlns_name = config['crits']['sites'][dest]['api']['source']
     url = crits_url(config, dest)
-    allow_self_signed = \
-        config['crits']['sites'][dest]['api']['allow_self_signed']
-    if allow_self_signed:
+    attempt_certificate_validation = \
+        config['crits']['sites'][dest]['api']['attempt_certificate_validation']
+    if attempt_certificate_validation:
         requests.packages.urllib3.disable_warnings()
     data = {'api_key': config['crits']['sites'][dest]['api']['key'],
             'username': config['crits']['sites'][dest]['api']['user'],
@@ -95,7 +95,7 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
     if config['crits']['sites'][dest]['api']['ssl']:
         r = requests.post(url + endpoint + '/',
                           data=data,
-                          verify=not allow_self_signed)
+                          verify=not attempt_certificate_validation)
     else:
         r = requests.post(url + endpoint + '/', data=data)
     json_output = r.json()
@@ -341,13 +341,13 @@ def __fetch_crits_object_ids(config, src, endpoint, params):
     #      split into smaller functions
     '''fetch all crits object ids from endpoint and return a list'''
     url = crits_url(config, src)
-    allow_self_signed = \
-        config['crits']['sites'][src]['api']['allow_self_signed']
-    if allow_self_signed:
+    attempt_certificate_validation = \
+        config['crits']['sites'][src]['api']['attempt_certificate_validation']
+    if attempt_certificate_validation:
         requests.packages.urllib3.disable_warnings()
     if config['crits']['sites'][src]['api']['ssl']:
         r = requests.get(url + endpoint + '/', params=params,
-                         verify=not allow_self_signed)
+                         verify=not attempt_certificate_validation)
     else:
         r = requests.get(url + endpoint + '/', params=params)
     json_output = r.json()
@@ -366,7 +366,7 @@ def __fetch_crits_object_ids(config, src, endpoint, params):
         params['offset'] = i * max_results
         if config['crits']['sites'][src]['api']['ssl']:
             r = requests.get(url + endpoint + '/', params=params,
-                             verify=not allow_self_signed)
+                             verify=not attempt_certificate_validation)
         else:
             r = requests.get(url + endpoint + '/', params=params)
         json_output = r.json()
