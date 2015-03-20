@@ -517,7 +517,7 @@ def process_taxii_content_blocks(config, content_block):
     incidents = dict()
     indicators = dict()
     observables = dict()
-    xml = StringIO.StringIO(content_block)
+    xml = StringIO.StringIO(content_block.block)
     stix_package = STIXPackage.from_xml(xml)
     xml.close()
     if stix_package.incidents:
