@@ -10,11 +10,11 @@ crits:
         poll_interval: 30                                  # poll interval (in seconds)
         max_results: 1000                                  # 1000 is currently a hard-wired limit in crits but this can be reduced
         path: /api/v1/                                     # crits api path
-        source: dsie                                       # crits source
+        source: default                                    # crits source
         releasability: dsie                                # crits releasability flag
         use_releasability: false                           # use releasability flag?
         ssl: true                                          # use ssl?
-        attempt_certificate_validation: true                            # self-signed certs probably won't validate
+        attempt_certificate_validation: false              # self-signed certs probably won't validate
   datagen:
       indicator_count: 100                                 # default number of indicators for datagen
 edge:
