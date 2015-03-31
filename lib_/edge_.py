@@ -291,7 +291,7 @@ def process_incidents(config, src, dest, incidents):
         json = dict()
         json['event_type'] = 'Threat Report'
         json['title'] = incidents[i].title
-        json['description'] = incidents[i].description.value
+        json['description'] = util_.rgetattr(incidents[i], ['description', 'value'])
         json['status'] = status_trans[incidents[i].status.value]
         # inbox the incident (we need to crits id!)
         config['edge_tally']['events']['incoming'] += 1
