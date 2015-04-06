@@ -30,20 +30,20 @@ import util_
 import yaml
 
 
-def mark_crits_releasability(config, src):
+def mark_crits_releasability(config, dest):
     '''add releasability markings to crits json'''
     json = dict()
-    if config['crits']['sites'][src]['api']['use_releasability']:
+    if config['crits']['sites'][dest]['api']['use_releasability']:
         json['releasability'] = \
             [{'name':
-              config['crits']['sites'][src]['api']['releasability'],
+              config['crits']['sites'][dest]['api']['releasability'],
               'analyst':
-              config['crits']['sites'][src]['api']['user'],
+              config['crits']['sites'][dest]['api']['user'],
               'instances': []}]
         json['c-releasability.name'] = \
-            config['crits']['sites'][src]['api']['releasability']
+            config['crits']['sites'][dest]['api']['releasability']
         json['releasability.name'] = \
-            config['crits']['sites'][src]['api']['releasability']
+            config['crits']['sites'][dest]['api']['releasability']
     return(json)
 
 
@@ -250,7 +250,7 @@ def process_observables(config, src, dest, observables):
             (json, endpoint) = cybox_observable_to_json(config, observables[o])
             if json:
                 # mark crits releasability
-                json.update(mark_crits_releasability(config, src))
+                json.update(mark_crits_releasability(config, dest))
             else:
                 config['logger'].error(
                     log_.log_messages[
