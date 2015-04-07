@@ -157,10 +157,10 @@ def json2indicator(config, src, dest, endpoint, json_, crits_id):
             endpoint_trans = {'Email': 'emails', 'IP': 'ips',
                               'Sample': 'samples', 'Domain': 'domains', 
                               'Indicator': 'indicators', 'Event': 'events'}
-            if json_['type'] not in ['Reference', 'Related_To']:
+            if json_.get('type', None) not in ['Reference', 'Related_To']:
                 config['logger'].error(
                     log_.log_messages['unsupported_object_error'].format(
-                        type_='crits', obj_type='indicator type ' + json_['type'],
+                        type_='crits', obj_type='indicator type ' + json_.get('type', 'None'),
                         id_=crits_id))
                 return(None)
             indicator_ = Indicator()
@@ -173,11 +173,11 @@ def json2indicator(config, src, dest, endpoint, json_, crits_id):
             observable_composition_.operator = \
                 indicator_.observable_composition_operator
             for r in json_['relationships']:
-                if r['relationship'] not in ['Contains', 'Related_To']:
+                if r.get('relationship', None) not in ['Contains', 'Related_To']:
                     config['logger'].error(
                         log_.log_messages['unsupported_object_error'].format(
                             type_='crits', obj_type='indicator relationship type '
-                            + r['relationship'], id_=crits_id))
+                            + r.get('relationship', 'None'), id_=crits_id))
                     continue
                 if r['type'] in ['Sample', 'Email', 'IP', 'Sample', 'Domain']:
                     observable_ = Observable()
@@ -229,11 +229,11 @@ def json2incident(config, src, dest, endpoint, json_, crits_id):
             incident_.status = status_trans[json_['status']]
             # incident_.confidence = json_['confidence']['rating'].capitalize()
             for r in json_['relationships']:
-                if r['relationship'] not in ['Contains', 'Related_To']:
+                if r.get('relationship', None) not in ['Contains', 'Related_To']:
                     config['logger'].error(
                         log_.log_messages['unsupported_object_error'].format(
                             type_='crits', obj_type='event relationship type '
-                            + r['relationship'], id_=crits_id))
+                            + r.get('relationship', 'None'), id_=crits_id))
                     continue
                 if r['type'] in ['Sample', 'Email', 'IP', 'Sample', 'Domain']:
                     related_observable = RelatedObservable(Observable(idref=xmlns_name + ':observable-' + r['value']))
