@@ -65,6 +65,12 @@ def cybox_address_to_json(config, observable):
         ip_value = util_.rgetattr(observable.object_.properties,
                                   ['address_value', 'value'])
         if ip_value and ip_category:
+            if ip_category not in crits_types.keys():
+                config['logger'].error(
+                    log_.log_messages['unsupported_object_error'].format(
+                        type_='edge', obj_type=(str(type(observable.object_.properties)) 
+                                                + ', %s' % ip_category), id_=observable.id_))
+                return(None)
             json = {'ip': ip_value, 'ip_type': crits_types[ip_category]}
             json['stix_id'] = observable.id_
             return(json)
@@ -95,9 +101,9 @@ def cybox_uri_to_json(config, observable):
         if domain_category not in crits_types.keys():
             config['logger'].error(
                 log_.log_messages['unsupported_object_error'].format(
-                    type_='edge', obj_type=type(props), id_=observable.id_))
-            endpoint = None
-            return(None, endpoint)
+                    type_='edge', obj_type=(str(type(observable.object_.properties)) 
+                                            + ', %s' % domain_category), id_=observable.id_))
+            return(None)
         json = {'domain': domain_value, 'type': crits_types[domain_category]}
         json['stix_id'] = observable.id_
         return(json)
@@ -218,7 +224,7 @@ def cybox_observable_to_json(config, observable):
         json = cybox_email_to_json(config, observable)
     if json and endpoint:
         # TODO: this would all be a helluva lot easier if the crits
-        #       api supported manulaly setting an _id
+        #       api supported manually setting an _id
         #
         # json['_id'] = observable.id_.split('-')[1]
         return(json, endpoint)
