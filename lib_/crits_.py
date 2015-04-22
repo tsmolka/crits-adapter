@@ -65,7 +65,7 @@ def crits_poll(config, src, endpoint, id_=None):
     url = crits_url(config, src)
     attempt_certificate_validation = \
         config['crits']['sites'][src]['api']['attempt_certificate_validation']
-    if attempt_certificate_validation:
+    if not attempt_certificate_validation:
         requests.packages.urllib3.disable_warnings()
     data = {'api_key': config['crits']['sites'][src]['api']['key'],
             'username': config['crits']['sites'][src]['api']['user']}
@@ -75,7 +75,7 @@ def crits_poll(config, src, endpoint, id_=None):
     if config['crits']['sites'][src]['api']['ssl']:
         r = requests.get(url + endpoint + '/' + id_ + '/',
                          params=data,
-                         verify=not attempt_certificate_validation)
+                         verify=attempt_certificate_validation)
     else:
         r = requests.get(url + endpoint + '/' + id_ + '/', params=data)
     json_output = r.json()
@@ -105,7 +105,7 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
     url = crits_url(config, dest)
     attempt_certificate_validation = \
         config['crits']['sites'][dest]['api']['attempt_certificate_validation']
-    if attempt_certificate_validation:
+    if not attempt_certificate_validation:
         requests.packages.urllib3.disable_warnings()
     data = {'api_key': config['crits']['sites'][dest]['api']['key'],
             'username': config['crits']['sites'][dest]['api']['user'],
@@ -114,7 +114,7 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
     if config['crits']['sites'][dest]['api']['ssl']:
         r = requests.post(url + endpoint + '/',
                           data=data,
-                          verify=not attempt_certificate_validation)
+                          verify=attempt_certificate_validation)
     else:
         r = requests.post(url + endpoint + '/', data=data)
     json_output = r.json()
@@ -134,11 +134,11 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
 def stix_pkg(config, src, endpoint, payload, title='random test data',
              description='random test data',
              package_intents='Indicators - Watchlist',
-             tlp_color='WHITE'):
+             tlp_color='WHITE', dest=None):
     '''package observables'''
     # setup the xmlns...
-    xmlns_url = config['edge']['sites'][src]['stix']['xmlns_url']
-    xmlns_name = config['edge']['sites'][src]['stix']['xmlns_name']
+    xmlns_url = config['edge']['sites'][dest]['stix']['xmlns_url']
+    xmlns_name = config['edge']['sites'][dest]['stix']['xmlns_name']
     set_stix_id_namespace({xmlns_url: xmlns_name})
     set_cybox_id_namespace(Namespace(xmlns_url, xmlns_name))
     # construct a stix package...
@@ -176,10 +176,10 @@ def json2indicator(config, src, dest, endpoint, json_, crits_id):
             endpoint_trans = {'Email': 'emails', 'IP': 'ips',
                               'Sample': 'samples', 'Domain': 'domains', 
                               'Indicator': 'indicators', 'Event': 'events'}
-            if json_['type'] not in ['Reference', 'Related_To']:
+            if json_.get('type', None) not in ['Reference', 'Related_To']:
                 config['logger'].error(
                     log_.log_messages['unsupported_object_error'].format(
-                        type_='crits', obj_type='indicator type ' + json_['type'],
+                        type_='crits', obj_type='indicator type ' + json_.get('type', 'None'),
                         id_=crits_id))
                 return(None)
             indicator_ = Indicator()
@@ -192,11 +192,11 @@ def json2indicator(config, src, dest, endpoint, json_, crits_id):
             observable_composition_.operator = \
                 indicator_.observable_composition_operator
             for r in json_['relationships']:
-                if r['relationship'] not in ['Contains', 'Related_To']:
+                if r.get('relationship', None) not in ['Contains', 'Related_To']:
                     config['logger'].error(
                         log_.log_messages['unsupported_object_error'].format(
                             type_='crits', obj_type='indicator relationship type '
-                            + r['relationship'], id_=crits_id))
+                            + r.get('relationship', 'None'), id_=crits_id))
                     continue
                 if r['type'] in ['Sample', 'Email', 'IP', 'Sample', 'Domain']:
                     observable_ = Observable()
@@ -248,11 +248,11 @@ def json2incident(config, src, dest, endpoint, json_, crits_id):
             incident_.status = status_trans[json_['status']]
             # incident_.confidence = json_['confidence']['rating'].capitalize()
             for r in json_['relationships']:
-                if r['relationship'] not in ['Contains', 'Related_To']:
+                if r.get('relationship', None) not in ['Contains', 'Related_To']:
                     config['logger'].error(
                         log_.log_messages['unsupported_object_error'].format(
                             type_='crits', obj_type='event relationship type '
-                            + r['relationship'], id_=crits_id))
+                            + r.get('relationship', 'None'), id_=crits_id))
                     continue
                 if r['type'] in ['Sample', 'Email', 'IP', 'Sample', 'Domain']:
                     related_observable = RelatedObservable(Observable(idref=xmlns_name + ':observable-' + r['value']))
@@ -362,11 +362,11 @@ def __fetch_crits_object_ids(config, src, endpoint, params):
     url = crits_url(config, src)
     attempt_certificate_validation = \
         config['crits']['sites'][src]['api']['attempt_certificate_validation']
-    if attempt_certificate_validation:
+    if not attempt_certificate_validation:
         requests.packages.urllib3.disable_warnings()
     if config['crits']['sites'][src]['api']['ssl']:
         r = requests.get(url + endpoint + '/', params=params,
-                         verify=not attempt_certificate_validation)
+                         verify=attempt_certificate_validation)
     else:
         r = requests.get(url + endpoint + '/', params=params)
     json_output = r.json()
@@ -385,7 +385,7 @@ def __fetch_crits_object_ids(config, src, endpoint, params):
         params['offset'] = i * max_results
         if config['crits']['sites'][src]['api']['ssl']:
             r = requests.get(url + endpoint + '/', params=params,
-                             verify=not attempt_certificate_validation)
+                             verify=attempt_certificate_validation)
         else:
             r = requests.get(url + endpoint + '/', params=params)
         json_output = r.json()
@@ -471,7 +471,7 @@ def crits2edge(config, src, dest, daemon=False,
                             log_.log_messages['obj_inbox_error'].format(
                                 src_type='crits', id_=crits_id, dest_type='edge'))
                         continue
-                    stix_ = stix_pkg(config, src, endpoint, indicator)
+                    stix_ = stix_pkg(config, src, endpoint, indicator, dest=dest)
                     if not stix_:
                         config['logger'].info(
                             log_.log_messages['obj_inbox_error'].format(
@@ -503,7 +503,7 @@ def crits2edge(config, src, dest, daemon=False,
                             log_.log_messages['obj_inbox_error'].format(
                                 src_type='crits', id_=crits_id, dest_type='edge'))
                         continue
-                    stix_ = stix_pkg(config, src, endpoint, incident)
+                    stix_ = stix_pkg(config, src, endpoint, incident, dest=dest)
                     if not stix_:
                         config['logger'].info(
                             log_.log_messages['obj_inbox_error'].format(
@@ -534,7 +534,7 @@ def crits2edge(config, src, dest, daemon=False,
                             log_.log_messages['obj_inbox_error'].format(
                                 src_type='crits', id_=crits_id, dest_type='edge'))
                         continue
-                    stix_ = stix_pkg(config, src, endpoint, observable)
+                    stix_ = stix_pkg(config, src, endpoint, observable, dest=dest)
                     if not stix_:
                         config['logger'].info(
                             log_.log_messages['obj_inbox_error'].format(
