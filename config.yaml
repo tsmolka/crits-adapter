@@ -11,7 +11,7 @@ crits:
         max_results: 1000                                  # 1000 is currently a hard-wired limit in crits but this can be reduced
         path: /api/v1/                                     # crits api path
         source: default                                    # crits source
-        releasability: dsie                                # crits releasability flag
+        releasability: soltra                                # crits releasability flag
         use_releasability: false                           # use releasability flag?
         ssl: true                                          # use ssl?
         attempt_certificate_validation: false              # self-signed certs probably won't validate
@@ -23,8 +23,8 @@ edge:
       host: 127.0.0.1                                      # site ip / fqdn
       enabled: true                                        # off switch
       stix:
-        xmlns_name: dsie                                   # xml namespace alias
-        xmlns_url: http://www.dsie.net/                    # xml namespace url
+        xmlns_name: soltra                                   # xml namespace alias
+        xmlns_url: http://www.soltra.come/                    # xml namespace url
       taxii:
         user: admin                                        # edge user
         pass: avalanche                                    # edge pass
