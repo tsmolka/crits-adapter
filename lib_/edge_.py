@@ -301,15 +301,22 @@ def process_observables(config, src, dest, observables):
                 continue
 
             # Successfully inboxed observable
-            patch_endpoint = '{}/{}'.format(endpoint, id_)
 
             # Send Patch request to set crits releasability
+            patch_endpoint = '{}/{}'.format(endpoint, id_)
             releasability_json = {
                 'action': 'add_releasability',
                 'name': config['crits']['sites'][dest]['api']['releasability'],
             }
-            crits_.crits_patch(config, dest, 
+            releasability_success = crits_.crits_patch(config, dest, 
                 patch_endpoint, releasability_json)
+
+            if not releasability_success:
+                config['logger'].error(
+                    log_.log_messages['obj_inbox_error'].format(
+                        src_type='edge', id_=o, dest_type='crits ' + patch_endpoint + ' api endpoint'))
+                continue
+
 
             config['edge_tally'][endpoint]['processed'] += 1
             config['edge_tally']['all']['processed'] += 1
