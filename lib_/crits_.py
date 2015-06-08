@@ -131,6 +131,31 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
     return(crits_id, success)
 
 
+def crits_patch(config, dest, endpoint, json, src=None, edge_id=None):
+    '''update data in crits via api, returns Bool indicating success'''
+    url = crits_url(config, dest)
+    attempt_certificate_validation = \
+        config['crits']['sites'][dest]['api']['attempt_certificate_validation']
+    if not attempt_certificate_validation:
+        requests.packages.urllib3.disable_warnings()
+    # Add username and api_key as query strings values to url
+    username = config['crits']['sites'][dest]['api']['user']
+    api_key = config['crits']['sites'][dest]['api']['key']
+    patch_endpoint = '{}{}/?username={}&api_key={}'.format(url, endpoint, username, api_key)
+    if config['crits']['sites'][dest]['api']['ssl']:
+        r = requests.patch(patch_endpoint,
+                          data=json,
+                          verify=attempt_certificate_validation)
+    else:
+        r = requests.patch(patch_endpoint,
+                          data=json)
+    json_output = r.json()
+    result_code = json_output[u'return_code']
+    success = r.status_code in (200, 201) and result_code == 0
+
+    return success
+
+
 def stix_pkg(config, src, endpoint, payload, title='random test data',
              description='random test data',
              package_intents='Indicators - Watchlist',

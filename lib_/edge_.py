@@ -258,53 +258,66 @@ def process_observables(config, src, dest, observables):
     '''handle incoming cybox observables and observable compositions'''
     # TODO some of the hailataxii date uses the cybox ###comma###
     #      construct, which is currently unsupported
-    for o in observables.keys():
+    for o_id, o in observables.iteritems():
         json = dict()
-        if util_.rgetattr(observables[o], ['observable_composition']) \
-           and not util_.rgetattr(observables[o], ['object_']):
+        if util_.rgetattr(o, ['observable_composition']) \
+           and not util_.rgetattr(o, ['object_']):
             # it's an observable composition
             # store it in the db...maybe the indicator will only come
             # across in a subsequent run so we can't rely on passing
             # this around in memory
             config['db'].store_obs_comp(src, dest,
-                                        obs_id=o,
-                                        obs_comp=observables[o].observable_composition)
+                                        obs_id=o_id,
+                                        obs_comp=o.observable_composition)
             continue
-        elif util_.rgetattr(observables[o], ['object_']):
+        elif util_.rgetattr(o, ['object_']):
             # it's a normal observable
-            (json, endpoint) = cybox_observable_to_json(config, observables[o])
-            if json:
-                # mark crits releasability
-                json.update(mark_crits_releasability(config, dest))
-            else:
+            (json, endpoint) = cybox_observable_to_json(config, o)
+            if not json:
                 config['logger'].error(
                     log_.log_messages[
                         'obj_convert_error'].format(src_type='cybox',
                                                     src_obj='observable',
-                                                    id_=o,
+                                                    id_=o_id,
                                                     dest_type='crits',
                                                     dest_obj='json'))
                 continue
+
+            # mark crits releasability
+            # TODO: Maybe remove this? Not sure if it works with
+            # the Crits PATCH API method for setting releasability. 
+            json.update(mark_crits_releasability(config, dest))
+
             # inbox the observable to crits
             config['edge_tally'][endpoint]['incoming'] += 1
             config['edge_tally']['all']['incoming'] += 1
             (id_, success) = \
                 crits_.crits_inbox(config, dest, endpoint, json,
-                                   src=src, edge_id=o)
+                                   src=src, edge_id=o_id)
             if not success:
                 config['logger'].error(
                     log_.log_messages['obj_inbox_error'].format(
                         src_type='edge', id_=o, dest_type='crits ' + endpoint + ' api endpoint'))
                 continue
-            else:
-                # successfully inboxed observable
-                config['edge_tally'][endpoint]['processed'] += 1
-                config['edge_tally']['all']['processed'] += 1
-                if config['daemon']['debug']:
-                    config['logger'].debug(
-                        log_.log_messages['obj_inbox_success'].format(
-                            src_type='edge', id_=o,
-                            dest_type='crits ' + endpoint + ' api endpoint'))
+
+            # Successfully inboxed observable
+            patch_endpoint = '{}/{}'.format(endpoint, id_)
+
+            # Send Patch request to set crits releasability
+            releasability_json = {
+                'action': 'add_releasability',
+                'name': config['crits']['sites'][dest]['api']['releasability'],
+            }
+            crits_.crits_patch(config, dest, 
+                patch_endpoint, releasability_json, src=src, edge_id=o_id)
+
+            config['edge_tally'][endpoint]['processed'] += 1
+            config['edge_tally']['all']['processed'] += 1
+            if config['daemon']['debug']:
+                config['logger'].debug(
+                    log_.log_messages['obj_inbox_success'].format(
+                        src_type='edge', id_=o_id,
+                        dest_type='crits ' + endpoint + ' api endpoint'))
 
 
 def process_incidents(config, src, dest, incidents):
