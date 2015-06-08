@@ -309,7 +309,7 @@ def process_observables(config, src, dest, observables):
                 'name': config['crits']['sites'][dest]['api']['releasability'],
             }
             crits_.crits_patch(config, dest, 
-                patch_endpoint, releasability_json, src=src, edge_id=o_id)
+                patch_endpoint, releasability_json)
 
             config['edge_tally'][endpoint]['processed'] += 1
             config['edge_tally']['all']['processed'] += 1

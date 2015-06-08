@@ -131,7 +131,7 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
     return(crits_id, success)
 
 
-def crits_patch(config, dest, endpoint, json, src=None, edge_id=None):
+def crits_patch(config, dest, endpoint, json):
     '''update data in crits via api, returns Bool indicating success'''
     url = crits_url(config, dest)
     attempt_certificate_validation = \
