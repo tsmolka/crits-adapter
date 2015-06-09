@@ -24,7 +24,7 @@ edge:
       enabled: true                                        # off switch
       stix:
         xmlns_name: soltra                                   # xml namespace alias
-        xmlns_url: http://www.soltra.come/                    # xml namespace url
+        xmlns_url: http://www.soltra.com/                    # xml namespace url
       taxii:
         user: admin                                        # edge user
         pass: avalanche                                    # edge pass
