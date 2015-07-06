@@ -414,7 +414,7 @@ def __fetch_crits_object_ids(config, src, endpoint, params):
         else:
             r = requests.get(url + endpoint + '/', params=params)
         json_output = r.json()
-        for object_ in json_output[u'objects']:
+        for object_ in json_output.get('objects', []):
             object_ids.append(object_[u'_id'].encode('ascii', 'ignore'))
         i += 1
     return(object_ids)
