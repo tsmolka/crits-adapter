@@ -226,6 +226,8 @@ def cybox_email_to_json(config, observable):
 def cybox_observable_to_json(config, observable):
     '''translate a cybox observable to crits json'''
     props = util_.rgetattr(observable.object_, ['properties'])
+    endpoint = None
+    json = None
     if props and isinstance(props, Address):
         endpoint = 'ips'
         json = cybox_address_to_json(config, observable)
@@ -241,7 +243,7 @@ def cybox_observable_to_json(config, observable):
     elif props and isinstance(props, EmailMessage):
         endpoint = 'emails'
         json = cybox_email_to_json(config, observable)
-    if json and endpoint:
+    if endpoint and json:
         # TODO: this would all be a helluva lot easier if the crits
         #       api supported manually setting an _id
         #
