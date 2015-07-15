@@ -18,5 +18,5 @@ chkconfig --level 345 edgy_critsd on
 echo '/opt/soltra/edge/repository/lib' >> /opt/soltra/edge/lib/python2.7/site-packages/repository.pth
 echo 'edgy_critsd successfully installed. Edit config.yaml and then start the service (`service edgy_critsd start`).'
 
-# Copy over existing .config.yaml
-yes n | cp -i /opt/soltra/edge/repository/adapters/crits/.config.yaml /opt/soltra/edge/repository/adapters/crits/config.yaml
+# Copy over existing .default_config.yaml
+yes n | cp -i /opt/soltra/edge/repository/adapters/crits/.default_config.yaml /opt/soltra/edge/repository/adapters/crits/config.yaml
