@@ -21,26 +21,22 @@
 
 from docopt import docopt
 import os.path
-from sys import path as python_path
-python_path.append('./lib_')
-import util_
-import log_
-import db_
+from lib import util, log, db
 import signal
 
-__version__ = '0.2'
+__version__ = '0.3'
 app_path = os.path.split(os.path.abspath(__file__))[0]
 default_config = os.path.join(app_path, 'config.yaml')
 __doc__ = '''edgy_critsd.py: a daemon to drive edgy_crits
 
 Usage:
-    edgy_crits.py start [--config=CONFIG]
-    edgy_crits.py stop [--config=CONFIG]
-    edgy_crits.py restart [--config=CONFIG]
-    edgy_crits.py status [--config=CONFIG]
+    edgy_critsd.py start [--config=CONFIG]
+    edgy_critsd.py stop [--config=CONFIG]
+    edgy_critsd.py restart [--config=CONFIG]
+    edgy_critsd.py status [--config=CONFIG]
 
-    edgy_crits.py --help
-    edgy_crits.py --version
+    edgy_critsd.py --help
+    edgy_critsd.py --version
 
 
 Options:
@@ -54,17 +50,17 @@ Please report bugs to support@soltra.com
 
 def main():
     args = docopt(__doc__, version=__version__)
-    config = util_.parse_config(args['--config'])
+    config = util.parse_config(args['--config'])
     config['config_file'] = args['--config']
     config['daemon']['app_path'] = app_path
-    logger = log_.setup_logging(config)
+    logger = log.setup_logging(config)
     config['logger'] = logger
-    db = db_.DB(config)
-    config['db'] = db
-    daemon = util_.Daemon(config)
+    my_db = db.DB(config)
+    config['db'] = my_db
+    daemon = util.Daemon(config)
     if args['start']:
         logger.info('edgy_critsd starting...')
-        signal.signal(signal.SIGTERM, util_.signal_handler)
+        signal.signal(signal.SIGTERM, util.signal_handler)
         daemon.start()
     elif args['stop']:
         logger.info('edgy_critsd stopping...')

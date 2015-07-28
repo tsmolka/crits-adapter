@@ -27,7 +27,6 @@ import os.path
 import random
 import uuid
 import yaml
-# import ssdeep
 
 
 def load_tlds(config):

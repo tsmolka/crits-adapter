@@ -23,9 +23,9 @@ from bson import json_util
 from copy import deepcopy
 from dateutil.tz import tzutc
 import atexit
-import crits_
+import crits
 import datetime
-import edge_
+import edge
 import hashlib
 import os
 import os.path
@@ -249,7 +249,7 @@ class Daemon:
                        last_run + datetime.timedelta(seconds=poll_interval):
                         self.logger.info('initiating crits=>edge sync between '
                                          '%s and %s' % (c_site, e_site))
-                        completed_run = crits_.crits2edge(self.config, c_site,
+                        completed_run = crits.crits2edge(self.config, c_site,
                                                           e_site, daemon=True,
                                                           now=now,
                                                           last_run=last_run)
@@ -271,7 +271,7 @@ class Daemon:
                        last_run + datetime.timedelta(seconds=poll_interval):
                         self.logger.info('initiating edge=>crits sync between '
                                          '%s and %s' % (e_site, c_site))
-                        completed_run = edge_.edge2crits(self.config, e_site,
+                        completed_run = edge.edge2crits(self.config, e_site,
                                                          c_site, daemon=True,
                                                          now=now,
                                                          last_run=last_run)
