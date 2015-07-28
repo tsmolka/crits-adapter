@@ -128,32 +128,39 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
             config['db'].set_object_id(src, dest, edge_id=edge_id,
                                        crits_id=(xmlns_name + ':' + 
                                                  endpoint + '-' + crits_id))
+        # mark crits releasability, if enabled
+        # import pudb; pu.db
+        releasability_json = edge.mark_crits_releasability(config, dest)
+        if releasability_json:
+            releasability_success = apply_releasability(config, dest, endpoint, crits_id, releasability_json)
+            if not releasability_success:
+                config['logger'].error(
+                    log.log_messages['obj_inbox_error'].format(
+                        src_type='edge', id_=edge_id, dest_type='crits ' + endpoint + ' api endpoint'))
     return(crits_id, success)
 
 
-def crits_patch(config, dest, endpoint, json):
-    '''update data in crits via api, returns Bool indicating success'''
+def apply_releasability(config, dest, endpoint, crits_id, json):
+    '''apply releasability markings to crits objects via api, return bool to indicate success'''
     url = crits_url(config, dest)
     attempt_certificate_validation = \
         config['crits']['sites'][dest]['api']['attempt_certificate_validation']
     if not attempt_certificate_validation:
         requests.packages.urllib3.disable_warnings()
-    # Add username and api_key as query strings values to url
-    username = config['crits']['sites'][dest]['api']['user']
-    api_key = config['crits']['sites'][dest]['api']['key']
-    patch_endpoint = '{}{}/?username={}&api_key={}'.format(url, endpoint, username, api_key)
+    data = {'api_key': config['crits']['sites'][dest]['api']['key'],
+            'username': config['crits']['sites'][dest]['api']['user'],
+            'source': config['crits']['sites'][dest]['api']['source']}
+    data.update(json)
     if config['crits']['sites'][dest]['api']['ssl']:
-        r = requests.patch(patch_endpoint,
-                          data=json,
+        r = requests.post(url + endpoint + '/' + crits_id + '/',
+                          data=data,
                           verify=attempt_certificate_validation)
     else:
-        r = requests.patch(patch_endpoint,
-                          data=json)
+        r = requests.post(url + endpoint + '/' + crits_id + '/', data=data)
     json_output = r.json()
     result_code = json_output[u'return_code']
     success = r.status_code in (200, 201) and result_code == 0
-
-    return success
+    return(success)
 
 
 def stix_pkg(config, src, endpoint, payload, title='random test data',

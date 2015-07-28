@@ -50,19 +50,11 @@ import yaml
 
 
 def mark_crits_releasability(config, dest):
-    '''add releasability markings to crits json'''
+    '''add releasability markings to objects imported into crits'''
     json = dict()
     if config['crits']['sites'][dest]['api']['use_releasability']:
-        json['releasability'] = \
-            [{'name':
-              config['crits']['sites'][dest]['api']['releasability'],
-              'analyst':
-              config['crits']['sites'][dest]['api']['user'],
-              'instances': []}]
-        json['c-releasability.name'] = \
-            config['crits']['sites'][dest]['api']['releasability']
-        json['releasability.name'] = \
-            config['crits']['sites'][dest]['api']['releasability']
+        json['action'] = 'add_releasability'
+        json['name'] = config['crits']['sites'][dest]['api']['releasability']
     return(json)
 
 
@@ -285,11 +277,6 @@ def process_observables(config, src, dest, observables):
                                                     dest_obj='json'))
                 continue
 
-            # mark crits releasability
-            # TODO: Maybe remove this? Not sure if it works with
-            # the Crits PATCH API method for setting releasability. 
-            json.update(mark_crits_releasability(config, dest))
-
             # inbox the observable to crits
             config['edge_tally'][endpoint]['incoming'] += 1
             config['edge_tally']['all']['incoming'] += 1
@@ -302,24 +289,7 @@ def process_observables(config, src, dest, observables):
                         src_type='edge', id_=o, dest_type='crits ' + endpoint + ' api endpoint'))
                 continue
 
-            # Successfully inboxed observable
-
-            # Send Patch request to set crits releasability
-            patch_endpoint = '{}/{}'.format(endpoint, id_)
-            releasability_json = {
-                'action': 'add_releasability',
-                'name': config['crits']['sites'][dest]['api']['releasability'],
-            }
-            releasability_success = crits.crits_patch(config, dest, 
-                patch_endpoint, releasability_json)
-
-            if not releasability_success:
-                config['logger'].error(
-                    log.log_messages['obj_inbox_error'].format(
-                        src_type='edge', id_=o, dest_type='crits ' + patch_endpoint + ' api endpoint'))
-                continue
-
-
+            # successfully inboxed observable
             config['edge_tally'][endpoint]['processed'] += 1
             config['edge_tally']['all']['processed'] += 1
             if config['daemon']['debug']:
