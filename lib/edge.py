@@ -37,15 +37,15 @@ from stix.utils import set_id_namespace as set_stix_id_namespace
 from stix.incident import Incident
 from stix.common.related import RelatedIndicator, RelatedObservable, RelatedIncident
 import StringIO
-import crits_
+import crits
 import datetime
 import libtaxii as t
 import libtaxii.clients as tc
 import libtaxii.messages_10 as tm10
 import libtaxii.messages_11 as tm11
-import log_
+import log
 import lxml.etree
-import util_
+import util
 import yaml
 
 
@@ -75,18 +75,18 @@ def cybox_address_to_json(config, observable):
                    'ipv6-addr': 'Address - ipv6-addr',
                    'ipv6-net': 'Address - ipv6-net',
                    'ipv6-netmask': 'Address - ipv6-net-mask'}
-    condition = util_.rgetattr(observable.object_.properties, ['condition'])
+    condition = util.rgetattr(observable.object_.properties, ['condition'])
     if condition in ['Equals', None]:
         # currently not handling other observable conditions as
         # it's not clear that crits even supports these...
-        ip_category = util_.rgetattr(observable.object_.properties,
+        ip_category = util.rgetattr(observable.object_.properties,
                                      ['category'])
-        ip_value = util_.rgetattr(observable.object_.properties,
+        ip_value = util.rgetattr(observable.object_.properties,
                                   ['address_value', 'value'])
         if ip_value and ip_category:
             if ip_category not in crits_types.keys():
                 config['logger'].error(
-                    log_.log_messages['unsupported_object_error'].format(
+                    log.log_messages['unsupported_object_error'].format(
                         type_='edge', obj_type=(str(type(observable.object_.properties)) 
                                                 + ', %s' % ip_category), id_=observable.id_))
                 return(None)
@@ -99,8 +99,8 @@ def cybox_domain_to_json(config, observable):
     '''translate a cybox domain object to crits json'''
     crits_types = {'FQDN': 'A'}
     # crits doesn't appear to support tlds...
-    domain_category = util_.rgetattr(observable.object_.properties, ['type_'])
-    domain_value = util_.rgetattr(observable.object_.properties,
+    domain_category = util.rgetattr(observable.object_.properties, ['type_'])
+    domain_value = util.rgetattr(observable.object_.properties,
                                   ['value', 'value'])
     if domain_category and domain_value:
         json = {'domain': domain_value, 'type': crits_types[domain_category]}
@@ -112,14 +112,14 @@ def cybox_uri_to_json(config, observable):
     '''translate a cybox uri object to crits json'''
     crits_types = {'Domain Name': 'A'}
     # urls currently not supported...
-    domain_category = util_.rgetattr(observable.object_.properties,
+    domain_category = util.rgetattr(observable.object_.properties,
                                      ['type_'])
-    domain_value = util_.rgetattr(observable.object_.properties,
+    domain_value = util.rgetattr(observable.object_.properties,
                                   ['value', 'value'])
     if domain_category and domain_value:
         if domain_category not in crits_types.keys():
             config['logger'].error(
-                log_.log_messages['unsupported_object_error'].format(
+                log.log_messages['unsupported_object_error'].format(
                     type_='edge', obj_type=(str(type(observable.object_.properties)) 
                                             + ', %s' % domain_category), id_=observable.id_))
             return(None)
@@ -138,22 +138,22 @@ def cybox_file_to_json(config, observable):
                    'SHA512': 'sha512',
                    'SSDEEP': 'ssdeep'}
     json = {'upload_type': 'metadata'}
-    hashes = util_.rgetattr(observable.object_.properties, ['hashes'])
+    hashes = util.rgetattr(observable.object_.properties, ['hashes'])
     if hashes:
         for hash in hashes:
-            hash_type = util_.rgetattr(hash, ['type_', 'value'])
-            hash_value = util_.rgetattr(hash, ['simple_hash_value', 'value'])
+            hash_type = util.rgetattr(hash, ['type_', 'value'])
+            hash_value = util.rgetattr(hash, ['simple_hash_value', 'value'])
             if hash_type and hash_value:
                 json[crits_types[hash_type]] = hash_value
-    file_name = util_.rgetattr(observable.object_.properties,
+    file_name = util.rgetattr(observable.object_.properties,
                                ['file_name', 'value'])
     if file_name:
         json['filename'] = file_name
-    file_format = util_.rgetattr(observable.object_.properties,
+    file_format = util.rgetattr(observable.object_.properties,
                                  ['file_format', 'value'])
     if file_format:
         json['filetype'] = file_format
-    file_size = util_.rgetattr(observable.object_.properties,
+    file_size = util.rgetattr(observable.object_.properties,
                                ['size_in_bytes', 'value'])
     if file_size:
         json['size'] = file_size
@@ -169,53 +169,53 @@ def cybox_email_to_json(config, observable):
                    'boundary': 'boundary', 'x_mailer': 'x_mailer',
                    'x_originating_ip': 'x_originating_ip'}
     json = {'upload_type': 'fields'}
-    subject = util_.rgetattr(observable.object_.properties,
+    subject = util.rgetattr(observable.object_.properties,
                              ['header', 'subject', 'value'])
     if subject:
         json['subject'] = subject
-    to = util_.rgetattr(observable.object_.properties, ['header', 'to'])
+    to = util.rgetattr(observable.object_.properties, ['header', 'to'])
     if to:
         json['to'] = []
         for i in to:
-            addr = util_.rgetattr(i, ['address_value', 'values'])
+            addr = util.rgetattr(i, ['address_value', 'values'])
             if addr:
                 json['to'].append(addr)
-    cc = util_.rgetattr(observable.object_.properties, ['header', 'cc'])
+    cc = util.rgetattr(observable.object_.properties, ['header', 'cc'])
     if cc:
         json['cc'] = []
         for i in cc:
-            addr = util_.rgetattr(i, ['address_value', 'values'])
+            addr = util.rgetattr(i, ['address_value', 'values'])
             if addr:
                 json['cc'].append(addr)
-    from_ = util_.rgetattr(observable.object_.properties,
+    from_ = util.rgetattr(observable.object_.properties,
                            ['header', 'from_', 'address_value', 'value'])
     if from_:
         json['from_address'] = [from_]
-    sender = util_.rgetattr(observable.object_.properties,
+    sender = util.rgetattr(observable.object_.properties,
                             ['header', 'sender', 'address_value', 'value'])
     if sender:
         json['sender'] = sender
-    date = util_.rgetattr(observable.object_.properties,
+    date = util.rgetattr(observable.object_.properties,
                           ['header', 'date', 'value'])
     if date:
         json['date'] = date
-    message_id = util_.rgetattr(observable.object_.properties,
+    message_id = util.rgetattr(observable.object_.properties,
                                 ['header', 'message_id', 'value'])
     if message_id:
         json['message_id'] = message_id
-    reply_to = util_.rgetattr(observable.object_.properties,
+    reply_to = util.rgetattr(observable.object_.properties,
                               ['header', 'reply_to', 'address_value', 'value'])
     if reply_to:
         json['reply_to'] = reply_to
-    boundary = util_.rgetattr(observable.object_.properties,
+    boundary = util.rgetattr(observable.object_.properties,
                               ['header', 'boundary', 'value'])
     if boundary:
         json['boundary'] = boundary
-    x_mailer = util_.rgetattr(observable.object_.properties,
+    x_mailer = util.rgetattr(observable.object_.properties,
                               ['header', 'x_mailer', 'value'])
     if x_mailer:
         json['x_mailer'] = x_mailer
-    x_originating_ip = util_.rgetattr(observable.object_.properties,
+    x_originating_ip = util.rgetattr(observable.object_.properties,
                                       ['header', 'x_originating_ip', 'value'])
     if x_originating_ip:
         json['x_originating_ip'] = x_originating_ip
@@ -225,7 +225,7 @@ def cybox_email_to_json(config, observable):
 
 def cybox_observable_to_json(config, observable):
     '''translate a cybox observable to crits json'''
-    props = util_.rgetattr(observable.object_, ['properties'])
+    props = util.rgetattr(observable.object_, ['properties'])
     endpoint = None
     json = None
     if props and isinstance(props, Address):
@@ -251,7 +251,7 @@ def cybox_observable_to_json(config, observable):
         return(json, endpoint)
     else:
         config['logger'].error(
-            log_.log_messages['unsupported_object_error'].format(
+            log.log_messages['unsupported_object_error'].format(
                 type_='edge', obj_type=type(props), id_=observable.id_))
         return(None, None)
 
@@ -262,8 +262,8 @@ def process_observables(config, src, dest, observables):
     #      construct, which is currently unsupported
     for o_id, o in observables.iteritems():
         json = dict()
-        if util_.rgetattr(o, ['observable_composition']) \
-           and not util_.rgetattr(o, ['object_']):
+        if util.rgetattr(o, ['observable_composition']) \
+           and not util.rgetattr(o, ['object_']):
             # it's an observable composition
             # store it in the db...maybe the indicator will only come
             # across in a subsequent run so we can't rely on passing
@@ -272,12 +272,12 @@ def process_observables(config, src, dest, observables):
                                         obs_id=o_id,
                                         obs_comp=o.observable_composition)
             continue
-        elif util_.rgetattr(o, ['object_']):
+        elif util.rgetattr(o, ['object_']):
             # it's a normal observable
             (json, endpoint) = cybox_observable_to_json(config, o)
             if not json:
                 config['logger'].error(
-                    log_.log_messages[
+                    log.log_messages[
                         'obj_convert_error'].format(src_type='cybox',
                                                     src_obj='observable',
                                                     id_=o_id,
@@ -294,11 +294,11 @@ def process_observables(config, src, dest, observables):
             config['edge_tally'][endpoint]['incoming'] += 1
             config['edge_tally']['all']['incoming'] += 1
             (id_, success) = \
-                crits_.crits_inbox(config, dest, endpoint, json,
+                crits.crits_inbox(config, dest, endpoint, json,
                                    src=src, edge_id=o_id)
             if not success:
                 config['logger'].error(
-                    log_.log_messages['obj_inbox_error'].format(
+                    log.log_messages['obj_inbox_error'].format(
                         src_type='edge', id_=o, dest_type='crits ' + endpoint + ' api endpoint'))
                 continue
 
@@ -310,12 +310,12 @@ def process_observables(config, src, dest, observables):
                 'action': 'add_releasability',
                 'name': config['crits']['sites'][dest]['api']['releasability'],
             }
-            releasability_success = crits_.crits_patch(config, dest, 
+            releasability_success = crits.crits_patch(config, dest, 
                 patch_endpoint, releasability_json)
 
             if not releasability_success:
                 config['logger'].error(
-                    log_.log_messages['obj_inbox_error'].format(
+                    log.log_messages['obj_inbox_error'].format(
                         src_type='edge', id_=o, dest_type='crits ' + patch_endpoint + ' api endpoint'))
                 continue
 
@@ -324,7 +324,7 @@ def process_observables(config, src, dest, observables):
             config['edge_tally']['all']['processed'] += 1
             if config['daemon']['debug']:
                 config['logger'].debug(
-                    log_.log_messages['obj_inbox_success'].format(
+                    log.log_messages['obj_inbox_success'].format(
                         src_type='edge', id_=o_id,
                         dest_type='crits ' + endpoint + ' api endpoint'))
 
@@ -338,17 +338,17 @@ def process_incidents(config, src, dest, incidents):
         json = dict()
         json['event_type'] = 'Threat Report'
         json['title'] = incidents[i].title
-        json['description'] = util_.rgetattr(incidents[i], ['description', 'value'])
+        json['description'] = util.rgetattr(incidents[i], ['description', 'value'])
         json['status'] = status_trans[incidents[i].status.value]
         # inbox the incident (we need to crits id!)
         config['edge_tally']['events']['incoming'] += 1
         config['edge_tally']['all']['incoming'] += 1
-        (crits_event_id, success) = crits_.crits_inbox(config, dest,
+        (crits_event_id, success) = crits.crits_inbox(config, dest,
                                                        'events',
                                                        json, src=src)
         if not success:
             config['logger'].error(
-                log_.log_messages['obj_inbox_error'].format(
+                log.log_messages['obj_inbox_error'].format(
                     src_type='edge', id_=i, 
                     dest_type='crits events api endpoint'))
             continue
@@ -358,14 +358,14 @@ def process_incidents(config, src, dest, incidents):
             config['edge_tally']['all']['processed'] += 1
             if config['daemon']['debug']:
                 config['logger'].debug(
-                    log_.log_messages['obj_inbox_success'].format(
+                    log.log_messages['obj_inbox_success'].format(
                         src_type='edge', id_=i,
                         dest_type='crits events api endpoint'))
         # as we've now successfully processed the event, track
         # the related crits/json ids (by src/dest)
-        if util_.rgetattr(incidents[i], ['related_observables']) and len(incidents[i].related_observables):
+        if util.rgetattr(incidents[i], ['related_observables']) and len(incidents[i].related_observables):
             for j in incidents[i].related_observables:
-                if util_.rgetattr(j, ['item', 'idref']):
+                if util.rgetattr(j, ['item', 'idref']):
                     # store the pending relationship in the db for
                     # later processing 
                     config['db'].set_pending_crits_link(src, dest,
@@ -373,9 +373,9 @@ def process_incidents(config, src, dest, incidents):
                                                                   'events' + '-' +
                                                                   crits_event_id),
                                                         rhs_id=j.item.idref)
-        if util_.rgetattr(incidents[i], ['related_indicators']) and len(incidents[i].related_indicators):
+        if util.rgetattr(incidents[i], ['related_indicators']) and len(incidents[i].related_indicators):
             for j in incidents[i].related_indicators:
-                if util_.rgetattr(j, ['item', 'idref']):
+                if util.rgetattr(j, ['item', 'idref']):
                     # store the pending relationship in the db for
                     # later processing 
                     config['db'].set_pending_crits_link(src, dest,
@@ -383,9 +383,9 @@ def process_incidents(config, src, dest, incidents):
                                                                   'events' + '-' +
                                                                   crits_event_id),
                                                         rhs_id=j.item.idref)
-        if util_.rgetattr(incidents[i], ['related_incidents']) and len(incidents[i].related_incidents):
+        if util.rgetattr(incidents[i], ['related_incidents']) and len(incidents[i].related_incidents):
             for j in incidents[i].related_incidents:
-                if util_.rgetattr(j, ['item', 'idref']):
+                if util.rgetattr(j, ['item', 'idref']):
                     # store the pending relationship in the db for
                     # later processing 
                     config['db'].set_pending_crits_link(src, dest,
@@ -406,22 +406,22 @@ def process_indicators(config, src, dest, indicators):
     for i in indicators.keys():
         json = dict()
         json['type'] = 'Related_To'
-        json['value'] = util_.rgetattr(indicators[i], ['title'],
+        json['value'] = util.rgetattr(indicators[i], ['title'],
                                        default_='unknown')
         json['indicator_confidence'] = \
-            util_.rgetattr(indicators[i], ['confidence', 'value', 'value'],
+            util.rgetattr(indicators[i], ['confidence', 'value', 'value'],
                            default_='unknown')
         # TODO lookup the corresponding stix prop for indicator_impact
         json['indicator_impact'] = {'rating': 'unknown'}
         # inbox the indicator (we need to crits id!)
         config['edge_tally']['indicators']['incoming'] += 1
         config['edge_tally']['all']['incoming'] += 1
-        (crits_indicator_id, success) = crits_.crits_inbox(config, dest,
+        (crits_indicator_id, success) = crits.crits_inbox(config, dest,
                                                            'indicators',
                                                            json, src=src)
         if not success:
             config['logger'].error(
-                log_.log_messages['obj_inbox_error'].format(
+                log.log_messages['obj_inbox_error'].format(
                     src_type='edge', id_=i, 
                     dest_type='crits indicators api endpoint'))
             continue
@@ -431,13 +431,13 @@ def process_indicators(config, src, dest, indicators):
             config['edge_tally']['all']['processed'] += 1
             if config['daemon']['debug']:
                 config['logger'].debug(
-                    log_.log_messages['obj_inbox_success'].format(
+                    log.log_messages['obj_inbox_success'].format(
                         src_type='edge', id_=i,
                         dest_type='crits indicators api endpoint'))
-        if util_.rgetattr(indicators[i], ['observables']):
+        if util.rgetattr(indicators[i], ['observables']):
             for o in indicators[i].observables:
-                if util_.rgetattr(o, ['idref']) and \
-                   not util_.rgetattr(o, ['object_']):
+                if util.rgetattr(o, ['idref']) and \
+                   not util.rgetattr(o, ['object_']):
                     # TODO need to delete observable compositions from
                     #      mongo once we've processed them
                     obs_comp = \
@@ -457,11 +457,11 @@ def process_indicators(config, src, dest, indicators):
                         # previously ingested. TODO what about when
                         # the observable composition comes in *after*
                         # the indicator?
-                        observables_list = util_.rgetattr(obs_comp,
+                        observables_list = util.rgetattr(obs_comp,
                                                           ['observables'])
                         if not observables_list:
                             config['logger'].error(
-                                log_.log_messages['obs_comp_dereference_error'
+                                log.log_messages['obs_comp_dereference_error'
                                               ].format(id_=i))
                             continue
                         else:
@@ -481,14 +481,14 @@ def process_indicators(config, src, dest, indicators):
                     # for later processing.
                     else:
                         config['logger'].error(
-                            log_.log_messages['obs_comp_dereference_error'
+                            log.log_messages['obs_comp_dereference_error'
                                           ].format(id_=i))
                         continue
         # as we've now successfully processed the indicator, track
         # the related crits/json ids (by src/dest)
-        if util_.rgetattr(indicators[i], ['related_indicators']) and len(indicators[i].related_indicators):
+        if util.rgetattr(indicators[i], ['related_indicators']) and len(indicators[i].related_indicators):
             for j in indicators[i].related_indicators:
-                if util_.rgetattr(j, ['item', 'idref']):
+                if util.rgetattr(j, ['item', 'idref']):
                     # store the pending relationship in the db for
                     # later processing 
 
@@ -518,7 +518,7 @@ def process_relationships(config, src, dest):
     pending_crits_links = config['db'].get_pending_crits_links(src, dest)
     if not pending_crits_links:
         config['logger'].info(
-            log_.log_messages['no_pending_crits_relationships'])
+            log.log_messages['no_pending_crits_relationships'])
     else:
         for r in pending_crits_links:
             json = dict()
@@ -530,7 +530,7 @@ def process_relationships(config, src, dest):
                                              edge_id=r['rhs_id'])
             if not rhs or not rhs.get('crits_id', None):
                 config['logger'].error(
-                    log_.log_messages['obs_comp_dereference_error'
+                    log.log_messages['obs_comp_dereference_error'
                                   ].format(id_=r['rhs_id']))
             else:
                 json['right_type'] = \
@@ -543,11 +543,11 @@ def process_relationships(config, src, dest):
                 config['edge_tally']['relationships']['incoming'] += 1
                 config['edge_tally']['all']['incoming'] += 1
                 (relationship_id_, success) = \
-                    crits_.crits_inbox(config, dest,
+                    crits.crits_inbox(config, dest,
                                        'relationships', json, src=src)
                 if not success:
                     config['logger'].error(
-                        log_.log_messages['obj_inbox_error'].format(
+                        log.log_messages['obj_inbox_error'].format(
                             src_type='edge', id_=r['rhs_id'],
                             dest_type='crits relationships api endpoint'))
                 else:
@@ -588,10 +588,10 @@ def taxii_poll(config, src, dest, timestamp=None):
         {'username': config['edge']['sites'][src]['taxii']['user'],
          'password': config['edge']['sites'][src]['taxii']['pass']})
     if not timestamp:
-        earliest = util_.epoch_start()
+        earliest = util.epoch_start()
     else:
         earliest = timestamp
-    latest = util_.nowutc()
+    latest = util.nowutc()
     poll_request = tm10.PollRequest(
        message_id=tm10.generate_message_id(),
         feed_name=config['edge']['sites'][src]['taxii']['collection'],
@@ -606,7 +606,7 @@ def taxii_poll(config, src, dest, timestamp=None):
     taxii_message = t.get_message_from_http_response(http_response,
                                                      poll_request.message_id)
     if isinstance(taxii_message, tm10.StatusMessage):
-        config['logger'].error(log_.log_messages['polling_error'].format(
+        config['logger'].error(log.log_messages['polling_error'].format(
             type_='taxii', error=taxii_message.message))
     elif isinstance(taxii_message, tm10.PollResponse):
         incidents = dict()
@@ -629,7 +629,7 @@ def taxii_inbox(config, dest, stix_package=None, src=None, crits_id=None):
         if sync_state and sync_state.get('crits_id', None):
             if config['daemon']['debug']:
                 config['logger'].debug(
-                    log_.log_messages['object_already_ingested'].format(
+                    log.log_messages['object_already_ingested'].format(
                         src_type='crits', src_id=crits_id, src=src, 
                         dest_type='edge', dest=dest, dest_id=sync_state['edge_id']))
             return(True)
@@ -653,7 +653,7 @@ def taxii_inbox(config, dest, stix_package=None, src=None, crits_id=None):
         message.content_blocks.append(content_block)
         if config['daemon']['debug']:
             config['logger'].debug(
-                log_.log_messages[
+                log.log_messages[
                     'open_session'].format(type_='taxii', host=dest))
         taxii_response = client.callTaxiiService2(
             config['edge']['sites'][dest]['host'],
@@ -663,14 +663,14 @@ def taxii_inbox(config, dest, stix_package=None, src=None, crits_id=None):
         if taxii_response.code != 200 or taxii_response.msg != 'OK':
             success = False
             config['logger'].error(
-                log_.log_messages[
+                log.log_messages[
                     'inbox_error'].format(type_='taxii', host=dest,
                                           msg=taxii_response.msg))
         else:
             success = True
             if config['daemon']['debug']:
                 config['logger'].debug(
-                    log_.log_messages['inbox_success'].format(type_='taxii',
+                    log.log_messages['inbox_success'].format(type_='taxii',
                                                               host=dest))
         return(success)
 
@@ -680,12 +680,12 @@ def edge2crits(config, src, dest, daemon=False, now=None,
     '''sync an edge instance with crits'''
     # check if (and when) we synced src and dest...
     if not now:
-        now = util_.nowutc()
+        now = util.nowutc()
     if not last_run:
         # didn't get last_run as an arg so check the db...
         last_run = config['db'].get_last_sync(src=src, dest=dest,
                                               direction='e2c')
-    config['logger'].info(log_.log_messages['start_sync'].format(
+    config['logger'].info(log.log_messages['start_sync'].format(
         type_='edge', last_run=str(last_run), src=src, dest=dest))
     # setup the tally counters
     config['edge_tally'] = dict()
@@ -702,31 +702,31 @@ def edge2crits(config, src, dest, daemon=False, now=None,
     process_relationships(config, src, dest)
     for endpoint in endpoints:
         if config['edge_tally'][endpoint]['incoming'] > 0:
-            config['logger'].info(log_.log_messages['incoming_tally'].format(
+            config['logger'].info(log.log_messages['incoming_tally'].format(
                     count=config['edge_tally'][endpoint]['incoming'],
                     type_=endpoint, src='edge', dest='crits'))
         if (config['edge_tally'][endpoint]['incoming'] -
                    config['edge_tally'][endpoint]['processed']) > 0:
-            config['logger'].info(log_.log_messages['failed_tally'].format(
+            config['logger'].info(log.log_messages['failed_tally'].format(
                     count=(config['edge_tally'][endpoint]['incoming'] -
                            config['edge_tally'][endpoint]['processed']),
                     type_=endpoint, src='edge', dest='crits'))
         if config['edge_tally'][endpoint]['processed'] > 0:
-            config['logger'].info(log_.log_messages['processed_tally'].format(
+            config['logger'].info(log.log_messages['processed_tally'].format(
                     count=config['edge_tally'][endpoint]['processed'], 
                     type_=endpoint, src='edge', dest='crits'))
     if config['edge_tally']['all']['incoming'] > 0:
-        config['logger'].info(log_.log_messages['incoming_tally'].format(
+        config['logger'].info(log.log_messages['incoming_tally'].format(
                 count=config['edge_tally']['all']['incoming'], type_='total',
                 src='edge', dest='crits'))
     if (config['edge_tally']['all']['incoming'] -
                config['edge_tally']['all']['processed']) > 0:
-        config['logger'].info(log_.log_messages['failed_tally'].format(
+        config['logger'].info(log.log_messages['failed_tally'].format(
                 count=(config['edge_tally']['all']['incoming'] -
                        config['edge_tally']['all']['processed']),
                 type_='total', src='edge', dest='crits'))
     if config['edge_tally']['all']['processed'] > 0:
-        config['logger'].info(log_.log_messages['processed_tally'].format(
+        config['logger'].info(log.log_messages['processed_tally'].format(
                 count=config['edge_tally']['all']['processed'], type_='total',
                 src='edge', dest='crits'))
     # save state to disk for next run...
@@ -734,11 +734,11 @@ def edge2crits(config, src, dest, daemon=False, now=None,
         poll_interval = \
             config['edge']['sites'][src]['taxii']['poll_interval']
         next_run = str(now + datetime.timedelta(seconds=poll_interval))
-        config['logger'].debug(log_.log_messages['saving_state'].format(
+        config['logger'].debug(log.log_messages['saving_state'].format(
             next_run=next_run))
     if not daemon:
         config['db'].set_last_sync(src=src, dest=dest,
                                    direction='e2c', timestamp=now)
         return(None)
     else:
-        return(util_.nowutc())
+        return(util.nowutc())

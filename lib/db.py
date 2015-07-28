@@ -22,9 +22,9 @@
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 from cybox.core.observable import ObservableComposition
-import log_
+import log
 import pytz
-import util_
+import util
 
 
 def get_db(config):
@@ -68,7 +68,7 @@ class DB(object):
         if doc and 'timestamp' in doc.keys():
             return(doc['timestamp'].replace(tzinfo=pytz.utc))
         else:
-            return(util_.epoch_start().replace(tzinfo=pytz.utc))
+            return(util.epoch_start().replace(tzinfo=pytz.utc))
 
     def set_last_sync(self, src, dest, direction=None,
                       timestamp=None):
@@ -96,7 +96,7 @@ class DB(object):
             return None
 
     def set_object_id(self, src, dest, crits_id=None, edge_id=None):
-        timestamp=util_.nowutc()
+        timestamp=util.nowutc()
         query = {'src': src, 'dest': dest,
                  'crits_id': crits_id, 'edge_id': edge_id}
         doc = self.get_object_id(src, dest, crits_id=crits_id, edge_id=edge_id)

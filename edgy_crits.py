@@ -21,16 +21,12 @@
 
 from docopt import docopt
 import os.path
-from sys import path as python_path
-python_path.append('./lib_')
-from crits_ import crits2edge
-from edge_ import edge2crits
-import db_
-import log_
-import util_
+from lib.crits import crits2edge
+from lib.edge import edge2crits
+from lib import db, log, util
 
 
-__version__ = '0.2'
+__version__ = '0.3'
 app_path = os.path.split(os.path.abspath(__file__))[0]
 default_config = os.path.join(app_path, 'config.yaml')
 
@@ -57,12 +53,12 @@ Please report bugs to support@soltra.com
 
 def main():
     args = docopt(__doc__, version=__version__)
-    config = util_.parse_config(args['--config'])
+    config = util.parse_config(args['--config'])
     config['config_file'] = args['--config']
-    logger = log_.setup_logging(config)
+    logger = log.setup_logging(config)
     config['logger'] = logger
-    db = db_.DB(config)
-    config['db'] = db
+    my_db = db.DB(config)
+    config['db'] = my_db
     config['daemon']['app_path'] = app_path
     if args['--c2e']:
         if args['--src'] in config['crits']['sites'].keys() \

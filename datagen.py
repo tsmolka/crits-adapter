@@ -37,16 +37,10 @@ from stix.utils import set_id_namespace as set_stix_id_namespace
 import os.path
 import random
 import uuid
-from sys import path as python_path
-python_path.append('./lib_')
-import crits_
-import datagen_
-import edge_
-import log_
-import util_
+from lib import crits, datagen, edge, log, util
 
 
-__version__ = '0.2'
+__version__ = '0.3'
 app_path = os.path.split(os.path.abspath(__file__))[0]
 default_config = os.path.join(app_path, 'config.yaml')
 datatypes = ['ip', 'domain', 'filehash', 'email', 'mixed', 'indicator']
@@ -106,20 +100,20 @@ def gen_stix_observable_sample(config, target=None, datatype=None,
     stix_package.stix_header.handling.add_marking(marking)
     # ...and stuff it full of random sample data :-)
     if datatype == 'ip':
-        addr = Address(address_value=datagen_.generate_random_ip_address(),
+        addr = Address(address_value=datagen.generate_random_ip_address(),
                        category='ipv4-addr')
         addr.condition = 'Equals'
         stix_package.add_observable(Observable(addr))
     elif datatype == 'domain':
         domain = DomainName()
         domain.type_ = 'FQDN'
-        domain.value = datagen_.generate_random_domain(config)
+        domain.value = datagen.generate_random_domain(config)
         domain.condition = 'Equals'
         stix_package.add_observable(Observable(domain))
     elif datatype == 'filehash':
         file_object = File()
         file_object.file_name = str(uuid.uuid4()) + '.exe'
-        hashes = datagen_.generate_random_hashes()
+        hashes = datagen.generate_random_hashes()
         for hash in hashes.keys():
             file_object.add_hash(Hash(hashes[hash], type_=hash.upper()))
             for i in file_object.hashes:
@@ -127,7 +121,7 @@ def gen_stix_observable_sample(config, target=None, datatype=None,
         stix_package.add_observable(Observable(file_object))
     elif datatype == 'email':
         try:
-            msg = datagen_.get_random_spam_msg(config)
+            msg = datagen.get_random_spam_msg(config)
             email = EmailMessage()
             email.header = EmailHeader()
             header_map = {'Subject': 'subject', 'To': 'to', 'Cc':
@@ -219,7 +213,7 @@ def inject_edge_sample_data(config, target=None, datatype=None):
                 (observable_id, stix_) = \
                     gen_stix_observable_sample(config, target=target,
                                                datatype=datatype)
-                success = edge_.taxii_inbox(config, target, stix_)
+                success = edge.taxii_inbox(config, target, stix_)
                 if success:
                     i += 1
                 else:
@@ -243,7 +237,7 @@ def inject_edge_sample_data(config, target=None, datatype=None):
                     (observable_id, stix_) = \
                         gen_stix_observable_sample(config, target=target,
                                                    datatype=type_)
-                    success = edge_.taxii_inbox(config, target, stix_)
+                    success = edge.taxii_inbox(config, target, stix_)
                     if success:
                         j += 1
                         observables_list.append(observable_id)
@@ -258,7 +252,7 @@ def inject_edge_sample_data(config, target=None, datatype=None):
                         target=target,
                         datatype=type_,
                         observables_list=observables_list)
-                success = edge_.taxii_inbox(config, target, stix_)
+                success = edge.taxii_inbox(config, target, stix_)
                 if success:
                     i += 1
                 else:
@@ -275,7 +269,7 @@ def inject_edge_sample_data(config, target=None, datatype=None):
                 (observable_id, stix_) = \
                     gen_stix_observable_sample(config, target=target,
                                                datatype=type_)
-                success = edge_.taxii_inbox(config, target, stix_)
+                success = edge.taxii_inbox(config, target, stix_)
                 if success:
                     i += 1
                 else:
@@ -297,19 +291,19 @@ def generate_crits_indicator_json(config, observables_dict=None):
 
 def generate_crits_json(config, datatype=None):
     if datatype == 'ip':
-        ip = datagen_.generate_random_ip_address()
+        ip = datagen.generate_random_ip_address()
         return({'ip': ip, 'ip_type': 'Address - ipv4-addr'})
     elif datatype == 'domain':
-        return({'domain': datagen_.generate_random_domain(config)})
+        return({'domain': datagen.generate_random_domain(config)})
     elif datatype == 'filehash':
-        hashes = datagen_.generate_random_hashes()
+        hashes = datagen.generate_random_hashes()
         json = {'filename': str(uuid.uuid4()) + '.exe',
                 'upload_type': 'metadata'}
         for hash in hashes.keys():
             json[hash] = hashes[hash]
         return(json)
     elif datatype == 'email':
-        msg = datagen_.get_random_spam_msg(config)
+        msg = datagen.get_random_spam_msg(config)
         json = {'upload_type': 'fields'}
         header_map = {'Subject': 'subject', 'To': 'to', 'Cc': 'cc',
                       'From': 'from_address', 'Sender': 'sender', 'Date':
@@ -350,7 +344,7 @@ def inject_crits_sample_data(config, target=None, datatype=None):
         i = 0
         while i < config['crits']['datagen']['indicator_count']:
             (id_, success) = \
-                crits_.crits_inbox(config, target, endpoint,
+                crits.crits_inbox(config, target, endpoint,
                                    generate_crits_json(config, datatype))
             if success:
                 i += 1
@@ -381,7 +375,7 @@ def inject_crits_sample_data(config, target=None, datatype=None):
                 elif type_ == 'filehash':
                     endpoint = 'samples'
                 (id_, success) = \
-                    crits_.crits_inbox(config, target, endpoint,
+                    crits.crits_inbox(config, target, endpoint,
                                        generate_crits_json(config, type_))
                 if success:
                     j += 1
@@ -392,7 +386,7 @@ def inject_crits_sample_data(config, target=None, datatype=None):
             # now that we've got random observables in crits, inbox an
             # indicator...
             (id_, success) = \
-                crits_.crits_inbox(config, target, 'indicators',
+                crits.crits_inbox(config, target, 'indicators',
                                    generate_crits_indicator_json(
                                        config, observables_dict))
             if success:
@@ -405,7 +399,7 @@ def inject_crits_sample_data(config, target=None, datatype=None):
                     json['right_id'] = k
                     json['rel_type'] = 'Contains'
                     json['rel_confidence'] = 'unknown'
-                    (id_, success) = crits_.crits_inbox(config, target,
+                    (id_, success) = crits.crits_inbox(config, target,
                                                         'relationships', json)
             else:
                 print('error inboxing relationship for crits sample indicator '
@@ -426,7 +420,7 @@ def inject_crits_sample_data(config, target=None, datatype=None):
             elif type_ == 'filehash':
                 endpoint = 'samples'
             (id_, success) = \
-                crits_.crits_inbox(config, target, endpoint,
+                crits.crits_inbox(config, target, endpoint,
                                    generate_crits_json(
                                        config, type_))
             if success:
@@ -438,9 +432,9 @@ def inject_crits_sample_data(config, target=None, datatype=None):
 
 def main():
     args = docopt(__doc__, version=__version__)
-    config = util_.parse_config(args['--config'])
+    config = util.parse_config(args['--config'])
     config['config_file'] = args['--config']
-    logger = log_.setup_logging(config)
+    logger = log.setup_logging(config)
     config['logger'] = logger
     if args['--list-targets']:
         for i in config['crits']['sites']:
@@ -469,10 +463,10 @@ def main():
                     config['crits']['datagen']['indicator_count'] = \
                         int(args['--count'])
                 # read in icann tlds list for datagen use
-                config['datagen']['tlds'] = datagen_.load_tlds(config)
+                config['datagen']['tlds'] = datagen.load_tlds(config)
                 # read in email header samples for datagen use
                 config['datagen']['email_headers'] = \
-                    datagen_.load_mail_header_bits(config)
+                    datagen.load_mail_header_bits(config)
                 inject_crits_sample_data(config, target=args['--target'],
                                          datatype=args['--datatype'])
             elif args['--type'] == 'edge' and \
@@ -483,10 +477,10 @@ def main():
                     config['edge']['datagen']['indicator_count'] = \
                         int(args['--count'])
                 # read  in icann tlds list for datagen use
-                config['datagen']['tlds'] = datagen_.load_tlds(config)
+                config['datagen']['tlds'] = datagen.load_tlds(config)
                 # read in email header samples for datagen use
                 config['datagen']['email_headers'] = \
-                    datagen_.load_mail_header_bits(config)
+                    datagen.load_mail_header_bits(config)
                 inject_edge_sample_data(config, target=args['--target'],
                                         datatype=args['--datatype'])
 

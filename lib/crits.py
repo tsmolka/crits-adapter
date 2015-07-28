@@ -38,13 +38,13 @@ from stix.utils import set_id_namespace as set_stix_id_namespace
 from stix.incident import Incident
 from stix.common.related import RelatedIndicator, RelatedObservable, RelatedIncident
 import datetime
-import edge_
+import edge
 import json
 import requests
-import util_
+import util
 import yaml
 import sys
-import log_
+import log
 
 
 def crits_url(config, host):
@@ -96,7 +96,7 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
             if sync_state and sync_state.get('crits_id', None):
                 if config['daemon']['debug']:
                     config['logger'].debug(
-                        log_.log_messages['object_already_ingested'].format(
+                        log.log_messages['object_already_ingested'].format(
                             src_type='edge', src_id=edge_id, src=src, 
                             dest_type='crits', dest=dest, dest_id=sync_state['crits_id']))
                     return(sync_state['crits_id'], True)
@@ -203,7 +203,7 @@ def json2indicator(config, src, dest, endpoint, json_, crits_id):
                               'Indicator': 'indicators', 'Event': 'events'}
             if json_.get('type', None) not in ['Reference', 'Related_To']:
                 config['logger'].error(
-                    log_.log_messages['unsupported_object_error'].format(
+                    log.log_messages['unsupported_object_error'].format(
                         type_='crits', obj_type='indicator type ' + json_.get('type', 'None'),
                         id_=crits_id))
                 return(None)
@@ -219,7 +219,7 @@ def json2indicator(config, src, dest, endpoint, json_, crits_id):
             for r in json_['relationships']:
                 if r.get('relationship', None) not in ['Contains', 'Related_To']:
                     config['logger'].error(
-                        log_.log_messages['unsupported_object_error'].format(
+                        log.log_messages['unsupported_object_error'].format(
                             type_='crits', obj_type='indicator relationship type '
                             + r.get('relationship', 'None'), id_=crits_id))
                     continue
@@ -240,12 +240,12 @@ def json2indicator(config, src, dest, endpoint, json_, crits_id):
             return(indicator_)
         else:
             config['logger'].error(
-                log_.log_messages['unsupported_object_error'].format(
+                log.log_messages['unsupported_object_error'].format(
                     type_='crits', obj_type=endpoint, id_=crits_id))
             return(None)
     except:
         e = sys.exc_info()[0]
-        config['logger'].error(log_.log_messages['obj_convert_error'].format(
+        config['logger'].error(log.log_messages['obj_convert_error'].format(
             src_type='crits', src_obj='indicator', id_=crits_id,
             dest_type='stix', dest_obj='indicator'))
         config['logger'].exception(e)
@@ -275,7 +275,7 @@ def json2incident(config, src, dest, endpoint, json_, crits_id):
             for r in json_['relationships']:
                 if r.get('relationship', None) not in ['Contains', 'Related_To']:
                     config['logger'].error(
-                        log_.log_messages['unsupported_object_error'].format(
+                        log.log_messages['unsupported_object_error'].format(
                             type_='crits', obj_type='event relationship type '
                             + r.get('relationship', 'None'), id_=crits_id))
                     continue
@@ -291,12 +291,12 @@ def json2incident(config, src, dest, endpoint, json_, crits_id):
             return(incident_)
         else:
             config['logger'].error(
-                log_.log_messages['unsupported_object_error'].format(
+                log.log_messages['unsupported_object_error'].format(
                     type_='crits', obj_type=endpoint, id_=crits_id))
             return(None)
     except:
         e = sys.exc_info()[0]
-        config['logger'].error(log_.log_messages['obj_convert_error'].format(
+        config['logger'].error(log.log_messages['obj_convert_error'].format(
             src_type='crits', src_obj='event', id_=crits_id,
             dest_type='stix', dest_obj='incident'))
         config['logger'].exception(e)
@@ -364,7 +364,7 @@ def json2observable(config, src, dest, endpoint, json_, crits_id):
             observable_ = Observable(email)
         else:
             config['logger'].error(
-                log_.log_messages['unsupported_object_error'].format(
+                log.log_messages['unsupported_object_error'].format(
                     type_='crits', obj_type=endpoint, id_=crits_id))
             return(None)
         observable_.id = xmlns_name + ':observable-' + crits_id
@@ -373,7 +373,7 @@ def json2observable(config, src, dest, endpoint, json_, crits_id):
     except:
         e = sys.exc_info()[0]
         config['logger'].error(
-            log_.log_messages['obj_convert_error'].format(
+            log.log_messages['obj_convert_error'].format(
                 src_type='crits', src_obj='observable', id_=crits_id,
                 dest_type='cybox', dest_obj='observable'))
         config['logger'].exception(e)
@@ -465,12 +465,12 @@ def crits2edge(config, src, dest, daemon=False,
     xmlns_name = config['edge']['sites'][dest]['stix']['xmlns_name']
     # check if (and when) we synced src and dest...
     if not now:
-        now = util_.nowutc()
+        now = util.nowutc()
     if not last_run:
         last_run = config['db'].get_last_sync(src=src, dest=dest,
                                               direction='c2e')
     config['logger'].info(
-        log_.log_messages['start_sync'].format(
+        log.log_messages['start_sync'].format(
             type_='crits', last_run=last_run, src=src, dest=dest))
     endpoints = ['ips', 'domains', 'samples', 'emails', 'indicators', 'events']
     # setup the tally counters
@@ -493,21 +493,21 @@ def crits2edge(config, src, dest, daemon=False,
                     config['crits_tally']['all']['incoming'] += 1
                     if not indicator:
                         config['logger'].info(
-                            log_.log_messages['obj_inbox_error'].format(
+                            log.log_messages['obj_inbox_error'].format(
                                 src_type='crits', id_=crits_id, dest_type='edge'))
                         continue
                     stix_ = stix_pkg(config, src, endpoint, indicator, dest=dest)
                     if not stix_:
                         config['logger'].info(
-                            log_.log_messages['obj_inbox_error'].format(
+                            log.log_messages['obj_inbox_error'].format(
                                 src_type='crits', id_=crits_id, dest_type='edge'))
                         continue
-                    success = edge_.taxii_inbox(config, dest, stix_, src=src,
+                    success = edge.taxii_inbox(config, dest, stix_, src=src,
                                                 crits_id=endpoint + ':'
                                                 + crits_id)
                     if not success:
                         config['logger'].info(
-                            log_.log_messages['obj_inbox_error'].format(
+                            log.log_messages['obj_inbox_error'].format(
                                 src_type='crits', id_=crits_id, dest_type='edge'))
                         continue
                     else:
@@ -525,21 +525,21 @@ def crits2edge(config, src, dest, daemon=False,
                     config['crits_tally']['all']['incoming'] += 1
                     if not incident:
                         config['logger'].info(
-                            log_.log_messages['obj_inbox_error'].format(
+                            log.log_messages['obj_inbox_error'].format(
                                 src_type='crits', id_=crits_id, dest_type='edge'))
                         continue
                     stix_ = stix_pkg(config, src, endpoint, incident, dest=dest)
                     if not stix_:
                         config['logger'].info(
-                            log_.log_messages['obj_inbox_error'].format(
+                            log.log_messages['obj_inbox_error'].format(
                                 src_type='crits', id_=crits_id, dest_type='edge'))
                         continue
-                    success = edge_.taxii_inbox(config, dest, stix_, src=src,
+                    success = edge.taxii_inbox(config, dest, stix_, src=src,
                                                 crits_id=endpoint + ':'
                                                 + crits_id)
                     if not success:
                         config['logger'].info(
-                            log_.log_messages['obj_inbox_error'].format(
+                            log.log_messages['obj_inbox_error'].format(
                                 src_type='crits', id_=crits_id, dest_type='edge'))
                         continue
                     else:
@@ -556,19 +556,19 @@ def crits2edge(config, src, dest, daemon=False,
                     config['crits_tally']['all']['incoming'] += 1
                     if not observable:
                         config['logger'].info(
-                            log_.log_messages['obj_inbox_error'].format(
+                            log.log_messages['obj_inbox_error'].format(
                                 src_type='crits', id_=crits_id, dest_type='edge'))
                         continue
                     stix_ = stix_pkg(config, src, endpoint, observable, dest=dest)
                     if not stix_:
                         config['logger'].info(
-                            log_.log_messages['obj_inbox_error'].format(
+                            log.log_messages['obj_inbox_error'].format(
                                 src_type='crits', id_=crits_id, dest_type='edge'))
                         continue
-                    success = edge_.taxii_inbox(config, dest, stix_)
+                    success = edge.taxii_inbox(config, dest, stix_)
                     if not success:
                         config['logger'].info(
-                            log_.log_messages['obj_inbox_error'].format(
+                            log.log_messages['obj_inbox_error'].format(
                                 src_type='crits', id_=crits_id, dest_type='edge'))
                         continue
                     else:
@@ -580,42 +580,42 @@ def crits2edge(config, src, dest, daemon=False,
                                                              endpoint + '-' + crits_id))
     for endpoint in endpoints:
         if config['crits_tally'][endpoint]['incoming'] > 0:
-            config['logger'].info(log_.log_messages['incoming_tally'].format(
+            config['logger'].info(log.log_messages['incoming_tally'].format(
                     count=config['crits_tally'][endpoint]['incoming'],
                     type_=endpoint, src='crits', dest='edge'))
         if (config['crits_tally'][endpoint]['incoming'] -
                    config['crits_tally'][endpoint]['processed']) > 0:
-            config['logger'].info(log_.log_messages['failed_tally'].format(
+            config['logger'].info(log.log_messages['failed_tally'].format(
                     count=(config['crits_tally'][endpoint]['incoming'] -
                            config['crits_tally'][endpoint]['processed']),
                     type_=endpoint, src='crits', dest='edge'))
         if config['crits_tally'][endpoint]['processed'] > 0:
-            config['logger'].info(log_.log_messages['processed_tally'].format(
+            config['logger'].info(log.log_messages['processed_tally'].format(
                     count=config['crits_tally'][endpoint]['processed'], 
                     type_=endpoint, src='crits', dest='edge'))
     if config['crits_tally']['all']['incoming'] > 0:
-        config['logger'].info(log_.log_messages['incoming_tally'].format(
+        config['logger'].info(log.log_messages['incoming_tally'].format(
                 count=config['crits_tally']['all']['incoming'], type_='total',
                 src='crits', dest='edge'))
     if (config['crits_tally']['all']['incoming'] -
                config['crits_tally']['all']['processed']) > 0:
-        config['logger'].info(log_.log_messages['failed_tally'].format(
+        config['logger'].info(log.log_messages['failed_tally'].format(
                 count=(config['crits_tally']['all']['incoming'] -
                        config['crits_tally']['all']['processed']),
                 type_='total', src='crits', dest='edge'))
     if config['crits_tally']['all']['processed'] > 0:
-        config['logger'].info(log_.log_messages['processed_tally'].format(
+        config['logger'].info(log.log_messages['processed_tally'].format(
                 count=config['crits_tally']['all']['processed'], type_='total',
                 src='crits', dest='edge'))
     # save state to disk for next run...
     if config['daemon']['debug']:
         poll_interval = config['crits']['sites'][src]['api']['poll_interval']
         config['logger'].debug(
-            log_.log_messages['saving_state'].format(
+            log.log_messages['saving_state'].format(
                 next_run=str(now + datetime.timedelta(seconds=poll_interval))))
     if not daemon:
         config['db'].set_last_sync(src=src, dest=dest,
                                    direction='c2e', timestamp=now)
         return(None)
     else:
-        return(util_.nowutc())
+        return(util.nowutc())
