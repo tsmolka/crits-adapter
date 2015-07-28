@@ -142,21 +142,30 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
 
 def apply_releasability(config, dest, endpoint, crits_id, json):
     '''apply releasability markings to crits objects via api, return bool to indicate success'''
+
+    # Skip Crits objects that don't support releasability
+    endpoints_to_ignore = ['relationships']
+    if endpoint in endpoints_to_ignore:
+        return
+
     url = crits_url(config, dest)
     attempt_certificate_validation = \
         config['crits']['sites'][dest]['api']['attempt_certificate_validation']
     if not attempt_certificate_validation:
         requests.packages.urllib3.disable_warnings()
-    data = {'api_key': config['crits']['sites'][dest]['api']['key'],
-            'username': config['crits']['sites'][dest]['api']['user'],
-            'source': config['crits']['sites'][dest]['api']['source']}
+    data = {'source': config['crits']['sites'][dest]['api']['source']}
+    params = {'api_key': config['crits']['sites'][dest]['api']['key'],
+	      'username': config['crits']['sites'][dest]['api']['user']}
     data.update(json)
     if config['crits']['sites'][dest]['api']['ssl']:
-        r = requests.post(url + endpoint + '/' + crits_id + '/',
+        r = requests.patch(url + endpoint + '/' + crits_id + '/',
                           data=data,
+                          params=params,
                           verify=attempt_certificate_validation)
     else:
-        r = requests.post(url + endpoint + '/' + crits_id + '/', data=data)
+        r = requests.patch(url + endpoint + '/' + crits_id + '/',
+                          data=data,
+                          params=params)
     json_output = r.json()
     result_code = json_output[u'return_code']
     success = r.status_code in (200, 201) and result_code == 0
