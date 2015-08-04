@@ -67,17 +67,15 @@ def crits_poll(config, src, endpoint, id_=None):
         config['crits']['sites'][src]['api']['attempt_certificate_validation']
     if not attempt_certificate_validation:
         requests.packages.urllib3.disable_warnings()
+    to_verify = attempt_certificate_validation and config['crits']['sites'][src]['api']['ssl']
     data = {'api_key': config['crits']['sites'][src]['api']['key'],
             'username': config['crits']['sites'][src]['api']['user']}
     if config['crits']['sites'][src]['api']['use_releasability']:
         data.update({'c-releasability.name':
                      config['crits']['sites'][src]['api']['source']})
-    if config['crits']['sites'][src]['api']['ssl']:
-        r = requests.get(url + endpoint + '/' + id_ + '/',
-                         params=data,
-                         verify=attempt_certificate_validation)
-    else:
-        r = requests.get(url + endpoint + '/' + id_ + '/', params=data)
+    r = requests.get(url + endpoint + '/' + id_ + '/',
+                     params=data,
+                     verify=to_verify)
     json_output = r.json()
     success = r.status_code in (200, 201)
     if success:
@@ -107,16 +105,14 @@ def crits_inbox(config, dest, endpoint, json, src=None, edge_id=None):
         config['crits']['sites'][dest]['api']['attempt_certificate_validation']
     if not attempt_certificate_validation:
         requests.packages.urllib3.disable_warnings()
+    to_verify = attempt_certificate_validation and config['crits']['sites'][dest]['api']['ssl']
     data = {'api_key': config['crits']['sites'][dest]['api']['key'],
             'username': config['crits']['sites'][dest]['api']['user'],
             'source': config['crits']['sites'][dest]['api']['source']}
     data.update(json)
-    if config['crits']['sites'][dest]['api']['ssl']:
-        r = requests.post(url + endpoint + '/',
-                          data=data,
-                          verify=attempt_certificate_validation)
-    else:
-        r = requests.post(url + endpoint + '/', data=data)
+    r = requests.post(url + endpoint + '/',
+                      data=data,
+                      verify=to_verify)
     json_output = r.json()
     result_code = json_output[u'return_code']
     crits_id = None
@@ -153,19 +149,15 @@ def apply_releasability(config, dest, endpoint, crits_id, json):
         config['crits']['sites'][dest]['api']['attempt_certificate_validation']
     if not attempt_certificate_validation:
         requests.packages.urllib3.disable_warnings()
+    to_verify = attempt_certificate_validation and config['crits']['sites'][dest]['api']['ssl']
     data = {'source': config['crits']['sites'][dest]['api']['source']}
     params = {'api_key': config['crits']['sites'][dest]['api']['key'],
 	      'username': config['crits']['sites'][dest]['api']['user']}
     data.update(json)
-    if config['crits']['sites'][dest]['api']['ssl']:
-        r = requests.patch(url + endpoint + '/' + crits_id + '/',
-                          data=data,
-                          params=params,
-                          verify=attempt_certificate_validation)
-    else:
-        r = requests.patch(url + endpoint + '/' + crits_id + '/',
-                          data=data,
-                          params=params)
+    r = requests.patch(url + endpoint + '/' + crits_id + '/',
+                       data=data,
+                       params=params,
+                       verify=to_verify)
     json_output = r.json()
     result_code = json_output[u'return_code']
     success = r.status_code in (200, 201) and result_code == 0
@@ -405,11 +397,9 @@ def __fetch_crits_object_ids(config, src, endpoint, params):
         config['crits']['sites'][src]['api']['attempt_certificate_validation']
     if not attempt_certificate_validation:
         requests.packages.urllib3.disable_warnings()
-    if config['crits']['sites'][src]['api']['ssl']:
-        r = requests.get(url + endpoint + '/', params=params,
-                         verify=attempt_certificate_validation)
-    else:
-        r = requests.get(url + endpoint + '/', params=params)
+    to_verify = attempt_certificate_validation and config['crits']['sites'][src]['api']['ssl']
+    r = requests.get(url + endpoint + '/', params=params,
+                     verify=to_verify)
     json_output = r.json()
     object_count = int(json_output[u'meta'][u'total_count'])
     max_results = config['crits']['sites'][src]['api']['max_results']
@@ -424,11 +414,8 @@ def __fetch_crits_object_ids(config, src, endpoint, params):
     i = 0
     while i <= page_count:
         params['offset'] = i * max_results
-        if config['crits']['sites'][src]['api']['ssl']:
-            r = requests.get(url + endpoint + '/', params=params,
-                             verify=attempt_certificate_validation)
-        else:
-            r = requests.get(url + endpoint + '/', params=params)
+        r = requests.get(url + endpoint + '/', params=params,
+                         verify=to_verify)
         json_output = r.json()
         for object_ in json_output.get('objects', []):
             object_ids.append(object_[u'_id'].encode('ascii', 'ignore'))
