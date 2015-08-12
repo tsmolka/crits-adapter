@@ -164,7 +164,7 @@ def apply_releasability(config, dest, endpoint, crits_id, json):
     return(success)
 
 
-def stix_pkg(config, src, endpoint, payload, title='random test data',
+def stix_pkg(config, src, payload, title='random test data',
              description='random test data',
              package_intents='Indicators - Watchlist',
              tlp_color='WHITE', dest=None):
@@ -499,7 +499,7 @@ def crits2edge(config, src, dest, daemon=False,
                             log.log_messages['obj_inbox_error'].format(
                                 src_type='crits', id_=crits_id, dest_type='edge'))
                         continue
-                    stix_ = stix_pkg(config, src, endpoint, indicator, dest=dest)
+                    stix_ = stix_pkg(config, src, indicator, dest=dest)
                     if not stix_:
                         config['logger'].info(
                             log.log_messages['obj_inbox_error'].format(
@@ -531,7 +531,7 @@ def crits2edge(config, src, dest, daemon=False,
                             log.log_messages['obj_inbox_error'].format(
                                 src_type='crits', id_=crits_id, dest_type='edge'))
                         continue
-                    stix_ = stix_pkg(config, src, endpoint, incident, dest=dest)
+                    stix_ = stix_pkg(config, src, incident, dest=dest)
                     if not stix_:
                         config['logger'].info(
                             log.log_messages['obj_inbox_error'].format(
@@ -562,7 +562,7 @@ def crits2edge(config, src, dest, daemon=False,
                             log.log_messages['obj_inbox_error'].format(
                                 src_type='crits', id_=crits_id, dest_type='edge'))
                         continue
-                    stix_ = stix_pkg(config, src, endpoint, observable, dest=dest)
+                    stix_ = stix_pkg(config, src, observable, dest=dest)
                     if not stix_:
                         config['logger'].info(
                             log.log_messages['obj_inbox_error'].format(
