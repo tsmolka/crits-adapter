@@ -1,10 +1,17 @@
 import unittest
 
+from cybox.core import Observables
+from cybox.objects.address_object import Address
+from cybox.objects.email_message_object import EmailMessage
 
-from lib.crits import crits_url
+from cybox import helper
+from cybox.core.observable import Observable
+
+from lib.crits import crits_url, stix_pkg
+
 
 class TestCrits(unittest.TestCase):
-    example_config = {
+    testing_config = {
         'datagen': {
             'email_header_samples': 'datagen_samples/mail_headers.yaml',
             'canonical_tlds': 'datagen_samples/crits-tlds.txt'},
@@ -73,9 +80,37 @@ class TestCrits(unittest.TestCase):
     def test_crits_url(self):
         expected = 'https://127.0.0.1:8080/api/v1/'
 
-        result = crits_url(self.example_config, 'localhost')
+        result = crits_url(self.testing_config, 'localhost')
 
         self.assertEqual(result, expected)
+
+    def test_stix_pkg(self):
+        src = 'localhost'
+        dest = 'localhost'
+
+        domain_name = 'www.example.com'
+        domain = helper.create_domain_name_observable(domain_name)
+
+        url_name = 'http://www.example.com'
+        url = helper.create_url_observable(url_name)
+
+        ipv4_name = '127.0.0.1'
+        ipv4 = helper.create_ipv4_observable(ipv4_name)
+ 
+        domain_result = stix_pkg(self.testing_config, src, domain, dest=dest)
+        domain_value = domain_result.observables.observables[0].object_.properties.value.value
+
+        self.assertEqual(domain_value, domain_name)
+
+        url_result = stix_pkg(self.testing_config, src, url, dest=dest)
+        url_value = url_result.observables.observables[0].object_.properties.value.value
+
+        self.assertEqual(url_value, url_name)
+
+        ipv4_result = stix_pkg(self.testing_config, src, ipv4, dest=dest)
+        ipv4_value = ipv4_result.observables.observables[0].object_.properties.address_value.value
+
+        self.assertEqual(ipv4_value, ipv4_name)
 
 
 if __name__ == '__main__':
