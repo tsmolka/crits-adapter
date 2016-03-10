@@ -6,7 +6,7 @@ Project status update
 * I entered into this development effort operating under two
   assumptions that subsequently proved to be fallacious:
 
-1. The CRITs 'stable_4' branch was actually *stable*.
+1. The CRITs 'stable_4' branch was actually **stable**.
 2. Most folks are running stock CRITs.
 
 Regarding point 1, at the time the Soltra Edge CRITs adapter was
@@ -19,8 +19,8 @@ via the CRITs REST API what code is actually running. This is
 currently an unsolved problem.
 
 Regarding point 2, since this adapter was released it has come to my
-attention that many orgs are running *internal forks* of CRITs and not
-upstream. This exacerbates the challenge presented by point 1.
+attention that many orgs are running **internal forks** of CRITs and
+not upstream. This exacerbates the challenge presented by point 1.
 
 ETL is an inherently brittle approach to system integration. While it
 is not my intention to abandon this project, it is not currently being
