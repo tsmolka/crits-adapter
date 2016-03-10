@@ -1,6 +1,33 @@
 About the Soltra Edge CRITs adapter
 ===================================
 
+Project status update
+---------------------
+* I entered into this development effort operating under two
+  assumptions that subsequently proved to be fallacious:
+
+1. The CRITs 'stable_4' branch was actually *stable*.
+2. Most folks are running stock CRITs.
+
+Regarding point 1, at the time the Soltra Edge CRITs adapter was
+published on Github, it was working solidly against commit
+'697265292fe1cda83beca8dcaaa9d16d5ff258a3' off the CRITs 'stable_4'
+branch. In the interim there have been 300+ commits on the CRITs
+'stable_4' branch. At some point in there changes on the CRITs side
+broke this adapter. As far as I can tell, there's no way to determine
+via the CRITs REST API what code is actually running. This is
+currently an unsolved problem.
+
+Regarding point 2, since this adapter was released it has come to my
+attention that many orgs are running *internal forks* of CRITs and not
+upstream. This exacerbates the challenge presented by point 1.
+
+ETL is an inherently brittle approach to system integration. While it
+is not my intention to abandon this project, it is not currently being
+maintained while I'm trying to come to terms with the aforementioned
+challenges. (Suggestions warmly welcomed!)
+
+
 Intent
 ------
 * Enable the use of Soltra Edge as a transport mechanism for threat
